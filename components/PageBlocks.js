@@ -166,6 +166,29 @@ function PriceBand({ p }) {
   );
 }
 
+function PricingFactors({ p }) {
+  const items = lines(p.checklist);
+  return (
+    <section className={sectionClass(p, 'soft')}>
+      <div className="container split pricing-factors">
+        <div>
+          {p.eyebrow ? <span className="kicker">{p.eyebrow}</span> : null}
+          <h2>{p.heading}</h2>
+          {p.text ? <p className="muted" style={{ marginTop: 14, fontSize: 17 }}>{p.text}</p> : null}
+          {items.length ? <ul className="checks one">{items.map(item => <li key={item}>{item}</li>)}</ul> : null}
+        </div>
+        <div className="price-band pricing-guarantee">
+          <div>
+            {p.guaranteeEyebrow ? <span className="kicker" style={{ color:'var(--accent-2)' }}>{p.guaranteeEyebrow}</span> : null}
+            <h2>{p.guaranteeHeading}</h2>
+            {p.guaranteeText ? <p>{p.guaranteeText}</p> : null}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function SplitFeature({ p }) {
   const checks = lines(p.checklist);
   const photo = p.image
@@ -286,6 +309,9 @@ export default function PageBlocks({ data, pageId, services = [], locations = []
 
       case 'SunwingsPricingCardsBlock':
         return <PricingCards key={key} p={p}/>;
+
+      case 'SunwingsPricingFactorsBlock':
+        return <PricingFactors key={key} p={p}/>;
 
       case 'SunwingsPriceBandBlock':
         return <PriceBand key={key} p={p}/>;
