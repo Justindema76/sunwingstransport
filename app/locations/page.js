@@ -5,6 +5,7 @@ import { getLocations } from '@/lib/content';
 export const metadata = {
   title: 'Sunwings Transport Service Areas',
   description: 'Sunwings Transport service areas across Toronto, the GTA, Hamilton and the Niagara Region.',
+  alternates: { canonical: '/locations' },
 };
 
 export default async function LocationsPage() {
