@@ -1,7 +1,8 @@
 import HowItWorks from '@/components/HowItWorks';
 import PageHero from '@/components/PageHero';
+import PageBlocks from '@/components/PageBlocks';
 import ServiceCards from '@/components/ServiceCards';
-import { getServices, getSiteSettings } from '@/lib/content';
+import { getPageBuilderData, getServices, getSiteSettings } from '@/lib/content';
 
 export const metadata = {
   title: 'Moving, Delivery & Commercial Services',
@@ -10,7 +11,10 @@ export const metadata = {
 };
 
 export default async function ServicesPage() {
-  const [services, settings] = await Promise.all([getServices(), getSiteSettings()]);
+  const [services, settings, pageData] = await Promise.all([getServices(), getSiteSettings(), getPageBuilderData('services')]);
+  if (pageData) {
+    return <PageBlocks data={pageData} pageId="services" services={services} settings={settings}/>;
+  }
   return (
     <>
       <PageHero
