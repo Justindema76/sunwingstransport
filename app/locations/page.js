@@ -3,13 +3,16 @@ import PageHero from '@/components/PageHero';
 import PageBlocks from '@/components/PageBlocks';
 import QuoteForm from '@/components/QuoteForm';
 import ServiceAreaGrid from '@/components/ServiceAreaGrid';
-import { getLocations, getPageBuilderData, getServices, getSiteSettings } from '@/lib/content';
+import { getLocations, getPageBuilderData, getServices, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
 
-export const metadata = {
-  title: 'Sunwings Transport Service Areas',
-  description: 'Sunwings Transport service areas across Toronto, the GTA, Hamilton and the Niagara Region.',
-  alternates: { canonical: '/locations' },
-};
+export async function generateMetadata() {
+  const pageData = await getPageBuilderData('locations');
+  return pageMetadataFromBuilder(pageData, {
+    title:'Sunwings Transport Service Areas',
+    description:'Sunwings Transport service areas across Toronto, the GTA, Hamilton and the Niagara Region.',
+    canonical:'/locations',
+  });
+}
 
 export default async function LocationsPage() {
   const [locations, services, settings, pageData] = await Promise.all([getLocations(), getServices(), getSiteSettings(), getPageBuilderData('locations')]);
