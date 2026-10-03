@@ -16,8 +16,6 @@ export default function Header({ settings, services = [], globalHeader = {} }) {
   const phone = settings?.phone || '1-800-555-5555';
   const logo = globalHeader.logo || 'https://sunwingstransport.ca/wp-content/uploads/2026/01/SUNWING-site-logo.png';
   const brand = globalHeader.brand || 'Sunwings Transport';
-  const buttonText = globalHeader.buttonText || 'Free Quote';
-  const buttonUrl = globalHeader.buttonUrl || '/contact';
   const topbarEmphasis = globalHeader.topbarEmphasis || 'Reliable • On-Time • Professional';
   const topbarText = globalHeader.topbarText || 'Moving & delivery from Toronto to Niagara';
 
@@ -71,10 +69,9 @@ export default function Header({ settings, services = [], globalHeader = {} }) {
 
           <div className="nav-cta">
             <a className="nav-phone" href={telHref(phone)}>{phone}</a>
-            {buttonText ? <SmartNavLink className="btn btn-accent" href={buttonUrl}>{buttonText}</SmartNavLink> : null}
           </div>
 
-          <MobileNav links={links} services={services} phone={phone} buttonText={buttonText} buttonUrl={buttonUrl}/>
+          <MobileNav links={links} services={services} phone={phone} buttonText="" buttonUrl=""/>
         </div>
       </header>
     </>
