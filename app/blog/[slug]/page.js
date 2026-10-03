@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import BreadcrumbSchema from '@/components/BreadcrumbSchema';
 import { notFound } from 'next/navigation';
 import BlogCards from '@/components/BlogCards';
 import PageHero from '@/components/PageHero';
@@ -188,6 +189,7 @@ export default async function BlogPostPage({ params }) {
         </div>
       </section>
 
+      <BreadcrumbSchema baseUrl={getBaseUrl()} items={[{label:'Home',href:'/'},{label:'Moving Tips',href:'/blog'},{label:post.title}]}/>
       <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(articleSchema)}}/>
 
       {related.length ? (
