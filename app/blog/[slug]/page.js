@@ -5,11 +5,93 @@ import PageHero from '@/components/PageHero';
 import QuoteForm from '@/components/QuoteForm';
 import { getBlogPostBySlug, getBlogPosts, getServices, getSiteSettings } from '@/lib/content';
 
-function articleBody(body = '') {
-  const value = String(body || '');
-  const hasHtml = /<\/?[a-z][\s\S]*>/i.test(value);
-  if (hasHtml) return <div dangerouslySetInnerHTML={{ __html: value }}/>;
-  return value.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>);
+function escapeHtml(value = '') {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function headingSlug(value = '') {
+  return String(value)
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&[a-z0-9#]+;/gi, ' ')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80) || 'section';
+}
+
+function prepareArticle(body = '') {
+  const raw = String(body || '').trim();
+  if (!raw) return { html: '', toc: [] };
+
+  let html = raw;
+  if (!/<\/?[a-z][\s\S]*>/i.test(raw)) {
+    const blocks = [];
+    const lines = raw.split(/\r?\n/);
+    let paragraph = [];
+    let list = [];
+
+    const flushParagraph = () => {
+      if (!paragraph.length) return;
+      blocks.push(`<p>${paragraph.map(escapeHtml).join(' ')}</p>`);
+      paragraph = [];
+    };
+    const flushList = () => {
+      if (!list.length) return;
+      blocks.push(`<ul>${list.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`);
+      list = [];
+    };
+
+    for (const line of lines) {
+      const value = line.trim();
+      if (!value) {
+        flushParagraph();
+        flushList();
+        continue;
+      }
+      if (value.startsWith('### ')) {
+        flushParagraph(); flushList();
+        blocks.push(`<h3>${escapeHtml(value.slice(4))}</h3>`);
+      } else if (value.startsWith('## ')) {
+        flushParagraph(); flushList();
+        blocks.push(`<h2>${escapeHtml(value.slice(3))}</h2>`);
+      } else if (/^[-*]\s+/.test(value)) {
+        flushParagraph();
+        list.push(value.replace(/^[-*]\s+/, ''));
+      } else {
+        flushList();
+        paragraph.push(value);
+      }
+    }
+    flushParagraph();
+    flushList();
+    html = blocks.join('\n');
+  }
+
+  const toc = [];
+  const seen = new Map();
+  html = html.replace(/<h([23])([^>]*)>([\s\S]*?)<\/h\1>/gi, (match, level, attrs, inner) => {
+    const text = inner.replace(/<[^>]+>/g, '').trim();
+    if (!text) return match;
+    const base = headingSlug(text);
+    const count = (seen.get(base) || 0) + 1;
+    seen.set(base, count);
+    const id = count > 1 ? `${base}-${count}` : base;
+    toc.push({ id, text, level: Number(level) });
+    const cleanAttrs = String(attrs || '').replace(/\sid=(["']).*?\1/i, '');
+    return `<h${level}${cleanAttrs} id="${id}">${inner}</h${level}>`;
+  });
+
+  return { html, toc };
+}
+
+function estimateReadTime(body = '') {
+  const words = String(body || '').replace(/<[^>]+>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 220));
 }
 
 export async function generateMetadata({ params }) {
@@ -40,16 +122,21 @@ export default async function BlogPostPage({ params }) {
   if (!post) notFound();
 
   const related = posts.filter(item => item.slug !== post.slug).slice(0, 3);
+  const article = prepareArticle(post.body);
   const date = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString('en-CA', { month: 'long', day: 'numeric', year: 'numeric' })
     : '';
+  const read = `${estimateReadTime(post.body)} min read`;
+  const bodySections = article.html ? article.html.split(/(?=<h2\b)/i) : [];
+  const firstPart = bodySections.slice(0, Math.min(2, bodySections.length)).join('');
+  const remainingPart = bodySections.slice(Math.min(2, bodySections.length)).join('');
 
   return (
     <>
       <PageHero
         crumbs={[{label:'Home',href:'/'},{label:'Moving Tips',href:'/blog'},{label:post.tag || 'Article'}]}
         title={post.title}
-        description={[date, post.author_name].filter(Boolean).join(' · ')}
+        description={[date, read].filter(Boolean).join(' · ')}
         image={post.image}
         phone={settings.phone}
         ctas={false}
@@ -57,17 +144,33 @@ export default async function BlogPostPage({ params }) {
 
       <section className="section">
         <div className="container with-side">
-          <article className="prose">
+          <article className="prose article-prose">
             {post.excerpt ? <p className="lead-p">{post.excerpt}</p> : null}
-            {post.image ? <div className="ph" style={{backgroundImage:`url("${post.image}")`,aspectRatio:'16/8',borderRadius:20,margin:'10px 0 26px'}}/> : null}
-            {articleBody(post.body)}
+            {post.image ? <div className="ph article-featured" style={{backgroundImage:`url("${post.image}")`}}/> : null}
+
+            {firstPart ? <div dangerouslySetInnerHTML={{ __html:firstPart }}/> : null}
+
             <div className="cta-inline">
-              <div><h3>Need moving or delivery help?</h3><p>Send the details for an upfront quote.</p></div>
+              <div><h3>Want your exact number?</h3><p>Send the details for an upfront quote.</p></div>
               <Link className="btn btn-accent" href="/contact">Get a Quote →</Link>
+            </div>
+
+            {remainingPart ? <div dangerouslySetInnerHTML={{ __html:remainingPart }}/> : null}
+
+            <div className="note-box">
+              Related: <Link href="/pricing">Sunwings pricing</Link> · <Link href="/services/residential-moving">Residential moving</Link>
             </div>
           </article>
 
           <aside className="side">
+            {article.toc.length ? (
+              <div className="side-card toc">
+                <h3>On this page</h3>
+                {article.toc.map(item => (
+                  <a className={item.level === 3 ? 'toc-sub' : ''} href={`#${item.id}`} key={item.id}>{item.text}</a>
+                ))}
+              </div>
+            ) : null}
             <QuoteForm services={services} compact/>
           </aside>
         </div>
