@@ -15,7 +15,7 @@ export async function generateMetadata({ params }) {
   const title = location.seo_title || location.title;
   const description = location.seo_description || location.hero_description;
   return {
-    title,
+    title: location.seo_title ? { absolute: title } : title,
     description,
     alternates:{canonical:url},
     openGraph:{type:'website',url,title,description,images:location.og_image?[{url:location.og_image,alt:location.title}]:[]},
