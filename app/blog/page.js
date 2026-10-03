@@ -1,13 +1,16 @@
 import BlogCards from '@/components/BlogCards';
 import PageHero from '@/components/PageHero';
 import PageBlocks from '@/components/PageBlocks';
-import { getBlogPosts, getPageBuilderData, getSiteSettings } from '@/lib/content';
+import { getBlogPosts, getPageBuilderData, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
 
-export const metadata = {
-  title:'Moving Tips & Guides',
-  description:'Moving tips, pricing guides and delivery advice from Sunwings Transport.',
-  alternates:{canonical:'/blog'},
-};
+export async function generateMetadata() {
+  const pageData = await getPageBuilderData('blog');
+  return pageMetadataFromBuilder(pageData, {
+    title:'Moving Tips & Guides',
+    description:'Moving tips, pricing guides and delivery advice from Sunwings Transport.',
+    canonical:'/blog',
+  });
+}
 
 export default async function BlogPage() {
   const [settings, pageData, posts] = await Promise.all([getSiteSettings(), getPageBuilderData('blog'), getBlogPosts()]);
