@@ -13,7 +13,7 @@ function SmartNavLink({ href = '#', children, className = '' }) {
 }
 
 export default function Header({ settings, services = [], globalHeader = {} }) {
-  const phone = settings?.phone || '647-526-5132';
+  const phone = settings?.phone || '1-800-555-5555';
   const logo = globalHeader.logo || 'https://sunwingstransport.ca/wp-content/uploads/2026/01/SUNWING-site-logo.png';
   const brand = globalHeader.brand || 'Sunwings Transport';
   const buttonText = globalHeader.buttonText || 'Free Quote';
