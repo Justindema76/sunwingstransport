@@ -1,13 +1,16 @@
 import PageHero from '@/components/PageHero';
 import PageBlocks from '@/components/PageBlocks';
 import QuoteForm from '@/components/QuoteForm';
-import { getPageBuilderData, getServices, getSiteSettings } from '@/lib/content';
+import { getPageBuilderData, getServices, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
 
-export const metadata = {
-  title:'Contact & Free Quote',
-  description:'Request a moving, delivery or commercial transport quote from Sunwings Transport.',
-  alternates:{canonical:'/contact'},
-};
+export async function generateMetadata() {
+  const pageData = await getPageBuilderData('contact');
+  return pageMetadataFromBuilder(pageData, {
+    title:'Contact & Free Quote',
+    description:'Request a moving, delivery or commercial transport quote from Sunwings Transport.',
+    canonical:'/contact',
+  });
+}
 
 export default async function ContactPage() {
   const [services, settings, pageData] = await Promise.all([getServices(), getSiteSettings(), getPageBuilderData('contact')]);
