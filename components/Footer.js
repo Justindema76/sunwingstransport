@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import QuoteDrawerTrigger from './QuoteDrawerTrigger';
 
 function telHref(phone = '') {
   const digits = String(phone).replace(/\D/g, '');
@@ -128,7 +129,7 @@ export default function Footer({ settings, globalFooter = {}, socialLinks = {} }
 
       <div className="mbar">
         <a href={telHref(phone)}>Call</a>
-        <Link href="/contact">Free Quote</Link>
+        <QuoteDrawerTrigger className="mbar-quote">Request Quote</QuoteDrawerTrigger>
       </div>
     </>
   );
