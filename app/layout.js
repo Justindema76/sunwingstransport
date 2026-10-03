@@ -1,6 +1,7 @@
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import SiteAnalytics from '@/components/SiteAnalytics';
 import { getBaseUrl, getGlobalBlockProps, getGlobalSection, getGlobalStyles, getServices, getSiteSettings, getSocialLinks, globalStyleVars } from '@/lib/content';
 
 export async function generateMetadata() {
@@ -85,6 +86,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en-CA">
       <body style={styleVars}>
+        <SiteAnalytics ga4={settings.ga4_measurement_id || ''} metaPixel={settings.meta_pixel_id || ''}/>
         <Header settings={settings} services={services} globalHeader={headerProps} />
         <main>{children}</main>
         <Footer settings={settings} globalFooter={footerProps} socialLinks={socialLinks} />
