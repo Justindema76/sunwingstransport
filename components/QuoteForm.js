@@ -56,7 +56,7 @@ export default function QuoteForm({ services = [], compact = false, preset = '',
       const response = await fetch('/api/quote', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, quickRequest: compact }),
       });
       const result = await response.json();
       if (!response.ok) {
