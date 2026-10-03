@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ChevronDown, Phone } from 'lucide-react';
+import MobileNav from './MobileNav';
 
 function telHref(phone = '') {
   const digits = String(phone).replace(/\D/g, '');
@@ -70,6 +71,8 @@ export default function Header({ settings, services = [], globalHeader = {} }) {
             <a className="nav-phone" href={telHref(phone)}>{phone}</a>
             {buttonText ? <SmartNavLink className="btn btn-accent" href={buttonUrl}>{buttonText}</SmartNavLink> : null}
           </div>
+
+          <MobileNav links={links} services={services} phone={phone} buttonText={buttonText} buttonUrl={buttonUrl}/>
         </div>
       </header>
     </>
