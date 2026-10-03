@@ -5,9 +5,7 @@ export default function ReviewsBlock(props = {}) {
     stars: Math.min(5, Math.max(1, Number(props[`review${n}Stars`] || 5))),
   })).filter(review => review.text);
 
-  if (!reviews.length) {
-    return <p className="muted center">Add real Google reviews to this block in the admin.</p>;
-  }
+  if (!reviews.length) return null;
 
   return (
     <div className="grid-3">
