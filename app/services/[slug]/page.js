@@ -42,6 +42,8 @@ export default async function ServicePage({ params }) {
     !Array.isArray(location.service_slugs) || !location.service_slugs.length || location.service_slugs.includes(service.slug)
   );
 
+  const faqs = Array.isArray(service.faq) ? service.faq.filter(item => item?.question && item?.answer) : [];
+
   const serviceSchema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
@@ -81,14 +83,6 @@ export default async function ServicePage({ params }) {
 
             {service.body_html ? <div dangerouslySetInnerHTML={{__html:service.body_html}}/> : null}
 
-            <div className="cta-inline">
-              <div>
-                <h3>Need {service.title.toLowerCase()}?</h3>
-                <p>Get an upfront price, usually the same day.</p>
-              </div>
-              <Link className="btn btn-accent" href="/contact">Get a Quote →</Link>
-            </div>
-
             <h2>Where we offer {service.title.toLowerCase()}</h2>
             {relatedLocations.length ? (
               <div className="chips">
@@ -98,16 +92,37 @@ export default async function ServicePage({ params }) {
                 <Link className="chip" href="/locations">All areas →</Link>
               </div>
             ) : <p>No published service areas yet.</p>}
+
+            {faqs.length ? <>
+              <h2>{service.title} FAQs</h2>
+              <div className="service-faqs">
+                {faqs.map((item, index) => (
+                  <details key={`${item.question}-${index}`} open>
+                    <summary>{item.question}</summary>
+                    <p>{item.answer}</p>
+                  </details>
+                ))}
+              </div>
+            </> : null}
+
+            <div className="cta-inline">
+              <div>
+                <h3>{service.cta_title || `Need ${service.title.toLowerCase()}?`}</h3>
+                <p>{service.cta_text || 'Get an upfront price, usually the same day.'}</p>
+              </div>
+              <Link className="btn btn-accent" href="/contact">Get a Quote →</Link>
+            </div>
           </article>
 
           <aside className="side">
             <QuoteForm services={services} compact preset={service.title}/>
             <div className="side-card">
               <h3>Other services</h3>
-              <div className="side-links">
+              <div className="side-links service-side-links">
                 {services.filter(item => item.slug !== service.slug).map(item => (
                   <Link href={`/services/${item.slug}`} key={item.slug}>
-                    <ServiceIcon slug={item.slug} size={18}/>{item.title}
+                    <span className="service-side-icon"><ServiceIcon slug={item.slug} size={19}/></span>
+                    <span>{item.title}</span>
                   </Link>
                 ))}
               </div>
@@ -117,6 +132,15 @@ export default async function ServicePage({ params }) {
       </section>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(serviceSchema)}}/>
+      {faqs.length ? <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map(item => ({
+          '@type': 'Question',
+          name: item.question,
+          acceptedAnswer: { '@type': 'Answer', text: item.answer },
+        })),
+      })}}/> : null}
     </>
   );
 }
