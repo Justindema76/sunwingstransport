@@ -1,7 +1,7 @@
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { getBaseUrl, getServices, getSiteSettings } from '@/lib/content';
+import { getBaseUrl, getGlobalBlockProps, getGlobalSection, getGlobalStyles, getServices, getSiteSettings, globalStyleVars } from '@/lib/content';
 
 export async function generateMetadata() {
   const settings = await getSiteSettings();
@@ -47,8 +47,17 @@ export async function generateMetadata() {
 }
 
 export default async function RootLayout({ children }) {
-  const [settings, services] = await Promise.all([getSiteSettings(), getServices()]);
+  const [settings, services, globalStyles, headerSection, footerSection] = await Promise.all([
+    getSiteSettings(),
+    getServices(),
+    getGlobalStyles(),
+    getGlobalSection('header'),
+    getGlobalSection('footer'),
+  ]);
   const baseUrl = getBaseUrl();
+  const headerProps = getGlobalBlockProps(headerSection, 'HeaderBlock');
+  const footerProps = getGlobalBlockProps(footerSection, 'FooterBlock');
+  const styleVars = globalStyleVars(globalStyles);
 
   const organizationSchema = {
     '@context': 'https://schema.org',
@@ -68,10 +77,10 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang="en-CA">
-      <body>
-        <Header settings={settings} services={services} />
+      <body style={styleVars}>
+        <Header settings={settings} services={services} globalHeader={headerProps} />
         <main>{children}</main>
-        <Footer settings={settings} services={services} />
+        <Footer settings={settings} globalFooter={footerProps} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
