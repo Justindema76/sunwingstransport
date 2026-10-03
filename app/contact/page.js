@@ -1,6 +1,7 @@
 import PageHero from '@/components/PageHero';
+import PageBlocks from '@/components/PageBlocks';
 import QuoteForm from '@/components/QuoteForm';
-import { getServices, getSiteSettings } from '@/lib/content';
+import { getPageBuilderData, getServices, getSiteSettings } from '@/lib/content';
 
 export const metadata = {
   title:'Contact & Free Quote',
@@ -9,7 +10,10 @@ export const metadata = {
 };
 
 export default async function ContactPage() {
-  const [services, settings] = await Promise.all([getServices(), getSiteSettings()]);
+  const [services, settings, pageData] = await Promise.all([getServices(), getSiteSettings(), getPageBuilderData('contact')]);
+  if (pageData) {
+    return <PageBlocks data={pageData} pageId="contact" services={services} settings={settings}/>;
+  }
   const phoneDigits = String(settings.phone || '6475265132').replace(/\D/g,'');
   return (
     <>
