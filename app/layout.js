@@ -69,7 +69,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en-CA">
       <body>
-        <Header settings={settings} />
+        <Header settings={settings} services={services} />
         <main>{children}</main>
         <Footer settings={settings} services={services} />
         <script
