@@ -76,7 +76,7 @@ export default async function LocationPage({ params }) {
           <article className="prose">
             <span className="kicker">Services in {location.title}</span>
             <h2 style={{marginTop:0}}>Everything we do in {location.title}</h2>
-            {relatedServices.length ? <ServiceCards services={relatedServices} compact/> : <div className="empty-state">No published services linked yet.</div>}
+            {relatedServices.length ? <ServiceCards services={relatedServices} compact locationName={location.title}/> : <div className="empty-state">No published services linked yet.</div>}
 
             {(location.neighbourhoods || []).length ? <>
               <h2>Neighbourhoods we cover</h2>
