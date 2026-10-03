@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import BreadcrumbSchema from '@/components/BreadcrumbSchema';
 import { Building2, GraduationCap, MapPin, Mountain, Route, Truck } from 'lucide-react';
 import PageHero from '@/components/PageHero';
 import QuoteForm from '@/components/QuoteForm';
@@ -126,6 +127,7 @@ export default async function LocationPage({ params }) {
         </div>
       </section>
 
+      <BreadcrumbSchema baseUrl={getBaseUrl()} items={[{label:'Home',href:'/'},{label:'Service Areas',href:'/locations'},{label:location.title}]}/>
       <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(placeSchema)}}/>
       <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(providerSchema)}}/>
       {faqs.length ? <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify({
