@@ -27,7 +27,7 @@ export default async function ContactPage() {
       />
       <section className="section">
         <div className="container with-side">
-          <QuoteForm services={services}/>
+          <QuoteForm services={services} replyHours={settings.quote_reply_hours}/>
           <aside className="side">
             <div className="side-card">
               <h3>Call or text</h3>
