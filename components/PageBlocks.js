@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Phone } from 'lucide-react';
 import BlogArchive from './BlogArchive';
 import BlogCards from './BlogCards';
+import ContactForm from './ContactForm';
 import HowItWorks from './HowItWorks';
 import QuoteForm from './QuoteForm';
 import ReviewsBlock from './ReviewsBlock';
@@ -228,16 +229,14 @@ function Faq({ p }) {
 }
 
 function ContactPanel({ p, services, settings }) {
-  const phone = settings?.phone || '647-526-5132';
-  const email = settings?.email || 'dispatch@sunwingstransport.ca';
+  const phone = settings?.phone || '1-800-555-0123';
   return (
     <section className={sectionClass(p)}>
-      <div className="container with-side">
-        <QuoteForm services={services} replyHours={settings?.quote_reply_hours}/>
+      <div className="container with-side contact-layout">
+        <ContactForm services={services}/>
         <aside className="side">
           <div className="side-card"><h3>{p.callTitle || 'Call or text'}</h3><a className="btn btn-accent" style={{ width: '100%' }} href={telHref(phone)}>{phone}</a></div>
-          <div className="side-card"><h3>{p.emailTitle || 'Email'}</h3><a className="more" href={`mailto:${email}`}>{email}</a></div>
-          {p.hours ? <div className="side-card"><h3>Hours</h3><p className="muted" style={{ whiteSpace: 'pre-line' }}>{p.hours}</p></div> : null}
+          {p.hours ? <div className="side-card"><h3>{p.hoursTitle || 'Hours'}</h3><p className="muted" style={{ whiteSpace: 'pre-line' }}>{p.hours}</p></div> : null}
           <div className="side-card"><h3>{p.areaTitle || 'Service area'}</h3><p className="muted">{p.areaText || 'Toronto, the GTA, Halton, Hamilton & Niagara'}</p><Link className="more" href="/locations">See all areas →</Link></div>
         </aside>
       </div>
