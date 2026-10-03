@@ -7,13 +7,31 @@ const FALLBACK_IMAGES = {
   'commercial-transport': 'https://sunwingstransport.ca/wp-content/uploads/2026/02/van-loading-file-cabinet.jpg',
   'packing-protection': 'https://sunwingstransport.ca/wp-content/uploads/2026/02/cargo-van-driveway1.png',
   'warehouse-container-unloading': 'https://sunwingstransport.ca/wp-content/uploads/2026/01/cargo-van-1.png',
-  'general-labour': 'https://sunwingstransport.ca/wp-content/uploads/2026/02/cargo-van-driveway1.png',
   'junk-removal': 'https://sunwingstransport.ca/wp-content/uploads/2026/02/cargo-van-driveway1.png',
 };
 
-export default function ServiceCards({ services = [], compact = false }) {
+export default function ServiceCards({ services = [], compact = false, locationName = '' }) {
+  if (compact) {
+    return (
+      <div className="grid-2 location-service-grid">
+        {services.map(service => (
+          <Link className="card location-service-card" href={`/services/${service.slug}`} key={service.id || service.slug}>
+            <div className="card-body tight">
+              <h3 className="service-card-heading">
+                <span className="service-card-icon"><ServiceIcon slug={service.slug} size={20}/></span>
+                {service.title}
+              </h3>
+              <p>{service.intro || service.hero_description}</p>
+              <span className="more">{locationName ? `${service.title} in ${locationName} →` : 'Learn more →'}</span>
+            </div>
+          </Link>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className={compact ? 'grid-2' : 'grid-3'}>
+    <div className="grid-3">
       {services.map(service => {
         const image = service.banner_image || FALLBACK_IMAGES[service.slug] || '';
         return (
