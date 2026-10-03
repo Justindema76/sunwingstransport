@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import BreadcrumbSchema from '@/components/BreadcrumbSchema';
 import PageHero from '@/components/PageHero';
 import QuoteForm from '@/components/QuoteForm';
 import ServiceIcon from '@/components/ServiceIcon';
@@ -131,6 +132,7 @@ export default async function ServicePage({ params }) {
         </div>
       </section>
 
+      <BreadcrumbSchema baseUrl={getBaseUrl()} items={[{label:'Home',href:'/'},{label:'Services',href:'/services'},{label:service.title}]}/>
       <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(serviceSchema)}}/>
       {faqs.length ? <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify({
         '@context': 'https://schema.org',
