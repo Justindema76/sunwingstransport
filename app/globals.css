@@ -264,12 +264,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
 .quote-choice-row input[type="radio"]{width:18px;height:18px;margin:0;padding:0;box-shadow:none}
 .quote-intake-form.compact .quote-grid-3{grid-template-columns:1fr}
 .quote-intake-form.compact .quote-section{padding-top:0}
-.quote-drawer-launch{display:flex;align-items:center;justify-content:space-between;gap:22px;padding:26px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:0 14px 34px rgba(11,37,69,.08)}
-.quote-drawer-launch>div{min-width:0}
-.quote-drawer-launch .kicker{display:block;margin-bottom:6px}
-.quote-drawer-launch h3{margin:0;font-size:22px;color:var(--navy)}
-.quote-drawer-launch p{margin:7px 0 0;color:var(--muted);max-width:560px}
-.quote-drawer-launch .btn{flex:0 0 auto}
+.quote-side-tab{position:fixed;right:0;top:50%;z-index:118;transform:translateY(-50%);display:flex;align-items:center;gap:10px;padding:18px 12px;border:2px solid rgba(255,255,255,.72);border-right:0;border-radius:18px 0 0 18px;background:var(--accent);color:#fff;box-shadow:0 0 0 5px rgba(247,147,30,.18),0 16px 34px rgba(11,37,69,.20);font:inherit;font-weight:800;cursor:pointer;writing-mode:vertical-rl;text-orientation:mixed;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+.quote-side-tab:hover{background:var(--primary-dark,var(--accent));transform:translateY(-50%) translateX(-3px);box-shadow:0 0 0 6px rgba(247,147,30,.16),0 18px 38px rgba(11,37,69,.24)}
+.quote-side-tab:focus-visible{outline:3px solid #fff;outline-offset:-6px}
+.quote-side-tab-dot{width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:0 0 0 5px rgba(255,255,255,.18);flex:0 0 auto}
+.quote-side-tab[aria-expanded="true"]{opacity:0;pointer-events:none}
 .quote-drawer-overlay{position:fixed;inset:0;z-index:119;background:rgba(11,37,69,.48);border:0;padding:0;cursor:pointer}
 .quote-drawer{position:fixed;z-index:120;top:0;right:0;width:min(620px,96vw);height:100dvh;background:#fff;box-shadow:-24px 0 64px rgba(11,37,69,.24);display:flex;flex-direction:column;animation:quoteDrawerIn .2s ease-out}
 @keyframes quoteDrawerIn{from{transform:translateX(32px);opacity:.7}to{transform:translateX(0);opacity:1}}
@@ -353,8 +352,7 @@ footer a:hover{color:#fff}
 }
 
 @media (max-width:640px){
-  .quote-drawer-launch{display:grid;padding:20px}
-  .quote-drawer-launch .btn{width:100%;justify-content:center}
+  .quote-side-tab{padding:15px 10px;border-radius:15px 0 0 15px;font-size:14px}
   .quote-drawer{width:100vw;max-width:none}
   .quote-drawer-head{padding:18px}
   .quote-drawer-head h2{font-size:25px}
