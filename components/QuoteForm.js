@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useId, useState } from 'react';
-import { ArrowRight, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { trackEvent } from './SiteAnalytics';
 
 const initialState = {
@@ -120,23 +120,17 @@ export default function QuoteForm({
 
   return (
     <>
-      <div className="quote-drawer-launch">
-        <div>
-          <span className="kicker">Free Quote</span>
-          <h3>{preset ? `Need ${preset.toLowerCase()}?` : 'Tell us about the job.'}</h3>
-          <p>{compact ? 'Send the basics and we’ll follow up.' : 'Open the quote form when you’re ready. Your page stays clean and easy to browse.'}</p>
-        </div>
-        <button
-          className="btn btn-accent"
-          type="button"
-          aria-haspopup="dialog"
-          aria-controls={drawerId}
-          aria-expanded={open}
-          onClick={() => setOpen(true)}
-        >
-          {triggerText} <ArrowRight size={17}/>
-        </button>
-      </div>
+      <button
+        className="quote-side-tab"
+        type="button"
+        aria-haspopup="dialog"
+        aria-controls={drawerId}
+        aria-expanded={open}
+        onClick={() => setOpen(true)}
+      >
+        <span className="quote-side-tab-dot" aria-hidden="true"/>
+        <span>{triggerText}</span>
+      </button>
 
       {open ? <>
         <button className="quote-drawer-overlay" type="button" aria-label="Close quote form" onClick={closeDrawer}/>
