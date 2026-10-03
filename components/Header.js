@@ -5,7 +5,7 @@ export default function Header() {
     <>
       <div className="topbar">
         <div className="container topbar-inner">
-          <span><strong>Hamilton & Niagara</strong> residential and commercial transport</span>
+          <span><strong>Toronto • GTA • Hamilton • Niagara</strong> moving, delivery and commercial transport</span>
           <a href="tel:+16475265132">647-526-5132</a>
         </div>
       </div>
