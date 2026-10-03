@@ -1,11 +1,15 @@
 import PageHero from '@/components/PageHero';
+import PageBlocks from '@/components/PageBlocks';
+import { getPageBuilderData } from '@/lib/content';
 
 export const metadata = {
   title:'Privacy Policy',
   alternates:{canonical:'/privacy'},
 };
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const pageData = await getPageBuilderData('privacy');
+  if (pageData) return <PageBlocks data={pageData} pageId="privacy"/>;
   return (
     <>
       <PageHero crumbs={[{label:'Home',href:'/'},{label:'Privacy Policy'}]} title="Privacy Policy" ctas={false}/>
