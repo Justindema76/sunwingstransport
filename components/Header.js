@@ -1,12 +1,19 @@
 import Link from 'next/link';
 
-export default function Header() {
+function telHref(phone = '') {
+  const digits = String(phone).replace(/\D/g, '');
+  return digits ? `tel:+${digits.startsWith('1') ? digits : `1${digits}`}` : '#';
+}
+
+export default function Header({ settings }) {
+  const phone = settings?.phone || '647-526-5132';
+
   return (
     <>
       <div className="topbar">
         <div className="container topbar-inner">
           <span><strong>Toronto • GTA • Hamilton • Niagara</strong> moving, delivery and commercial transport</span>
-          <a href="tel:+16475265132">647-526-5132</a>
+          <a href={telHref(phone)}>{phone}</a>
         </div>
       </div>
       <header className="site-header">
@@ -14,7 +21,7 @@ export default function Header() {
           <Link className="brand" href="/">
             <span className="brand-mark">SW</span>
             <span className="brand-copy">
-              Sunwings Transport
+              {settings?.site_name || 'Sunwings Transport'}
               <small>Moving • Delivery • Commercial</small>
             </span>
           </Link>
@@ -25,7 +32,7 @@ export default function Header() {
             <Link href="/#quote">Contact</Link>
           </nav>
           <div className="nav-actions">
-            <a className="button button-outline" href="tel:+16475265132">Call Now</a>
+            <a className="button button-outline" href={telHref(phone)}>Call Now</a>
             <Link className="button button-primary" href="/#quote">Get a Quote</Link>
           </div>
         </div>
