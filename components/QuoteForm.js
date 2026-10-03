@@ -113,7 +113,7 @@ export default function QuoteForm({
         return;
       }
 
-      trackEvent('generate_lead', { lead_source:'quote_form', service:form.service || preset || '' });
+      trackEvent('generate_lead', { lead_source: compact ? 'quick_quote' : 'full_quote', service:form.service || preset || '' });
       if (typeof window !== 'undefined' && typeof window.fbq === 'function') window.fbq('track', 'Lead');
 
       setForm({ ...initialState, service: preset });
@@ -131,13 +131,15 @@ export default function QuoteForm({
   }
 
   const errorFor = name => state.fieldErrors?.[name] || '';
-  const title = preset ? `Quote for ${preset}` : 'Request a free quote';
+  const title = compact
+    ? (preset ? `Quick Quote — ${preset}` : 'Quick Quote')
+    : (preset ? `Quote for ${preset}` : 'Request a Quote');
 
   const formMarkup = (
     <form className={`quote-intake-form ${global ? 'quote-drawer-form' : 'form-card'} ${compact ? 'compact' : ''}`} onSubmit={submit} noValidate>
       {!global ? <>
         <h3>{title}</h3>
-        <p className="sub">Tell us about the job so we can prepare an accurate quote.</p>
+        <p className="sub">{compact ? 'Send the basics and we’ll follow up for anything else.' : 'Tell us about the job so we can prepare an accurate quote.'}</p>
       </> : null}
 
       <div className="quote-honeypot" aria-hidden="true">
