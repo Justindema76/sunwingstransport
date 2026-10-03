@@ -15,7 +15,7 @@ export async function generateMetadata({ params }) {
   const description = service.seo_description || service.hero_description;
 
   return {
-    title,
+    title: service.seo_title ? { absolute: title } : title,
     description,
     alternates: { canonical: url },
     openGraph: {
