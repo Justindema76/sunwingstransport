@@ -1,46 +1,32 @@
 import Link from 'next/link';
 
-export const MOCK_POSTS = [
-  {
-    slug:'how-much-do-movers-cost',
-    tag:'Pricing',
-    title:'How much do movers cost in Toronto & Hamilton?',
-    image:'https://sunwingstransport.ca/wp-content/uploads/elementor/thumbs/happy-couple-move-rjw992tbb61z2n9hhbnvscs9srjnmxwvlts7dp1qbi.jpg',
-    date:'Oct 2026',
-    read:'6 min',
-    excerpt:'A plain-English breakdown of hourly rates, truck fees and what actually changes your price.',
-  },
-  {
-    slug:'condo-move-checklist',
-    tag:'Guides',
-    title:'Condo move checklist: elevators, parking & building rules',
-    image:'https://sunwingstransport.ca/wp-content/uploads/2026/02/van-loading-file-cabinet.jpg',
-    date:'Oct 2026',
-    read:'5 min',
-    excerpt:'Everything to book and confirm before moving into or out of a GTA condo.',
-  },
-  {
-    slug:'marketplace-furniture-pickup',
-    tag:'Delivery',
-    title:'Bought furniture on Marketplace? How to get it home',
-    image:'https://sunwingstransport.ca/wp-content/uploads/2026/02/pexels-photo-7464708-7464708.jpg',
-    date:'Sep 2026',
-    read:'4 min',
-    excerpt:'What to check before you pay and how same-week pickup works.',
-  },
-];
+function formatDate(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleDateString('en-CA', { month: 'short', year: 'numeric' });
+}
 
-export default function BlogCards({ posts = MOCK_POSTS }) {
+function readTime(body = '') {
+  const words = String(body || '').replace(/<[^>]+>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+  return words ? `${Math.max(1, Math.ceil(words / 220))} min` : '';
+}
+
+export default function BlogCards({ posts = [] }) {
+  if (!posts.length) return null;
+
   return (
     <div className="grid-3">
       {posts.map(post => (
         <Link className="card post-card" href={`/blog/${post.slug}`} key={post.slug}>
-          <div className="card-img ph" style={{ backgroundImage:`url("${post.image}")` }}/>
+          <div className="card-img ph" style={post.image ? { backgroundImage:`url("${post.image}")` } : undefined}/>
           <div className="card-body tight">
-            <span className="tag">{post.tag}</span>
+            {post.tag ? <span className="tag">{post.tag}</span> : null}
             <h3>{post.title}</h3>
-            <p>{post.excerpt}</p>
-            <div className="meta">{post.date} · {post.read} read</div>
+            {post.excerpt ? <p>{post.excerpt}</p> : null}
+            <div className="meta">
+              {[post.date || formatDate(post.publishedAt), post.read || readTime(post.body)].filter(Boolean).join(' · ')}
+            </div>
           </div>
         </Link>
       ))}
