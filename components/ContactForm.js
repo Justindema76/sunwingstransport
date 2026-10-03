@@ -10,7 +10,7 @@ const initialState = {
   website: '',
 };
 
-export default function ContactForm({ services = [] }) {
+export default function ContactForm({ services = [], title = 'Contact Sunwings', text = 'Send us a message and we’ll get back to you.' }) {
   const [form, setForm] = useState(initialState);
   const [state, setState] = useState({ sending:false, message:'', fieldErrors:{} });
 
@@ -70,8 +70,8 @@ export default function ContactForm({ services = [] }) {
 
   return (
     <form className="form-card contact-form" onSubmit={submit} noValidate>
-      <h2>Contact Sunwings</h2>
-      <p className="sub">Send us a message and we’ll get back to you.</p>
+      <h2>{title}</h2>
+      {text ? <p className="sub">{text}</p> : null}
 
       <div className="quote-honeypot" aria-hidden="true">
         <label>Website<input tabIndex="-1" autoComplete="off" name="website" value={form.website} onChange={update}/></label>
