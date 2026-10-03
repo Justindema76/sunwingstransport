@@ -1,11 +1,15 @@
 import PageHero from '@/components/PageHero';
 import PageBlocks from '@/components/PageBlocks';
-import { getPageBuilderData } from '@/lib/content';
+import { getPageBuilderData, pageMetadataFromBuilder } from '@/lib/content';
 
-export const metadata = {
-  title:'Privacy Policy',
-  alternates:{canonical:'/privacy'},
-};
+export async function generateMetadata() {
+  const pageData = await getPageBuilderData('privacy');
+  return pageMetadataFromBuilder(pageData, {
+    title:'Privacy Policy',
+    description:'Sunwings Transport privacy policy.',
+    canonical:'/privacy',
+  });
+}
 
 export default async function PrivacyPage() {
   const pageData = await getPageBuilderData('privacy');
