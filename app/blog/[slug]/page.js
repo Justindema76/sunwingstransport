@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import BlogCards from '@/components/BlogCards';
 import PageHero from '@/components/PageHero';
 import QuoteForm from '@/components/QuoteForm';
-import { getBlogPostBySlug, getBlogPosts, getServices, getSiteSettings } from '@/lib/content';
+import { getBaseUrl, getBlogPostBySlug, getBlogPosts, getServices, getSiteSettings } from '@/lib/content';
 
 function escapeHtml(value = '') {
   return String(value)
@@ -99,7 +99,7 @@ export async function generateMetadata({ params }) {
   const post = await getBlogPostBySlug(slug);
   if (!post) return {};
   return {
-    title: post.seoTitle || post.title,
+    title: post.seoTitle ? { absolute: post.seoTitle } : post.title,
     description: post.seoDescription || post.excerpt || '',
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
@@ -127,6 +127,18 @@ export default async function BlogPostPage({ params }) {
     ? new Date(post.publishedAt).toLocaleDateString('en-CA', { month: 'long', day: 'numeric', year: 'numeric' })
     : '';
   const read = `${estimateReadTime(post.body)} min read`;
+  const articleSchema = {
+    '@context':'https://schema.org',
+    '@type':'Article',
+    headline:post.title,
+    description:post.seoDescription || post.excerpt || '',
+    image:post.image || undefined,
+    datePublished:post.publishedAt || undefined,
+    dateModified:post.updated_at || post.publishedAt || undefined,
+    author:{ '@type':'Organization', name:post.author_name || 'Sunwings Transport' },
+    publisher:{ '@type':'Organization', name:settings.site_name || 'Sunwings Transport', url:getBaseUrl() },
+    mainEntityOfPage:`${getBaseUrl()}/blog/${post.slug}`,
+  };
   const bodySections = article.html ? article.html.split(/(?=<h2\b)/i) : [];
   const firstPart = bodySections.slice(0, Math.min(2, bodySections.length)).join('');
   const remainingPart = bodySections.slice(Math.min(2, bodySections.length)).join('');
@@ -136,7 +148,7 @@ export default async function BlogPostPage({ params }) {
       <PageHero
         crumbs={[{label:'Home',href:'/'},{label:'Moving Tips',href:'/blog'},{label:post.tag || 'Article'}]}
         title={post.title}
-        description={[date, read].filter(Boolean).join(' · ')}
+        description={[post.author_name || 'Sunwings Transport', date, read].filter(Boolean).join(' · ')}
         image={post.image}
         phone={settings.phone}
         ctas={false}
@@ -171,10 +183,12 @@ export default async function BlogPostPage({ params }) {
                 ))}
               </div>
             ) : null}
-            <QuoteForm services={services} compact/>
+            <QuoteForm services={services} compact replyHours={settings.quote_reply_hours}/>
           </aside>
         </div>
       </section>
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(articleSchema)}}/>
 
       {related.length ? (
         <section className="section section-soft">
