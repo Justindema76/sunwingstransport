@@ -117,7 +117,7 @@ export default async function LocationPage({ params }) {
           </article>
 
           <aside className="side">
-            <QuoteForm services={services} compact/>
+            <QuoteForm services={services} compact replyHours={settings.quote_reply_hours}/>
             <div className="side-card">
               <h3>Call the crew</h3>
               <a className="btn btn-navy" style={{width:'100%'}} href={`tel:+1${String(settings.phone || '6475265132').replace(/\D/g,'')}`}>{settings.phone || '647-526-5132'}</a>
