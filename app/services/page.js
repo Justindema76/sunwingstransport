@@ -5,6 +5,7 @@ import { getServices } from '@/lib/content';
 export const metadata = {
   title: 'Moving, Delivery & Commercial Services',
   description: 'Explore Sunwings Transport residential moving, commercial transport, furniture delivery, warehouse support and labour services.',
+  alternates: { canonical: '/services' },
 };
 
 export default async function ServicesPage() {
