@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import PageHero from '@/components/PageHero';
 import QuoteForm from '@/components/QuoteForm';
-import ServiceAreaGrid from '@/components/ServiceAreaGrid';
 import ServiceIcon from '@/components/ServiceIcon';
 import { getBaseUrl, getLocations, getServiceBySlug, getServices, getSiteSettings } from '@/lib/content';
 import { notFound } from 'next/navigation';
@@ -91,7 +90,14 @@ export default async function ServicePage({ params }) {
             </div>
 
             <h2>Where we offer {service.title.toLowerCase()}</h2>
-            {relatedLocations.length ? <ServiceAreaGrid locations={relatedLocations}/> : <p>No published service areas yet.</p>}
+            {relatedLocations.length ? (
+              <div className="chips">
+                {relatedLocations.map(location => (
+                  <Link className="chip" href={`/locations/${location.slug}`} key={location.slug}>{location.title}</Link>
+                ))}
+                <Link className="chip" href="/locations">All areas →</Link>
+              </div>
+            ) : <p>No published service areas yet.</p>}
           </article>
 
           <aside className="side">
