@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import PageHero from '@/components/PageHero';
+import PageBlocks from '@/components/PageBlocks';
 import QuoteForm from '@/components/QuoteForm';
 import ServiceAreaGrid from '@/components/ServiceAreaGrid';
-import { getLocations, getServices, getSiteSettings } from '@/lib/content';
+import { getLocations, getPageBuilderData, getServices, getSiteSettings } from '@/lib/content';
 
 export const metadata = {
   title: 'Sunwings Transport Service Areas',
@@ -11,7 +12,10 @@ export const metadata = {
 };
 
 export default async function LocationsPage() {
-  const [locations, services, settings] = await Promise.all([getLocations(), getServices(), getSiteSettings()]);
+  const [locations, services, settings, pageData] = await Promise.all([getLocations(), getServices(), getSiteSettings(), getPageBuilderData('locations')]);
+  if (pageData) {
+    return <PageBlocks data={pageData} pageId="locations" services={services} locations={locations} settings={settings}/>;
+  }
   return (
     <>
       <PageHero
