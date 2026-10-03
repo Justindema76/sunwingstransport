@@ -68,7 +68,11 @@ export default function Footer({ settings, globalFooter = {}, socialLinks = {} }
         <div className="container">
           <h2>{ctaTitle}</h2>
           <div className="cta-actions">
-            {ctaPrimaryText ? <SmartLink href={ctaPrimaryUrl}><span className="btn btn-navy">{ctaPrimaryText}</span></SmartLink> : null}
+            {ctaPrimaryText ? (
+              /quote/i.test(ctaPrimaryText)
+                ? <QuoteDrawerTrigger className="btn btn-navy">{ctaPrimaryText}</QuoteDrawerTrigger>
+                : <SmartLink href={ctaPrimaryUrl}><span className="btn btn-navy">{ctaPrimaryText}</span></SmartLink>
+            ) : null}
             {ctaSecondaryText ? <a className="btn btn-line" href={telHref(phone)}>{ctaSecondaryText} {phone}</a> : null}
           </div>
         </div>
