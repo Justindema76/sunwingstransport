@@ -115,7 +115,7 @@ export default async function ServicePage({ params }) {
           </article>
 
           <aside className="side">
-            <QuoteForm services={services} compact preset={service.title}/>
+            <QuoteForm services={services} compact preset={service.title} replyHours={settings.quote_reply_hours}/>
             <div className="side-card">
               <h3>Other services</h3>
               <div className="side-links service-side-links">
