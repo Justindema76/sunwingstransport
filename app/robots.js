@@ -1,8 +1,13 @@
 import { getBaseUrl } from '@/lib/content';
 
 export default function robots() {
+  const base = getBaseUrl();
+  const isLiveDomain = base.includes('sunwingstransport.ca');
+
   return {
-    rules: [{ userAgent: '*', allow: '/' }],
-    sitemap: `${getBaseUrl()}/sitemap.xml`,
+    rules: isLiveDomain
+      ? [{ userAgent: '*', allow: '/' }]
+      : [{ userAgent: '*', disallow: '/' }],
+    sitemap: isLiveDomain ? `${base}/sitemap.xml` : undefined,
   };
 }
