@@ -17,9 +17,16 @@ function validate(body) {
   const phone = clean(body.phone, 60);
   const email = clean(body.email, 160);
   const digits = phone.replace(/\D/g, '');
+  const contactRequest = body.contactRequest === true;
 
   if (!name) fieldErrors.name = 'Enter your name.';
   if (digits.length < 10) fieldErrors.phone = 'Enter a phone number with at least 10 digits.';
+
+  if (contactRequest) {
+    if (!clean(body.message, 3000)) fieldErrors.message = 'Enter a message.';
+    return fieldErrors;
+  }
+
   if (!email) fieldErrors.email = 'Enter your email address.';
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) fieldErrors.email = 'Enter a valid email address.';
   if (!clean(body.service, 160)) fieldErrors.service = 'Choose a service.';
@@ -46,6 +53,7 @@ function rpcErrorMessage(message = '') {
   if (text.includes('service_required')) return { status:400, error:'Choose a service.', fieldErrors:{ service:'Choose a service.' } };
   if (text.includes('date_required')) return { status:400, error:'Choose a date.', fieldErrors:{ preferredDate:'Choose a date.' } };
   if (text.includes('date_invalid')) return { status:400, error:'Choose a valid date.', fieldErrors:{ preferredDate:'Choose a valid date.' } };
+  if (text.includes('message_required')) return { status:400, error:'Enter a message.', fieldErrors:{ message:'Enter a message.' } };
   if (text.includes('pickup_address_required')) return { status:400, error:'Enter the pickup address.', fieldErrors:{ pickupAddress:'Enter the pickup address.' } };
   if (text.includes('pickup_postal_required')) return { status:400, error:'Enter the pickup postal code.', fieldErrors:{ pickupPostalCode:'Enter the pickup postal code.' } };
   if (text.includes('dropoff_address_required')) return { status:400, error:'Enter the drop-off address.', fieldErrors:{ dropoffAddress:'Enter the drop-off address.' } };
@@ -93,6 +101,7 @@ export async function POST(request) {
     itemList: clean(body.itemList, 6000),
     message: clean(body.message, 3000),
     quickRequest: body.quickRequest === true,
+    contactRequest: body.contactRequest === true,
   };
 
   const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/sunwings_submit_quote`, {
