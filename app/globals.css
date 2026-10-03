@@ -252,6 +252,19 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
 .field-error{display:block;color:#b42318;font-size:12px;margin-top:5px}
 .quote-status{font-weight:600;color:var(--navy)}
 .form-card.compact .row{grid-template-columns:1fr}
+.quote-intake-form{display:grid;gap:4px}
+.quote-intake-form .quote-section{padding-top:4px}
+.quote-intake-form .quote-section+ .quote-section{margin-top:6px;padding-top:18px;border-top:1px solid var(--line)}
+.quote-intake-form .quote-section h4{margin:0 0 12px;font-size:16px;color:var(--navy)}
+.quote-grid-3{display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:12px}
+.quote-access-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:2px}
+.quote-choice-label{display:block;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:7px}
+.quote-choice-row{display:flex;gap:18px;align-items:center;min-height:42px;padding:0 2px}
+.quote-choice-row label{display:flex;align-items:center;gap:7px;margin:0;font-weight:600;color:var(--ink)}
+.quote-choice-row input[type="radio"]{width:18px;height:18px;margin:0;padding:0;box-shadow:none}
+.quote-intake-form.compact .quote-grid-3{grid-template-columns:1fr}
+.quote-intake-form.compact .quote-section{padding-top:0}
+
 
 /* BLOG */
 .blog-filters{margin-bottom:28px}
@@ -323,7 +336,7 @@ footer a:hover{color:#fff}
   .hero .container{padding:64px 0 110px}
   .hero h1{font-size:40px}
   .hero-ctas .btn{flex:1;justify-content:center}
-  .trust-grid,.grid-3,.grid-4,.grid-2,.steps,.checks,.row,.pcs,.foot,.city-list{grid-template-columns:1fr}
+  .trust-grid,.grid-3,.grid-4,.grid-2,.steps,.checks,.row,.pcs,.foot,.city-list,.quote-grid-3,.quote-access-grid{grid-template-columns:1fr}
   .trust-item{border-left:none!important;border-top:1px solid var(--line)}
   .trust-item:first-child{border-top:none}
   .form-card{padding:22px}
