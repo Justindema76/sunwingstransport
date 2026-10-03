@@ -1,12 +1,12 @@
 import Link from 'next/link';
-import { Phone } from 'lucide-react';
+import { ChevronDown, Phone } from 'lucide-react';
 
 function telHref(phone = '') {
   const digits = String(phone).replace(/\D/g, '');
   return digits ? `tel:+${digits.startsWith('1') ? digits : `1${digits}`}` : '#';
 }
 
-export default function Header({ settings }) {
+export default function Header({ settings, services = [] }) {
   const phone = settings?.phone || '647-526-5132';
 
   return (
@@ -28,7 +28,20 @@ export default function Header({ settings }) {
           </Link>
 
           <nav className="nav-links" aria-label="Main navigation">
-            <Link href="/services">Services</Link>
+            <div className="nav-dropdown">
+              <Link className="nav-dropdown-trigger" href="/services">
+                Services <ChevronDown size={16} strokeWidth={2.2}/>
+              </Link>
+              <div className="nav-dropdown-menu">
+                <Link className="nav-dropdown-all" href="/services">All Services</Link>
+                {services.map(service => (
+                  <Link href={`/services/${service.slug}`} key={service.id || service.slug}>
+                    {service.title}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
             <Link href="/locations">Service Areas</Link>
             <Link href="/pricing">Pricing</Link>
             <Link href="/blog">Moving Tips</Link>
