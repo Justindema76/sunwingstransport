@@ -39,7 +39,7 @@ export default function QuoteForm({
   compact = false,
   preset = '',
   replyHours = '',
-  triggerText = 'Get a Free Quote',
+  triggerText = 'Request a Quote',
   global = false,
 }) {
   const drawerId = useId();
@@ -262,7 +262,7 @@ export default function QuoteForm({
       </> : null}
 
       <button className="btn btn-accent quote-drawer-submit" disabled={state.sending} type="submit">
-        {state.sending ? 'Sending…' : 'Request My Free Quote →'}
+        {state.sending ? 'Sending…' : 'Request a Quote →'}
       </button>
       {state.message ? <p className="fine quote-status" role="status" aria-live="polite">{state.message}</p> : null}
     </form>
