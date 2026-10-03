@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Phone } from 'lucide-react';
 
 function telHref(phone = '') {
   const digits = String(phone).replace(/\D/g, '');
@@ -11,29 +12,32 @@ export default function Header({ settings }) {
   return (
     <>
       <div className="topbar">
-        <div className="container topbar-inner">
-          <span><strong>Toronto • GTA • Hamilton • Niagara</strong> moving, delivery and commercial transport</span>
-          <a href={telHref(phone)}>{phone}</a>
+        <div className="container">
+          <span><b>Reliable • On-Time • Professional</b> — Moving &amp; delivery from Toronto to Niagara</span>
+          <a href={telHref(phone)}><Phone size={15}/> {phone}</a>
         </div>
       </div>
-      <header className="site-header">
+
+      <header className="site">
         <div className="container nav">
-          <Link className="brand" href="/">
-            <span className="brand-mark">SW</span>
-            <span className="brand-copy">
-              {settings?.site_name || 'Sunwings Transport'}
-              <small>Moving • Delivery • Commercial</small>
-            </span>
+          <Link className="logo" href="/">
+            <img
+              src="https://sunwingstransport.ca/wp-content/uploads/2026/01/SUNWING-site-logo.png"
+              alt="Sunwings Transport"
+            />
           </Link>
+
           <nav className="nav-links" aria-label="Main navigation">
             <Link href="/services">Services</Link>
-            <Link href="/locations">Locations</Link>
-            <Link href="/#business">Business</Link>
-            <Link href="/#quote">Contact</Link>
+            <Link href="/locations">Service Areas</Link>
+            <Link href="/pricing">Pricing</Link>
+            <Link href="/blog">Moving Tips</Link>
+            <Link href="/contact">Contact</Link>
           </nav>
-          <div className="nav-actions">
-            <a className="button button-outline" href={telHref(phone)}>Call Now</a>
-            <Link className="button button-primary" href="/#quote">Get a Quote</Link>
+
+          <div className="nav-cta">
+            <a className="nav-phone" href={telHref(phone)}>{phone}</a>
+            <Link className="btn btn-accent" href="/contact">Free Quote</Link>
           </div>
         </div>
       </header>
