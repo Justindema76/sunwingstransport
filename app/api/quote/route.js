@@ -25,10 +25,13 @@ function validate(body) {
   if (!clean(body.service, 160)) fieldErrors.service = 'Choose a service.';
   if (!body.preferredDate) fieldErrors.preferredDate = 'Choose a date.';
   else if (!/^\d{4}-\d{2}-\d{2}$/.test(String(body.preferredDate))) fieldErrors.preferredDate = 'Choose a valid date.';
-  if (!clean(body.pickupAddress, 220)) fieldErrors.pickupAddress = 'Enter the pickup address.';
-  if (!clean(body.pickupPostalCode, 24)) fieldErrors.pickupPostalCode = 'Enter the pickup postal code.';
-  if (!clean(body.dropoffAddress, 220)) fieldErrors.dropoffAddress = 'Enter the drop-off address.';
-  if (!clean(body.dropoffPostalCode, 24)) fieldErrors.dropoffPostalCode = 'Enter the drop-off postal code.';
+  const quickRequest = body.quickRequest === true;
+  if (!quickRequest) {
+    if (!clean(body.pickupAddress, 220)) fieldErrors.pickupAddress = 'Enter the pickup address.';
+    if (!clean(body.pickupPostalCode, 24)) fieldErrors.pickupPostalCode = 'Enter the pickup postal code.';
+    if (!clean(body.dropoffAddress, 220)) fieldErrors.dropoffAddress = 'Enter the drop-off address.';
+    if (!clean(body.dropoffPostalCode, 24)) fieldErrors.dropoffPostalCode = 'Enter the drop-off postal code.';
+  }
 
   return fieldErrors;
 }
@@ -89,6 +92,7 @@ export async function POST(request) {
     dropoffStairs: clean(body.dropoffStairs, 10),
     itemList: clean(body.itemList, 6000),
     message: clean(body.message, 3000),
+    quickRequest: body.quickRequest === true,
   };
 
   const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/sunwings_submit_quote`, {
