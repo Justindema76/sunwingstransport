@@ -73,7 +73,6 @@ export default async function RootLayout({ children }) {
     url: baseUrl,
     logo: headerProps.logo || undefined,
     telephone: settings.phone || '647-526-5132',
-    email: settings.email || 'dispatch@sunwingstransport.ca',
     description: settings.seo_description || 'Residential moving, furniture delivery and commercial transport services.',
     sameAs: sameAs.length ? sameAs : undefined,
     areaServed: [
