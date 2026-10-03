@@ -7,7 +7,17 @@ import ReviewsBlock from '@/components/ReviewsBlock';
 import ServiceAreaGrid from '@/components/ServiceAreaGrid';
 import ServiceCards from '@/components/ServiceCards';
 import TrustStrip from '@/components/TrustStrip';
-import { getBlogPosts, getLocations, getPageBuilderData, getServices, getSiteSettings } from '@/lib/content';
+import { getBlogPosts, getLocations, getPageBuilderData, getServices, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
+
+export async function generateMetadata() {
+  const [pageData, settings] = await Promise.all([getPageBuilderData('home'), getSiteSettings()]);
+  return pageMetadataFromBuilder(pageData, {
+    title:settings.seo_title || 'Sunwings Transport | Moving, Delivery & Commercial Transport',
+    description:settings.seo_description || 'Residential moving, furniture delivery, commercial transport, warehouse support and general labour across Toronto, the GTA, Hamilton and Niagara.',
+    ogImage:settings.seo_image || '',
+    canonical:'/',
+  });
+}
 
 export default async function HomePage() {
   const [settings, services, locations, pageData, posts] = await Promise.all([
