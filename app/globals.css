@@ -216,6 +216,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
 .form-card.compact .row{grid-template-columns:1fr}
 
 /* BLOG */
+.blog-filters{margin-bottom:28px}
+.blog-filter{cursor:pointer;font:inherit;color:var(--ink)}
+.blog-filter.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.blog-filter:hover{border-color:var(--blue);color:var(--blue)}
+.blog-filter.active:hover{color:#fff}
 .post-card .card-img{aspect-ratio:16/10}
 .meta{font-size:13px;color:var(--muted);margin-bottom:8px}
 .toc a{display:block;padding:6px 0;color:var(--muted);font-weight:600;font-size:15px}
