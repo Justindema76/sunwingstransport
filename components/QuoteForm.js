@@ -48,6 +48,20 @@ export default function QuoteForm({
   const [state, setState] = useState({ sending: false, message: '', fieldErrors: {} });
 
   useEffect(() => {
+    if (!global) return undefined;
+
+    function openQuoteDrawer(event) {
+      const nextPreset = String(event?.detail?.preset || '').trim();
+      if (nextPreset) setForm(current => ({ ...current, service: nextPreset }));
+      setState(current => ({ ...current, message: '', fieldErrors: {} }));
+      setOpen(true);
+    }
+
+    window.addEventListener('sunwings:open-quote', openQuoteDrawer);
+    return () => window.removeEventListener('sunwings:open-quote', openQuoteDrawer);
+  }, [global]);
+
+  useEffect(() => {
     if (!open) return undefined;
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
