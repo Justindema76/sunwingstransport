@@ -225,6 +225,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
 .meta{font-size:13px;color:var(--muted);margin-bottom:8px}
 .toc a{display:block;padding:6px 0;color:var(--muted);font-weight:600;font-size:15px}
 .toc a:hover{color:var(--blue)}
+.toc .toc-sub{padding-left:14px;font-size:14px}
+.article-featured{background-size:cover;background-position:center;aspect-ratio:16/8;border-radius:20px;margin:10px 0 26px}
+.article-prose h2,.article-prose h3{scroll-margin-top:120px}
+.note-box a{font-weight:700;color:var(--blue)}
+.note-box a:hover{text-decoration:underline}
 
 /* CTA + FOOTER */
 .cta-band{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--accent-ink)}
