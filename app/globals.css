@@ -352,7 +352,7 @@ footer a:hover{color:#fff}
 }
 
 @media (max-width:640px){
-  .quote-side-tab{padding:15px 10px;border-radius:15px 0 0 15px;font-size:14px}
+  .quote-side-tab{display:none}
   .quote-drawer{width:100vw;max-width:none}
   .quote-drawer-head{padding:18px}
   .quote-drawer-head h2{font-size:25px}
@@ -374,8 +374,8 @@ footer a:hover{color:#fff}
   .trust-item:first-child{border-top:none}
   .form-card{padding:22px}
   .mbar{display:grid;grid-template-columns:1fr 1fr;position:fixed;bottom:0;left:0;right:0;z-index:60;background:#fff;border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(11,37,69,.1)}
-  .mbar a{padding:15px;text-align:center;font-weight:800;font-family:var(--font-head)}
-  .mbar a:first-child{color:var(--navy)}
-  .mbar a:last-child{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--accent-ink)}
+  .mbar a,.mbar button{padding:15px;text-align:center;font-weight:800;font-family:var(--font-head);border:0;margin:0;font-size:inherit;cursor:pointer}
+  .mbar a:first-child{color:var(--navy);background:#fff}
+  .mbar .mbar-quote{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--accent-ink)}
   body{padding-bottom:56px}
 }
