@@ -18,6 +18,8 @@ export default function Header({ settings, services = [], globalHeader = {} }) {
   const brand = globalHeader.brand || 'Sunwings Transport';
   const buttonText = globalHeader.buttonText || 'Free Quote';
   const buttonUrl = globalHeader.buttonUrl || '/contact';
+  const topbarEmphasis = globalHeader.topbarEmphasis || 'Reliable • On-Time • Professional';
+  const topbarText = globalHeader.topbarText || 'Moving & delivery from Toronto to Niagara';
 
   const navItems = Array.from({ length: 7 }, (_, index) => ({
     label: globalHeader[`nav${index + 1}Label`] || '',
@@ -38,7 +40,7 @@ export default function Header({ settings, services = [], globalHeader = {} }) {
     <>
       <div className="topbar">
         <div className="container">
-          <span><b>Reliable • On-Time • Professional</b> — Moving &amp; delivery from Toronto to Niagara</span>
+          <span><b>{topbarEmphasis}</b>{topbarText ? <> — {topbarText}</> : null}</span>
           <a href={telHref(phone)}><Phone size={15}/> {phone}</a>
         </div>
       </div>
