@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Phone } from 'lucide-react';
+import BlogArchive from './BlogArchive';
 import BlogCards from './BlogCards';
 import HowItWorks from './HowItWorks';
 import QuoteForm from './QuoteForm';
@@ -320,11 +321,16 @@ export default function PageBlocks({ data, pageId, services = [], locations = []
         const limit = Number(p.limit || 3);
         const list = Array.isArray(posts) ? posts.slice(0, limit) : [];
         if (!list.length && pageId === 'home') return null;
+        const showCategories = p.showCategories === true || p.showCategories === 'true' || pageId === 'blog';
         return (
           <section className={sectionClass(p)} key={key}>
             <div className="container">
               <SectionHead p={p}/>
-              {list.length ? <BlogCards posts={list}/> : <div className="empty-state">No published Moving Tips yet.</div>}
+              {showCategories
+                ? <BlogArchive posts={Array.isArray(posts) ? posts : []}/>
+                : list.length
+                  ? <BlogCards posts={list}/>
+                  : <div className="empty-state">No published Moving Tips yet.</div>}
             </div>
           </section>
         );
