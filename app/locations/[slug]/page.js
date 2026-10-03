@@ -54,7 +54,7 @@ export default async function LocationPage({ params }) {
     '@context':'https://schema.org',
     '@type':'MovingCompany',
     name:settings.site_name || 'Sunwings Transport',
-    telephone:settings.phone || '647-526-5132',
+    telephone:settings.phone || '1-800-555-5555',
     email:settings.email || 'dispatch@sunwingstransport.ca',
     url:getBaseUrl(),
     areaServed:{ '@type':'City', name:location.title },
@@ -121,7 +121,7 @@ export default async function LocationPage({ params }) {
             <QuoteForm services={services} compact replyHours={settings.quote_reply_hours}/>
             <div className="side-card">
               <h3>Call the crew</h3>
-              <a className="btn btn-navy" style={{width:'100%'}} href={`tel:+1${String(settings.phone || '6475265132').replace(/\D/g,'')}`}>{settings.phone || '647-526-5132'}</a>
+              <a className="btn btn-navy" style={{width:'100%'}} href={`tel:+1${String(settings.phone || '18005555555').replace(/\D/g,'')}`}>{settings.phone || '1-800-555-5555'}</a>
             </div>
           </aside>
         </div>
