@@ -60,14 +60,20 @@ export default async function RootLayout({ children }) {
   const footerProps = getGlobalBlockProps(footerSection, 'FooterBlock');
   const styleVars = globalStyleVars(globalStyles);
 
+  const sameAs = Object.values(socialLinks || {})
+    .filter(value => value?.url && value?.enabled !== false)
+    .map(value => value.url);
+
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': ['LocalBusiness', 'MovingCompany'],
     name: settings.site_name || 'Sunwings Transport',
     url: baseUrl,
+    logo: headerProps.logo || undefined,
     telephone: settings.phone || '647-526-5132',
     email: settings.email || 'dispatch@sunwingstransport.ca',
     description: settings.seo_description || 'Residential moving, furniture delivery and commercial transport services.',
+    sameAs: sameAs.length ? sameAs : undefined,
     areaServed: [
       { '@type': 'City', name: 'Toronto' },
       { '@type': 'AdministrativeArea', name: 'Greater Toronto Area' },
