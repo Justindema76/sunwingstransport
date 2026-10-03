@@ -44,7 +44,7 @@ function sectionClass(p, fallback = '') {
 }
 
 function Hero({ p, home, settings }) {
-  const phone = settings?.phone || '647-526-5132';
+  const phone = settings?.phone || '1-800-555-5555';
   const secondaryText = p.secondaryButtonText || (p.showCallButton !== false ? `Call ${phone}` : '');
   const secondaryUrl = p.secondaryButtonUrl || telHref(phone);
   const actions = (
