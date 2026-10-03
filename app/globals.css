@@ -125,3 +125,13 @@ button,input,select,textarea{font:inherit}
   .footer-grid{grid-template-columns:1fr}
   .footer-bottom{display:block}
 }
+
+.location-directory{display:grid;gap:22px}
+.location-directory-group{border:1px solid var(--line);border-radius:22px;padding:24px;background:#fff}
+.location-directory-group h3{margin:0 0 16px;font-size:1.35rem}
+.location-link-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.location-link-grid a{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:var(--soft);font-weight:800}
+.location-link-grid a:hover{border-color:var(--orange);color:var(--orange)}
+.location-link-grid a span{color:var(--orange)}
+@media(max-width:900px){.location-link-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.location-link-grid{grid-template-columns:1fr}}
