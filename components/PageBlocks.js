@@ -233,7 +233,7 @@ function ContactPanel({ p, services, settings }) {
   return (
     <section className={sectionClass(p)}>
       <div className="container with-side">
-        <QuoteForm services={services}/>
+        <QuoteForm services={services} replyHours={settings?.quote_reply_hours}/>
         <aside className="side">
           <div className="side-card"><h3>{p.callTitle || 'Call or text'}</h3><a className="btn btn-accent" style={{ width: '100%' }} href={telHref(phone)}>{phone}</a></div>
           <div className="side-card"><h3>{p.emailTitle || 'Email'}</h3><a className="more" href={`mailto:${email}`}>{email}</a></div>
@@ -378,7 +378,7 @@ export default function PageBlocks({ data, pageId, services = [], locations = []
                 {p.text ? <p className="muted" style={{ marginTop: 14, fontSize: 17 }}>{p.text}</p> : null}
                 {p.buttonText ? <div style={{ marginTop: 24 }}><SmartLink to={p.buttonUrl || '/contact'}>{p.buttonText}</SmartLink></div> : null}
               </div>
-              <QuoteForm services={services} compact={p.compact !== false && p.compact !== 'false'}/>
+              <QuoteForm services={services} compact={p.compact !== false && p.compact !== 'false'} replyHours={settings?.quote_reply_hours}/>
             </div>
           </section>
         );
