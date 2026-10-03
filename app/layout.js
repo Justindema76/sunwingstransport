@@ -10,8 +10,14 @@ export async function generateMetadata() {
   const description = settings.seo_description || 'Residential moving, furniture delivery, commercial transport, warehouse support and general labour across Toronto, the GTA, Hamilton and Niagara.';
   const image = settings.seo_image || '';
 
+  const isLiveDomain = baseUrl.includes('sunwingstransport.ca');
+
   return {
     metadataBase: new URL(baseUrl),
+    robots: {
+      index: isLiveDomain,
+      follow: isLiveDomain,
+    },
     title: {
       default: title,
       template: '%s | Sunwings Transport',
