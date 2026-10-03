@@ -1,13 +1,16 @@
 import Link from 'next/link';
 import PageHero from '@/components/PageHero';
 import PageBlocks from '@/components/PageBlocks';
-import { getPageBuilderData, getSiteSettings } from '@/lib/content';
+import { getPageBuilderData, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
 
-export const metadata = {
-  title:'Pricing',
-  description:'Sunwings Transport pricing and quote information for moving, delivery and commercial transport.',
-  alternates:{canonical:'/pricing'},
-};
+export async function generateMetadata() {
+  const pageData = await getPageBuilderData('pricing');
+  return pageMetadataFromBuilder(pageData, {
+    title:'Pricing',
+    description:'Sunwings Transport pricing and quote information for moving, delivery and commercial transport.',
+    canonical:'/pricing',
+  });
+}
 
 export default async function PricingPage() {
   const [settings, pageData] = await Promise.all([getSiteSettings(), getPageBuilderData('pricing')]);
