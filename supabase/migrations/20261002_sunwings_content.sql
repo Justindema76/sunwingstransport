@@ -1,10 +1,13 @@
 -- Sunwings Transport content model for Just Innovate Admin + public Next.js frontend
 
-insert into public.sites (site_key, site_name, domain)
-values ('sunwings','Sunwings Transport','sunwingstransport.ca')
+insert into public.sites (site_key, name, domain, admin_label, is_active)
+values ('sunwings','Sunwings Transport','sunwingstransport.ca','Sunwings Transport',true)
 on conflict (site_key) do update set
-  site_name = excluded.site_name,
-  domain = excluded.domain;
+  name = excluded.name,
+  domain = excluded.domain,
+  admin_label = excluded.admin_label,
+  is_active = excluded.is_active,
+  updated_at = now();
 
 create table if not exists public.sunwings_services (
   id uuid primary key default gen_random_uuid(),
