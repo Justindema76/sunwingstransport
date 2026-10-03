@@ -11,7 +11,15 @@ function SmartLink({ href = '#', children }) {
   return <Link href={href}>{children}</Link>;
 }
 
-export default function Footer({ settings, globalFooter = {} }) {
+const SOCIAL_NETWORKS = [
+  { key:'facebook', label:'Facebook', icon:'https://www.justconsignin.com/images/brand/social-media-icons/facebook-logo.png' },
+  { key:'instagram', label:'Instagram', icon:'https://www.justconsignin.com/images/brand/social-media-icons/instagram-logo.png' },
+  { key:'linkedin', label:'LinkedIn', icon:'https://www.justconsignin.com/images/brand/social-media-icons/linkedin-logo.jpeg' },
+  { key:'youtube', label:'YouTube', icon:'https://www.justconsignin.com/images/brand/social-media-icons/youtube-logo.png' },
+  { key:'tiktok', label:'TikTok', icon:'https://www.justconsignin.com/images/brand/social-media-icons/ticktok-logo.png' },
+];
+
+export default function Footer({ settings, globalFooter = {}, socialLinks = {} }) {
   const phone = settings?.phone || '647-526-5132';
   const email = settings?.email || 'dispatch@sunwingstransport.ca';
   const logo = globalFooter.logo || 'https://sunwingstransport.ca/wp-content/uploads/2026/01/SUNWING-site-logo.png';
@@ -45,6 +53,10 @@ export default function Footer({ settings, globalFooter = {} }) {
 
   const links1 = column1.length ? column1 : fallback1;
   const links2 = column2.length ? column2 : fallback2;
+  const activeSocial = SOCIAL_NETWORKS.filter(network => {
+    const value = socialLinks?.[network.key];
+    return value?.url && value?.enabled !== false;
+  });
 
   return (
     <>
@@ -79,6 +91,21 @@ export default function Footer({ settings, globalFooter = {} }) {
             <div>
               <h4>{globalFooter.socialTitle || 'Company'}</h4>
               {globalFooter.socialText ? <p>{globalFooter.socialText}</p> : null}
+              {activeSocial.length ? <div className="footer-social-icons">
+                {activeSocial.map(network => (
+                  <a
+                    className="footer-social-icon"
+                    href={socialLinks[network.key].url}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={network.label}
+                    title={network.label}
+                    key={network.key}
+                  >
+                    <img src={network.icon} alt=""/>
+                  </a>
+                ))}
+              </div> : null}
               <Link href="/pricing">Pricing</Link>
               <Link href="/blog">Moving Tips</Link>
               <Link href="/contact">Contact</Link>
