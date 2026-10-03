@@ -1,6 +1,9 @@
-import HeroBanner from '@/components/HeroBanner';
-import LocationCards from '@/components/LocationCards';
-import { getBaseUrl, getLocations, getServiceBySlug, getSiteSettings } from '@/lib/content';
+import Link from 'next/link';
+import PageHero from '@/components/PageHero';
+import QuoteForm from '@/components/QuoteForm';
+import ServiceAreaGrid from '@/components/ServiceAreaGrid';
+import ServiceIcon from '@/components/ServiceIcon';
+import { getBaseUrl, getLocations, getServiceBySlug, getServices, getSiteSettings } from '@/lib/content';
 import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
@@ -23,26 +26,21 @@ export async function generateMetadata({ params }) {
       description,
       images: service.og_image ? [{ url: service.og_image, alt: service.title }] : [],
     },
-    twitter: {
-      card: service.og_image ? 'summary_large_image' : 'summary',
-      title,
-      description,
-      images: service.og_image ? [service.og_image] : [],
-    },
   };
 }
 
 export default async function ServicePage({ params }) {
   const { slug } = await params;
-  const [service, locations, settings] = await Promise.all([
+  const [service, locations, services, settings] = await Promise.all([
     getServiceBySlug(slug),
     getLocations(),
+    getServices(),
     getSiteSettings(),
   ]);
   if (!service) notFound();
 
   const relatedLocations = locations.filter(location =>
-    !Array.isArray(location.service_slugs) || location.service_slugs.includes(service.slug)
+    !Array.isArray(location.service_slugs) || !location.service_slugs.length || location.service_slugs.includes(service.slug)
   );
 
   const serviceSchema = {
@@ -58,56 +56,61 @@ export default async function ServicePage({ params }) {
       email: settings.email || 'dispatch@sunwingstransport.ca',
       url: getBaseUrl(),
     },
-    areaServed: relatedLocations.map(location => ({
-      '@type': 'City',
-      name: location.title,
-    })),
   };
 
   return (
     <>
-      <HeroBanner
-        eyebrow={service.eyebrow}
+      <PageHero
+        crumbs={[{label:'Home',href:'/'},{label:'Services',href:'/services'},{label:service.title}]}
         title={service.hero_title || service.title}
-        description={service.hero_description}
+        description={service.intro || service.hero_description}
         image={service.banner_image}
-        ctaLabel="Request a Quote"
-        ctaUrl="/#quote"
+        phone={settings.phone}
       />
+
       <section className="section">
-        <div className="container detail-grid">
-          <article className="rich-content">
-            <p className="lead">{service.intro}</p>
-            {service.body_html ? <div dangerouslySetInnerHTML={{ __html: service.body_html }} /> : null}
+        <div className="container with-side">
+          <article className="prose">
+            <p className="lead-p">{service.intro}</p>
+
+            {(service.bullets || []).length ? <>
+              <h2>What’s included</h2>
+              <ul className="checks">
+                {service.bullets.map(item => <li key={item}>{item}</li>)}
+              </ul>
+            </> : null}
+
+            {service.body_html ? <div dangerouslySetInnerHTML={{__html:service.body_html}}/> : null}
+
+            <div className="cta-inline">
+              <div>
+                <h3>Need {service.title.toLowerCase()}?</h3>
+                <p>Get an upfront price, usually the same day.</p>
+              </div>
+              <Link className="btn btn-accent" href="/contact">Get a Quote →</Link>
+            </div>
+
+            <h2>Where we offer {service.title.toLowerCase()}</h2>
+            {relatedLocations.length ? <ServiceAreaGrid locations={relatedLocations}/> : <p>No published service areas yet.</p>}
           </article>
-          <aside className="side-panel">
-            <h2>Service includes</h2>
-            <ul>
-              {(service.bullets || []).map(item => <li key={item}>{item}</li>)}
-            </ul>
+
+          <aside className="side">
+            <QuoteForm services={services} compact preset={service.title}/>
+            <div className="side-card">
+              <h3>Other services</h3>
+              <div className="side-links">
+                {services.filter(item => item.slug !== service.slug).map(item => (
+                  <Link href={`/services/${item.slug}`} key={item.slug}>
+                    <ServiceIcon slug={item.slug} size={18}/>{item.title}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </aside>
         </div>
       </section>
-      {relatedLocations.length ? (
-        <section className="section section-soft">
-          <div className="container">
-            <div className="section-heading">
-              <div><span className="kicker">Service Areas</span><h2>Where this service is available.</h2></div>
-            </div>
-            <LocationCards locations={relatedLocations} />
-          </div>
-        </section>
-      ) : null}
-      <section className="section">
-        <div className="container inline-cta">
-          <div><h2>{service.cta_title || 'Need this service?'}</h2><p>{service.cta_text}</p></div>
-          <a className="button button-light" href="/#quote">Request a Quote</a>
-        </div>
-      </section>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
-      />
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(serviceSchema)}}/>
     </>
   );
 }
