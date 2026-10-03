@@ -187,6 +187,10 @@ details p{color:var(--muted);margin-top:10px}
 .prose li{margin-bottom:6px}
 .lead-p{font-size:20px!important;color:var(--ink)!important}
 .note-box{background:var(--sky);border-left:4px solid var(--blue);border-radius:12px;padding:18px 20px;margin:22px 0;color:var(--navy)}
+.local-note-grid{margin-top:16px}
+.local-note-card h3{margin:8px 0 6px}
+.local-note-card p{font-size:15px!important;margin:0!important}
+.local-note-icon{color:var(--blue);display:flex;align-items:center}
 .cta-inline{background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;border-radius:20px;padding:28px;margin:30px 0;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
 .cta-inline h3{font-size:22px}
 .cta-inline p{color:#c9d9ee!important;margin:4px 0 0!important}
