@@ -54,7 +54,7 @@ export default async function ServicePage({ params }) {
     provider: {
       '@type': 'MovingCompany',
       name: settings.site_name || 'Sunwings Transport',
-      telephone: settings.phone || '647-526-5132',
+      telephone: settings.phone || '1-800-555-5555',
       email: settings.email || 'dispatch@sunwingstransport.ca',
       url: getBaseUrl(),
     },
