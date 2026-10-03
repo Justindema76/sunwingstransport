@@ -72,7 +72,7 @@ export default async function RootLayout({ children }) {
     name: settings.site_name || 'Sunwings Transport',
     url: baseUrl,
     logo: headerProps.logo || undefined,
-    telephone: settings.phone || '647-526-5132',
+    telephone: settings.phone || '1-800-555-5555',
     description: settings.seo_description || 'Residential moving, furniture delivery and commercial transport services.',
     sameAs: sameAs.length ? sameAs : undefined,
     areaServed: [
