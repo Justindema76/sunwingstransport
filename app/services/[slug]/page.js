@@ -56,7 +56,6 @@ export default async function ServicePage({ params }) {
       '@type': 'MovingCompany',
       name: settings.site_name || 'Sunwings Transport',
       telephone: settings.phone || '1-800-555-5555',
-      email: settings.email || 'dispatch@sunwingstransport.ca',
       url: getBaseUrl(),
     },
   };
