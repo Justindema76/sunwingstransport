@@ -5,6 +5,7 @@ import BlogCards from './BlogCards';
 import ContactForm from './ContactForm';
 import HowItWorks from './HowItWorks';
 import QuoteForm from './QuoteForm';
+import QuoteDrawerTrigger from './QuoteDrawerTrigger';
 import ReviewsBlock from './ReviewsBlock';
 import ServiceAreaGrid from './ServiceAreaGrid';
 import ServiceCards from './ServiceCards';
@@ -15,9 +16,12 @@ function telHref(phone = '') {
   return digits ? `tel:+${digits.startsWith('1') ? digits : `1${digits}`}` : '#';
 }
 
-function SmartLink({ to, className = 'btn btn-accent', children }) {
+function SmartLink({ to, className = 'btn btn-accent', children, action = '' }) {
   if (!children) return null;
   const url = String(to || '#');
+  const label = typeof children === 'string' ? children : '';
+  const opensQuote = action === 'quote' || (url === '/contact' && /quote/i.test(label));
+  if (opensQuote) return <QuoteDrawerTrigger className={className}>{children}</QuoteDrawerTrigger>;
   if (/^(https?:|tel:|mailto:)/i.test(url)) return <a className={className} href={url}>{children}</a>;
   return <Link className={className} href={url}>{children}</Link>;
 }
@@ -49,7 +53,7 @@ function Hero({ p, home, settings }) {
   const secondaryUrl = p.secondaryButtonUrl || telHref(phone);
   const actions = (
     <div className="hero-ctas">
-      <SmartLink to={p.primaryButtonUrl || '/contact'}>{p.primaryButtonText}</SmartLink>
+      <SmartLink to={p.primaryButtonUrl || '/contact'} action={p.primaryButtonAction}>{p.primaryButtonText}</SmartLink>
       {secondaryText ? (
         <SmartLink to={secondaryUrl} className="btn btn-ghost">
           {!p.secondaryButtonText ? <Phone size={18}/> : null} {secondaryText}
@@ -117,6 +121,7 @@ function PricingCards({ p }) {
       features: lines(p[`card${n}Features`] ?? fallback.features),
       buttonText: p[`card${n}ButtonText`] || 'Get a quote',
       buttonUrl: p[`card${n}ButtonUrl`] || '/contact',
+      buttonAction: p[`card${n}ButtonAction`] || '',
     };
   }).filter(card => card.title);
 
@@ -132,7 +137,7 @@ function PricingCards({ p }) {
               <div className="amt">{card.amount}</div>
               {card.note ? <small className="muted">{card.note}</small> : null}
               <ul>{card.features.map(item => <li key={item}>{item}</li>)}</ul>
-              <SmartLink to={card.buttonUrl} className={featured === i + 1 ? 'btn btn-accent' : 'btn btn-line'}>{card.buttonText}</SmartLink>
+              <SmartLink to={card.buttonUrl} action={card.buttonAction} className={featured === i + 1 ? 'btn btn-accent' : 'btn btn-line'}>{card.buttonText}</SmartLink>
             </div>
           ))}
         </div>
@@ -375,7 +380,7 @@ export default function PageBlocks({ data, pageId, services = [], locations = []
                 {p.eyebrow ? <span className="kicker">{p.eyebrow}</span> : null}
                 <h2>{p.heading}</h2>
                 {p.text ? <p className="muted" style={{ marginTop: 14, fontSize: 17 }}>{p.text}</p> : null}
-                {p.buttonText ? <div style={{ marginTop: 24 }}><SmartLink to={p.buttonUrl || '/contact'}>{p.buttonText}</SmartLink></div> : null}
+                {p.buttonText ? <div style={{ marginTop: 24 }}><SmartLink to={p.buttonUrl || '/contact'} action={p.buttonAction}>{p.buttonText}</SmartLink></div> : null}
               </div>
               <QuoteForm services={services} compact={p.compact !== false && p.compact !== 'false'} replyHours={settings?.quote_reply_hours}/>
             </div>
@@ -410,7 +415,7 @@ export default function PageBlocks({ data, pageId, services = [], locations = []
           <section className="section" key={key}>
             <div className="container inline-cta">
               <div><h2>{p.heading}</h2>{p.text ? <p>{p.text}</p> : null}</div>
-              <SmartLink to={p.buttonUrl || '/contact'}>{p.buttonText}</SmartLink>
+              <SmartLink to={p.buttonUrl || '/contact'} action={p.buttonAction}>{p.buttonText}</SmartLink>
             </div>
           </section>
         );
