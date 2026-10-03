@@ -2,6 +2,7 @@ import Link from 'next/link';
 import BreadcrumbSchema from '@/components/BreadcrumbSchema';
 import PageHero from '@/components/PageHero';
 import QuoteForm from '@/components/QuoteForm';
+import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import ServiceIcon from '@/components/ServiceIcon';
 import { getBaseUrl, getLocations, getServiceBySlug, getServices, getSiteSettings } from '@/lib/content';
 import { notFound } from 'next/navigation';
@@ -89,7 +90,7 @@ export default async function ServicePage({ params }) {
                 <h3>{service.cta_title || `Need ${service.title.toLowerCase()}?`}</h3>
                 <p>{service.cta_text || 'Get an upfront price, usually the same day.'}</p>
               </div>
-              <Link className="btn btn-accent" href="/contact">Get a Quote →</Link>
+              <QuoteDrawerTrigger className="btn btn-accent" preset={service.title}>Request a Quote →</QuoteDrawerTrigger>
             </div>
 
             <h2>Where we offer {service.title.toLowerCase()}</h2>
