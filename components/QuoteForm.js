@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { trackEvent } from './SiteAnalytics';
 
 const initialState = {
   name: '',
@@ -50,6 +51,8 @@ export default function QuoteForm({ services = [], compact = false, preset = '',
         return;
       }
 
+      trackEvent('generate_lead', { lead_source:'quote_form', service:form.service || preset || '' });
+      if (typeof window !== 'undefined' && typeof window.fbq === 'function') window.fbq('track', 'Lead');
       setForm({ ...initialState, service: preset });
       const timing = String(replyHours || '').trim();
       setState({
