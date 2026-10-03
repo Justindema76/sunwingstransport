@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import PageHero from '@/components/PageHero';
-import { getSiteSettings } from '@/lib/content';
+import PageBlocks from '@/components/PageBlocks';
+import { getPageBuilderData, getSiteSettings } from '@/lib/content';
 
 export const metadata = {
   title:'Pricing',
@@ -9,7 +10,10 @@ export const metadata = {
 };
 
 export default async function PricingPage() {
-  const settings = await getSiteSettings();
+  const [settings, pageData] = await Promise.all([getSiteSettings(), getPageBuilderData('pricing')]);
+  if (pageData) {
+    return <PageBlocks data={pageData} pageId="pricing" settings={settings}/>;
+  }
   return (
     <>
       <PageHero
