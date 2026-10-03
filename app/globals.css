@@ -161,6 +161,9 @@ a.chip:hover{border-color:var(--blue);color:var(--blue)}
 .price-card .amt{font-family:var(--font-head);font-size:40px;font-weight:800;color:var(--navy);margin:10px 0 2px}
 .price-card ul{list-style:none;margin:18px 0 24px;display:grid;gap:8px;flex:1}
 .price-card li::before{content:"✓ ";color:var(--blue);font-weight:800}
+.pricing-guarantee{grid-template-columns:1fr;padding:34px}
+.pricing-guarantee h2{font-size:30px}
+.pricing-factors{align-items:stretch}
 
 /* REVIEWS */
 .rev{background:#fff;border:1px dashed #c9d6e8;border-radius:var(--radius);padding:26px}
