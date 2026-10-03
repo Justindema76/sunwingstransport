@@ -88,7 +88,7 @@ export default async function RootLayout({ children }) {
       <body style={styleVars}>
         <SiteAnalytics ga4={settings.ga4_measurement_id || ''} metaPixel={settings.meta_pixel_id || ''}/>
         <Header settings={settings} services={services} globalHeader={headerProps} />
-        <QuoteForm services={services} replyHours={settings.quote_reply_hours} triggerText="Get a Quote" global />
+        <QuoteForm services={services} replyHours={settings.quote_reply_hours} triggerText="Request a Quote" global />
         <main>{children}</main>
         <Footer settings={settings} globalFooter={footerProps} socialLinks={socialLinks} />
         <script
