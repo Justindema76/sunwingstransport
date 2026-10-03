@@ -2,13 +2,16 @@ import HowItWorks from '@/components/HowItWorks';
 import PageHero from '@/components/PageHero';
 import PageBlocks from '@/components/PageBlocks';
 import ServiceCards from '@/components/ServiceCards';
-import { getPageBuilderData, getServices, getSiteSettings } from '@/lib/content';
+import { getPageBuilderData, getServices, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
 
-export const metadata = {
-  title: 'Moving, Delivery & Commercial Services',
-  description: 'Explore Sunwings Transport residential moving, commercial transport, furniture delivery, warehouse support and labour services.',
-  alternates: { canonical: '/services' },
-};
+export async function generateMetadata() {
+  const pageData = await getPageBuilderData('services');
+  return pageMetadataFromBuilder(pageData, {
+    title:'Moving, Delivery & Commercial Services',
+    description:'Explore Sunwings Transport residential moving, commercial transport, furniture delivery, warehouse support and labour services.',
+    canonical:'/services',
+  });
+}
 
 export default async function ServicesPage() {
   const [services, settings, pageData] = await Promise.all([getServices(), getSiteSettings(), getPageBuilderData('services')]);
