@@ -247,6 +247,10 @@ input,select,textarea{width:100%;margin-top:6px;font:inherit;font-size:15px;padd
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px rgba(31,95,168,.12)}
 .form-card .btn{width:100%;justify-content:center}
 .fine{font-size:13px;color:var(--muted);text-align:center;margin-top:12px}
+.quote-honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+.field-has-error input,.field-has-error select,.field-has-error textarea{border-color:#b42318}
+.field-error{display:block;color:#b42318;font-size:12px;margin-top:5px}
+.quote-status{font-weight:600;color:var(--navy)}
 .form-card.compact .row{grid-template-columns:1fr}
 
 /* BLOG */
