@@ -1,10 +1,10 @@
 import HeroBanner from '@/components/HeroBanner';
-import LocationCards from '@/components/LocationCards';
+import LocationDirectory from '@/components/LocationDirectory';
 import { getLocations } from '@/lib/content';
 
 export const metadata = {
-  title: 'Hamilton & Niagara Service Areas',
-  description: 'Sunwings Transport service areas across Hamilton and the Niagara Region.',
+  title: 'Sunwings Transport Service Areas',
+  description: 'Sunwings Transport service areas across Toronto, the GTA, Hamilton and the Niagara Region.',
 };
 
 export default async function LocationsPage() {
@@ -13,14 +13,14 @@ export default async function LocationsPage() {
     <>
       <HeroBanner
         eyebrow="Service Areas"
-        title="Hamilton & Niagara Moving and Transport"
-        description="Regional moving, delivery, business transport and labour services with dedicated local content for each service area."
+        title="Moving & Transport Service Areas"
+        description="Browse every published Sunwings service area across Toronto, the GTA, Hamilton and Niagara."
         ctaLabel="View Services"
         ctaUrl="/services"
       />
       <section className="section">
         <div className="container">
-          <LocationCards locations={locations} />
+          <LocationDirectory locations={locations} />
         </div>
       </section>
     </>
