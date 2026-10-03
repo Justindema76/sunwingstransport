@@ -1,5 +1,5 @@
 import HeroBanner from '@/components/HeroBanner';
-import LocationCards from '@/components/LocationCards';
+import LocationDirectory from '@/components/LocationDirectory';
 import QuoteForm from '@/components/QuoteForm';
 import ServiceCards from '@/components/ServiceCards';
 import { getLocations, getServices, getSiteSettings } from '@/lib/content';
@@ -14,7 +14,7 @@ export default async function HomePage() {
   return (
     <>
       <HeroBanner
-        eyebrow="Hamilton • Niagara • GTA Connections"
+        eyebrow="Toronto • GTA • Hamilton • Niagara"
         title={settings.hero_title}
         description={settings.hero_description}
         image={settings.hero_image}
@@ -40,11 +40,11 @@ export default async function HomePage() {
           <div className="section-heading">
             <div>
               <span className="kicker">Service Areas</span>
-              <h2>Hamilton and Niagara are separate regional branches.</h2>
+              <h2>Serving Toronto, the GTA, Hamilton and Niagara.</h2>
             </div>
-            <p>Each location is managed like a post, so new cities can be added without manually building another page.</p>
+            <p>Every published Location Post appears here automatically, so the service-area list grows from the admin instead of being hard-coded.</p>
           </div>
-          <LocationCards locations={locations} />
+          <LocationDirectory locations={locations} />
         </div>
       </section>
 
