@@ -233,7 +233,7 @@ function ContactPanel({ p, services, settings }) {
   return (
     <section className={sectionClass(p)}>
       <div className="container with-side contact-layout">
-        <ContactForm services={services}/>
+        <ContactForm services={services} title={p.formTitle || 'Contact Sunwings'} text={p.formText || 'Send us a message and we’ll get back to you.'}/>
         <aside className="side">
           <div className="side-card"><h3>{p.callTitle || 'Call or text'}</h3><a className="btn btn-accent" style={{ width: '100%' }} href={telHref(phone)}>{phone}</a></div>
           {p.hours ? <div className="side-card"><h3>{p.hoursTitle || 'Hours'}</h3><p className="muted" style={{ whiteSpace: 'pre-line' }}>{p.hours}</p></div> : null}
