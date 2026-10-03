@@ -1,17 +1,21 @@
-const REVIEWS = [
-  { initial:'A', text:'Real Google review will appear here once the reviews feed is connected.' },
-  { initial:'B', text:'Real Google review will appear here once the reviews feed is connected.' },
-  { initial:'C', text:'Real Google review will appear here once the reviews feed is connected.' },
-];
+export default function ReviewsBlock(props = {}) {
+  const reviews = [1, 2, 3].map(n => ({
+    text: props[`review${n}Text`] || '',
+    name: props[`review${n}Name`] || 'Google customer',
+    stars: Math.min(5, Math.max(1, Number(props[`review${n}Stars`] || 5))),
+  })).filter(review => review.text);
 
-export default function ReviewsBlock() {
+  if (!reviews.length) {
+    return <p className="muted center">Add real Google reviews to this block in the admin.</p>;
+  }
+
   return (
     <div className="grid-3">
-      {REVIEWS.map(review => (
-        <div className="rev" key={review.initial}>
-          <div className="stars">★★★★★</div>
+      {reviews.map((review, i) => (
+        <div className="rev" key={i}>
+          <div className="stars">{'★'.repeat(review.stars)}</div>
           <p>{review.text}</p>
-          <div className="who"><div className="avatar">{review.initial}</div>Google customer</div>
+          <div className="who"><div className="avatar">{review.name.charAt(0).toUpperCase()}</div>{review.name}</div>
         </div>
       ))}
     </div>
