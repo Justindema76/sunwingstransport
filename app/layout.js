@@ -1,7 +1,7 @@
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { getBaseUrl, getSiteSettings } from '@/lib/content';
+import { getBaseUrl, getServices, getSiteSettings } from '@/lib/content';
 
 export async function generateMetadata() {
   const settings = await getSiteSettings();
@@ -47,7 +47,7 @@ export async function generateMetadata() {
 }
 
 export default async function RootLayout({ children }) {
-  const settings = await getSiteSettings();
+  const [settings, services] = await Promise.all([getSiteSettings(), getServices()]);
   const baseUrl = getBaseUrl();
 
   const organizationSchema = {
@@ -71,7 +71,7 @@ export default async function RootLayout({ children }) {
       <body>
         <Header settings={settings} />
         <main>{children}</main>
-        <Footer settings={settings} />
+        <Footer settings={settings} services={services} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
