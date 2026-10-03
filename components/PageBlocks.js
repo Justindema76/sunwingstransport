@@ -303,7 +303,9 @@ export default function PageBlocks({ data, pageId, services = [], locations = []
           </section>
         );
 
-      case 'SunwingsReviewsBlock':
+      case 'SunwingsReviewsBlock': {
+        const hasReviews = [1,2,3].some(n => String(p[`review${n}Text`] || '').trim());
+        if (!hasReviews) return null;
         return (
           <section className={sectionClass(p, 'soft')} key={key}>
             <div className="container">
@@ -312,14 +314,17 @@ export default function PageBlocks({ data, pageId, services = [], locations = []
             </div>
           </section>
         );
+      }
 
       case 'SunwingsBlogGridBlock': {
         const limit = Number(p.limit || 3);
+        const list = Array.isArray(posts) ? posts.slice(0, limit) : [];
+        if (!list.length && pageId === 'home') return null;
         return (
           <section className={sectionClass(p)} key={key}>
             <div className="container">
               <SectionHead p={p}/>
-              {Array.isArray(posts) ? <BlogCards posts={posts.slice(0, limit)}/> : <BlogCards/>}
+              {list.length ? <BlogCards posts={list}/> : <div className="empty-state">No published Moving Tips yet.</div>}
             </div>
           </section>
         );
