@@ -9,7 +9,7 @@ export default function Footer() {
             <span className="brand-mark">SW</span>
             <span className="brand-copy">Sunwings Transport</span>
           </div>
-          <p>Residential moving, delivery, commercial transport and labour services across Hamilton, Niagara and connected GTA routes.</p>
+          <p>Residential moving, delivery, commercial transport and labour services across Toronto, the GTA, Hamilton and Niagara.</p>
         </div>
         <div>
           <h3>Services</h3>
@@ -20,8 +20,11 @@ export default function Footer() {
         </div>
         <div>
           <h3>Locations</h3>
+          <Link href="/locations/toronto">Toronto</Link>
+          <Link href="/locations/mississauga">Mississauga</Link>
           <Link href="/locations/hamilton">Hamilton</Link>
-          <Link href="/locations/niagara">Niagara Region</Link>
+          <Link href="/locations/st-catharines">St. Catharines</Link>
+          <Link href="/locations">View All Locations</Link>
         </div>
         <div>
           <h3>Contact</h3>
