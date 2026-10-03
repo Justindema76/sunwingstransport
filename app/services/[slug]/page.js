@@ -83,6 +83,14 @@ export default async function ServicePage({ params }) {
 
             {service.body_html ? <div dangerouslySetInnerHTML={{__html:service.body_html}}/> : null}
 
+            <div className="cta-inline">
+              <div>
+                <h3>{service.cta_title || `Need ${service.title.toLowerCase()}?`}</h3>
+                <p>{service.cta_text || 'Get an upfront price, usually the same day.'}</p>
+              </div>
+              <Link className="btn btn-accent" href="/contact">Get a Quote →</Link>
+            </div>
+
             <h2>Where we offer {service.title.toLowerCase()}</h2>
             {relatedLocations.length ? (
               <div className="chips">
@@ -104,14 +112,6 @@ export default async function ServicePage({ params }) {
                 ))}
               </div>
             </> : null}
-
-            <div className="cta-inline">
-              <div>
-                <h3>{service.cta_title || `Need ${service.title.toLowerCase()}?`}</h3>
-                <p>{service.cta_text || 'Get an upfront price, usually the same day.'}</p>
-              </div>
-              <Link className="btn btn-accent" href="/contact">Get a Quote →</Link>
-            </div>
           </article>
 
           <aside className="side">
