@@ -1,19 +1,25 @@
 import Link from 'next/link';
 import BlogCards from '@/components/BlogCards';
 import HomeHero from '@/components/HomeHero';
+import PageBlocks from '@/components/PageBlocks';
 import HowItWorks from '@/components/HowItWorks';
 import ReviewsBlock from '@/components/ReviewsBlock';
 import ServiceAreaGrid from '@/components/ServiceAreaGrid';
 import ServiceCards from '@/components/ServiceCards';
 import TrustStrip from '@/components/TrustStrip';
-import { getLocations, getServices, getSiteSettings } from '@/lib/content';
+import { getLocations, getPageBuilderData, getServices, getSiteSettings } from '@/lib/content';
 
 export default async function HomePage() {
-  const [settings, services, locations] = await Promise.all([
+  const [settings, services, locations, pageData] = await Promise.all([
     getSiteSettings(),
     getServices(),
     getLocations(),
+    getPageBuilderData('home'),
   ]);
+
+  if (pageData) {
+    return <PageBlocks data={pageData} pageId="home" services={services} locations={locations} settings={settings}/>;
+  }
 
   return (
     <>
