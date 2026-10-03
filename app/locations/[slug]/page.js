@@ -1,8 +1,9 @@
 import Link from 'next/link';
-import { Building2, MapPin, Route } from 'lucide-react';
+import { Building2, GraduationCap, MapPin, Mountain, Route, Truck } from 'lucide-react';
 import PageHero from '@/components/PageHero';
 import QuoteForm from '@/components/QuoteForm';
 import ServiceCards from '@/components/ServiceCards';
+import TrustStrip from '@/components/TrustStrip';
 import { getBaseUrl, getLocationBySlug, getLocations, getServices, getSiteSettings } from '@/lib/content';
 import { notFound } from 'next/navigation';
 
@@ -35,6 +36,28 @@ export default async function LocationPage({ params }) {
     !Array.isArray(location.service_slugs) || !location.service_slugs.length || location.service_slugs.includes(service.slug)
   );
   const nearby = locations.filter(item => item.region === location.region && item.slug !== location.slug).slice(0,8);
+  const localNotes = Array.isArray(location.local_notes) ? location.local_notes : [];
+  const iconMap = { map: MapPin, building: Building2, route: Route, mountain: Mountain, graduation: GraduationCap, truck: Truck };
+  const faqs = Array.isArray(location.faq) ? location.faq.filter(item => item?.question && item?.answer) : [];
+
+  const placeSchema = {
+    '@context':'https://schema.org',
+    '@type':'Place',
+    name:location.title,
+    description:location.seo_description || location.hero_description || location.intro,
+    url:`${getBaseUrl()}/locations/${location.slug}`,
+    containedInPlace: location.region ? { '@type':'AdministrativeArea', name:location.region } : undefined,
+  };
+
+  const providerSchema = {
+    '@context':'https://schema.org',
+    '@type':'MovingCompany',
+    name:settings.site_name || 'Sunwings Transport',
+    telephone:settings.phone || '647-526-5132',
+    email:settings.email || 'dispatch@sunwingstransport.ca',
+    url:getBaseUrl(),
+    areaServed:{ '@type':'City', name:location.title },
+  };
 
   return (
     <>
@@ -45,6 +68,8 @@ export default async function LocationPage({ params }) {
         image={location.banner_image}
         phone={settings.phone}
       />
+
+      <TrustStrip/>
 
       <section className="section">
         <div className="container with-side">
@@ -60,18 +85,27 @@ export default async function LocationPage({ params }) {
               </div>
             </> : null}
 
-            <h2>Moving in {location.title}: what to know</h2>
-            <div className="grid-3">
-              <div className="side-card"><MapPin size={26}/><h3>Local coverage</h3><p>Routes, pickups and deliveries planned around {location.title} and nearby communities.</p></div>
-              <div className="side-card"><Building2 size={26}/><h3>Buildings & access</h3><p>Tell us about elevators, loading zones, stairs or access restrictions before move day.</p></div>
-              <div className="side-card"><Route size={26}/><h3>Route planning</h3><p>We plan travel time and truck access around the job, distance and destination.</p></div>
-            </div>
+            {localNotes.length ? <>
+              <h2>Moving in {location.title}: what to know</h2>
+              <div className="grid-3 local-note-grid">
+                {localNotes.map((note, index) => {
+                  const Icon = iconMap[note.icon] || MapPin;
+                  return <div className="side-card local-note-card" key={`${note.title}-${index}`}>
+                    <div className="local-note-icon"><Icon size={26}/></div>
+                    <h3>{note.title}</h3>
+                    <p>{note.text}</p>
+                  </div>;
+                })}
+              </div>
+            </> : null}
+
+            {location.recent_job ? <div className="note-box"><b>Recent {location.title} job:</b> {location.recent_job}</div> : null}
 
             {location.body_html ? <div dangerouslySetInnerHTML={{__html:location.body_html}}/> : null}
 
-            {Array.isArray(location.faq) && location.faq.length ? <>
+            {faqs.length ? <>
               <h2>{location.title} moving FAQs</h2>
-              {location.faq.map(item => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}
+              {faqs.map(item => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}
             </> : null}
 
             {nearby.length ? <>
@@ -91,6 +125,18 @@ export default async function LocationPage({ params }) {
           </aside>
         </div>
       </section>
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(placeSchema)}}/>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(providerSchema)}}/>
+      {faqs.length ? <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify({
+        '@context':'https://schema.org',
+        '@type':'FAQPage',
+        mainEntity:faqs.map(item => ({
+          '@type':'Question',
+          name:item.question,
+          acceptedAnswer:{ '@type':'Answer', text:item.answer },
+        })),
+      })}}/> : null}
     </>
   );
 }
