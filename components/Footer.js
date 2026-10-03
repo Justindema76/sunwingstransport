@@ -20,7 +20,7 @@ const SOCIAL_NETWORKS = [
 ];
 
 export default function Footer({ settings, globalFooter = {}, socialLinks = {} }) {
-  const phone = settings?.phone || '647-526-5132';
+  const phone = settings?.phone || '1-800-555-5555';
   const logo = globalFooter.logo || 'https://sunwingstransport.ca/wp-content/uploads/2026/01/SUNWING-site-logo.png';
   const brand = globalFooter.brand || 'Sunwings Transport';
   const tagline = globalFooter.tagline || 'Reliable • On-Time • Professional. Moving, delivery and commercial transport from Toronto to Niagara.';
