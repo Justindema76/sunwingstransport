@@ -25,6 +25,10 @@ export default function Footer({ settings, globalFooter = {}, socialLinks = {} }
   const logo = globalFooter.logo || 'https://sunwingstransport.ca/wp-content/uploads/2026/01/SUNWING-site-logo.png';
   const brand = globalFooter.brand || 'Sunwings Transport';
   const tagline = globalFooter.tagline || 'Reliable • On-Time • Professional. Moving, delivery and commercial transport from Toronto to Niagara.';
+  const ctaTitle = globalFooter.ctaTitle || 'Ready when you are.';
+  const ctaPrimaryText = globalFooter.ctaPrimaryText || 'Get a Free Quote';
+  const ctaPrimaryUrl = globalFooter.ctaPrimaryUrl || '/contact';
+  const ctaSecondaryText = globalFooter.ctaSecondaryText || 'Call';
   const column1Title = globalFooter.column1Title || 'Services';
   const column2Title = globalFooter.column2Title || 'Service Areas';
 
@@ -62,10 +66,10 @@ export default function Footer({ settings, globalFooter = {}, socialLinks = {} }
     <>
       <section className="cta-band">
         <div className="container">
-          <h2>Ready when you are.</h2>
+          <h2>{ctaTitle}</h2>
           <div className="cta-actions">
-            <Link className="btn btn-navy" href="/contact">Get a Free Quote</Link>
-            <a className="btn btn-line" href={telHref(phone)}>Call {phone}</a>
+            {ctaPrimaryText ? <SmartLink href={ctaPrimaryUrl}><span className="btn btn-navy">{ctaPrimaryText}</span></SmartLink> : null}
+            {ctaSecondaryText ? <a className="btn btn-line" href={telHref(phone)}>{ctaSecondaryText} {phone}</a> : null}
           </div>
         </div>
       </section>
