@@ -20,8 +20,15 @@ function validate(body) {
 
   if (!name) fieldErrors.name = 'Enter your name.';
   if (digits.length < 10) fieldErrors.phone = 'Enter a phone number with at least 10 digits.';
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) fieldErrors.email = 'Enter a valid email address.';
-  if (body.preferredDate && !/^\d{4}-\d{2}-\d{2}$/.test(String(body.preferredDate))) fieldErrors.preferredDate = 'Choose a valid date.';
+  if (!email) fieldErrors.email = 'Enter your email address.';
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) fieldErrors.email = 'Enter a valid email address.';
+  if (!clean(body.service, 160)) fieldErrors.service = 'Choose a service.';
+  if (!body.preferredDate) fieldErrors.preferredDate = 'Choose a date.';
+  else if (!/^\d{4}-\d{2}-\d{2}$/.test(String(body.preferredDate))) fieldErrors.preferredDate = 'Choose a valid date.';
+  if (!clean(body.pickupAddress, 220)) fieldErrors.pickupAddress = 'Enter the pickup address.';
+  if (!clean(body.pickupPostalCode, 24)) fieldErrors.pickupPostalCode = 'Enter the pickup postal code.';
+  if (!clean(body.dropoffAddress, 220)) fieldErrors.dropoffAddress = 'Enter the drop-off address.';
+  if (!clean(body.dropoffPostalCode, 24)) fieldErrors.dropoffPostalCode = 'Enter the drop-off postal code.';
 
   return fieldErrors;
 }
@@ -30,9 +37,16 @@ function rpcErrorMessage(message = '') {
   const text = String(message || '');
   if (text.includes('rate_limited')) return { status:429, error:'Too many requests were sent from this connection. Please wait a few minutes and try again.' };
   if (text.includes('phone_invalid')) return { status:400, error:'Enter a phone number with at least 10 digits.', fieldErrors:{ phone:'Enter a phone number with at least 10 digits.' } };
+  if (text.includes('email_required')) return { status:400, error:'Enter your email address.', fieldErrors:{ email:'Enter your email address.' } };
   if (text.includes('email_invalid')) return { status:400, error:'Enter a valid email address.', fieldErrors:{ email:'Enter a valid email address.' } };
   if (text.includes('name_required')) return { status:400, error:'Enter your name.', fieldErrors:{ name:'Enter your name.' } };
+  if (text.includes('service_required')) return { status:400, error:'Choose a service.', fieldErrors:{ service:'Choose a service.' } };
+  if (text.includes('date_required')) return { status:400, error:'Choose a date.', fieldErrors:{ preferredDate:'Choose a date.' } };
   if (text.includes('date_invalid')) return { status:400, error:'Choose a valid date.', fieldErrors:{ preferredDate:'Choose a valid date.' } };
+  if (text.includes('pickup_address_required')) return { status:400, error:'Enter the pickup address.', fieldErrors:{ pickupAddress:'Enter the pickup address.' } };
+  if (text.includes('pickup_postal_required')) return { status:400, error:'Enter the pickup postal code.', fieldErrors:{ pickupPostalCode:'Enter the pickup postal code.' } };
+  if (text.includes('dropoff_address_required')) return { status:400, error:'Enter the drop-off address.', fieldErrors:{ dropoffAddress:'Enter the drop-off address.' } };
+  if (text.includes('dropoff_postal_required')) return { status:400, error:'Enter the drop-off postal code.', fieldErrors:{ dropoffPostalCode:'Enter the drop-off postal code.' } };
   return { status:500, error:'Unable to send quote request.' };
 }
 
@@ -61,7 +75,19 @@ export async function POST(request) {
     moveFrom: clean(body.moveFrom, 220),
     moveTo: clean(body.moveTo, 220),
     preferredDate: clean(body.preferredDate, 20),
+    preferredTime: clean(body.preferredTime, 80),
     moveSize: clean(body.moveSize, 120),
+    pickupAddress: clean(body.pickupAddress, 220),
+    pickupCity: clean(body.pickupCity, 120),
+    pickupPostalCode: clean(body.pickupPostalCode, 24),
+    pickupElevator: clean(body.pickupElevator, 10),
+    pickupStairs: clean(body.pickupStairs, 10),
+    dropoffAddress: clean(body.dropoffAddress, 220),
+    dropoffCity: clean(body.dropoffCity, 120),
+    dropoffPostalCode: clean(body.dropoffPostalCode, 24),
+    dropoffElevator: clean(body.dropoffElevator, 10),
+    dropoffStairs: clean(body.dropoffStairs, 10),
+    itemList: clean(body.itemList, 6000),
     message: clean(body.message, 3000),
   };
 
