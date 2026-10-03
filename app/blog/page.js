@@ -1,7 +1,7 @@
 import BlogCards from '@/components/BlogCards';
 import PageHero from '@/components/PageHero';
 import PageBlocks from '@/components/PageBlocks';
-import { getPageBuilderData, getSiteSettings } from '@/lib/content';
+import { getBlogPosts, getPageBuilderData, getSiteSettings } from '@/lib/content';
 
 export const metadata = {
   title:'Moving Tips & Guides',
@@ -10,9 +10,9 @@ export const metadata = {
 };
 
 export default async function BlogPage() {
-  const [settings, pageData] = await Promise.all([getSiteSettings(), getPageBuilderData('blog')]);
+  const [settings, pageData, posts] = await Promise.all([getSiteSettings(), getPageBuilderData('blog'), getBlogPosts()]);
   if (pageData) {
-    return <PageBlocks data={pageData} pageId="blog" settings={settings}/>;
+    return <PageBlocks data={pageData} pageId="blog" settings={settings} posts={posts}/>;
   }
   return (
     <>
@@ -33,7 +33,7 @@ export default async function BlogPage() {
             <span className="chip">Delivery</span>
             <span className="chip">Business</span>
           </div>
-          <BlogCards/>
+          {posts.length ? <BlogCards posts={posts}/> : <div className="empty-state">No published Moving Tips yet.</div>}
         </div>
       </section>
     </>
