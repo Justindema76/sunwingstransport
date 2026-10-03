@@ -16,7 +16,7 @@ export default async function ContactPage() {
   if (pageData) {
     return <PageBlocks data={pageData} pageId="contact" services={services} settings={settings}/>;
   }
-  const phoneDigits = String(settings.phone || '6475265132').replace(/\D/g,'');
+  const phoneDigits = String(settings.phone || '18005555555').replace(/\D/g,'');
   return (
     <section className="section contact-page-section">
       <div className="container with-side contact-layout">
