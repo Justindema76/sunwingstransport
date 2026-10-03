@@ -9,11 +9,13 @@ const initialState = {
   service: '',
   moveFrom: '',
   moveTo: '',
+  preferredDate: '',
+  moveSize: '',
   message: '',
 };
 
-export default function QuoteForm({ services = [] }) {
-  const [form, setForm] = useState(initialState);
+export default function QuoteForm({ services = [], compact = false, preset = '' }) {
+  const [form, setForm] = useState({ ...initialState, service: preset });
   const [state, setState] = useState({ sending: false, message: '' });
 
   function update(event) {
@@ -24,34 +26,39 @@ export default function QuoteForm({ services = [] }) {
     event.preventDefault();
     setState({ sending: true, message: '' });
 
+    const details = [
+      form.preferredDate ? `Preferred date: ${form.preferredDate}` : '',
+      form.moveSize ? `Move size: ${form.moveSize}` : '',
+      form.message,
+    ].filter(Boolean).join('\n');
+
     try {
       const response = await fetch('/api/quote', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, message: details }),
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Unable to send request.');
-      setForm(initialState);
-      setState({
-        sending: false,
-        message: result.demo
-          ? 'Local demo mode: form works, but Supabase is not connected yet.'
-          : 'Thanks. Your quote request has been sent.',
-      });
+      setForm({ ...initialState, service: preset });
+      setState({ sending: false, message: 'Thanks. Your quote request has been sent.' });
     } catch (error) {
       setState({ sending: false, message: error.message });
     }
   }
 
   return (
-    <form className="quote-form" onSubmit={submit}>
-      <div className="form-row">
-        <label>Name<input required name="name" value={form.name} onChange={update} /></label>
-        <label>Phone<input required name="phone" value={form.phone} onChange={update} /></label>
+    <form className={`form-card ${compact ? 'compact' : ''}`} onSubmit={submit}>
+      <h3>{preset ? `Quote for ${preset}` : 'Get your free quote'}</h3>
+      <p className="sub">Two minutes. No obligation. We reply fast.</p>
+
+      <div className="row">
+        <label>Name<input required name="name" value={form.name} onChange={update} placeholder="Your name"/></label>
+        <label>Phone<input required name="phone" value={form.phone} onChange={update} placeholder="(___) ___-____"/></label>
       </div>
-      <div className="form-row">
-        <label>Email<input type="email" name="email" value={form.email} onChange={update} /></label>
+
+      <div className="row">
+        <label>Email<input type="email" name="email" value={form.email} onChange={update} placeholder="you@email.com"/></label>
         <label>Service
           <select name="service" value={form.service} onChange={update}>
             <option value="">Select a service</option>
@@ -59,15 +66,33 @@ export default function QuoteForm({ services = [] }) {
           </select>
         </label>
       </div>
-      <div className="form-row">
-        <label>From<input name="moveFrom" value={form.moveFrom} onChange={update} /></label>
-        <label>To<input name="moveTo" value={form.moveTo} onChange={update} /></label>
+
+      <div className="row">
+        <label>Moving from<input name="moveFrom" value={form.moveFrom} onChange={update} placeholder="City or postal code"/></label>
+        <label>Moving to<input name="moveTo" value={form.moveTo} onChange={update} placeholder="City or postal code"/></label>
       </div>
-      <label>Job details<textarea rows="5" name="message" value={form.message} onChange={update} /></label>
-      <button className="button button-primary" disabled={state.sending} type="submit">
-        {state.sending ? 'Sending…' : 'Request a Quote'}
+
+      {!compact ? <>
+        <div className="row">
+          <label>Preferred date<input type="date" name="preferredDate" value={form.preferredDate} onChange={update}/></label>
+          <label>Move size
+            <select name="moveSize" value={form.moveSize} onChange={update}>
+              <option value="">Select size</option>
+              <option>Single item</option>
+              <option>Studio / 1 bed</option>
+              <option>2 bed</option>
+              <option>3+ bed / house</option>
+              <option>Commercial</option>
+            </select>
+          </label>
+        </div>
+        <label>Anything else?<textarea rows="3" name="message" value={form.message} onChange={update} placeholder="Stairs, elevator booking, heavy items…"/></label>
+      </> : null}
+
+      <button className="btn btn-accent" disabled={state.sending} type="submit">
+        {state.sending ? 'Sending…' : 'Send My Quote Request →'}
       </button>
-      {state.message ? <p className="form-message" role="status">{state.message}</p> : null}
+      {state.message ? <p className="fine" role="status">{state.message}</p> : null}
     </form>
   );
 }
