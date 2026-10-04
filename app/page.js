@@ -120,7 +120,7 @@ export default async function HomePage() {
       <section className="section">
         <div className="container">
           <div className="section-head"><span className="kicker">Moving tips</span><h2>From the Sunwings blog.</h2></div>
-          <BlogCards/>
+          <BlogCards posts={posts.slice(0, 3)}/>
         </div>
       </section>
     </>
