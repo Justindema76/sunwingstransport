@@ -379,3 +379,5 @@ footer a:hover{color:#fff}
   .mbar .mbar-quote{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--accent-ink)}
   body{padding-bottom:56px}
 }
+
+.review-preview-label{display:block;margin-top:2px;color:var(--muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
