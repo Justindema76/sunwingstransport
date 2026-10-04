@@ -20,18 +20,18 @@ export default function Header({ settings, services = [], globalHeader = {} }) {
   const brand = settings?.site_name || globalHeader.brand || 'Sun Wings';
   const topbarEmphasis = settings?.topbar_emphasis || globalHeader.topbarEmphasis || 'Reliable • On-Time • Professional';
   const topbarText = settings?.topbar_text || globalHeader.topbarText || 'Moving & delivery from Toronto to Niagara';
-  const showTopbar=on(settings?.topbar_enabled,true);
-  const showCall=on(settings?.call_button_enabled,true);
-  const callText=settings?.call_button_text || 'Call Now';
+  const showTopbar=on(globalHeader.topbarEnabled ?? settings?.topbar_enabled,true);
+  const showCall=on(globalHeader.callButtonEnabled ?? settings?.call_button_enabled,true);
+  const callText=globalHeader.callButtonText || settings?.call_button_text || 'Call Now';
   const vars={
-    '--logo-desktop-width':`${px(settings?.logo_desktop_width,140)}px`,
-    '--logo-mobile-width':`${px(settings?.logo_mobile_width,170)}px`,
-    '--logo-desktop-max-height':`${px(settings?.logo_desktop_max_height,100)}px`,
-    '--logo-mobile-max-height':`${px(settings?.logo_mobile_max_height,90)}px`,
-    '--logo-x':`${px(settings?.logo_offset_x,0)}px`,
-    '--logo-y':`${px(settings?.logo_offset_y,0)}px`,
-    '--header-desktop-height':`${px(settings?.header_desktop_height,110)}px`,
-    '--header-mobile-height':`${px(settings?.header_mobile_height,105)}px`,
+    '--logo-desktop-width':`${px(globalHeader.logoDesktopWidth ?? settings?.logo_desktop_width,140)}px`,
+    '--logo-mobile-width':`${px(globalHeader.logoMobileWidth ?? settings?.logo_mobile_width,170)}px`,
+    '--logo-desktop-max-height':`${px(globalHeader.logoDesktopMaxHeight ?? settings?.logo_desktop_max_height,100)}px`,
+    '--logo-mobile-max-height':`${px(globalHeader.logoMobileMaxHeight ?? settings?.logo_mobile_max_height,90)}px`,
+    '--logo-x':`${px(globalHeader.logoOffsetX ?? settings?.logo_offset_x,0)}px`,
+    '--logo-y':`${px(globalHeader.logoOffsetY ?? settings?.logo_offset_y,0)}px`,
+    '--header-desktop-height':`${px(globalHeader.headerDesktopHeight ?? settings?.header_desktop_height,110)}px`,
+    '--header-mobile-height':`${px(globalHeader.headerMobileHeight ?? settings?.header_mobile_height,105)}px`,
   };
 
   const navItems = Array.from({ length: 7 }, (_, index) => ({
