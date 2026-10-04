@@ -48,15 +48,16 @@ function sectionClass(p, fallback = '') {
 }
 
 function Hero({ p, home, settings }) {
-  const phone = settings?.phone || '1-800-555-5555';
-  const secondaryText = p.secondaryButtonText || (p.showCallButton !== false ? `Call ${phone}` : '');
-  const secondaryUrl = p.secondaryButtonUrl || telHref(phone);
+  const phone = settings?.phone || '647-526-5132';
+  const isCallButton = p.showCallButton !== false;
+  const secondaryText = isCallButton ? `Call ${phone}` : (p.secondaryButtonText || '');
+  const secondaryUrl = isCallButton ? telHref(phone) : (p.secondaryButtonUrl || '#');
   const actions = (
     <div className="hero-ctas">
       <SmartLink to={p.primaryButtonUrl || '/contact'} action={p.primaryButtonAction}>{p.primaryButtonText}</SmartLink>
       {secondaryText ? (
         <SmartLink to={secondaryUrl} className="btn btn-ghost">
-          {!p.secondaryButtonText ? <Phone size={18}/> : null} {secondaryText}
+          {isCallButton ? <Phone size={18}/> : null} {secondaryText}
         </SmartLink>
       ) : null}
     </div>
@@ -234,7 +235,7 @@ function Faq({ p }) {
 }
 
 function ContactPanel({ p, services, settings }) {
-  const phone = settings?.phone || '1-800-555-0123';
+  const phone = settings?.phone || '647-526-5132';
   return (
     <section className={sectionClass(p)}>
       <div className="container with-side contact-layout">
