@@ -48,6 +48,7 @@ export default function Header({ settings, services = [], globalHeader = {} }) {
     <div className="header-system" style={vars}>
       {showTopbar ? <div className="topbar"><div className="container topbar-centered">
         <span><b>{topbarEmphasis}</b>{topbarText ? <> — {topbarText}</> : null}</span>
+        <a className="mobile-topbar-phone" href={telHref(phone)}><Phone size={15}/> {phone}</a>
       </div></div> : null}
       <header className="site">
         <div className="container nav">
@@ -67,7 +68,6 @@ export default function Header({ settings, services = [], globalHeader = {} }) {
           </nav>
           <div className="nav-cta">{showCall ? <a className="btn btn-accent header-call" href={telHref(phone)}><Phone size={17}/>{callText}</a> : null}</div>
           <div className="mobile-header-actions">
-            {showCall ? <a className="btn btn-accent mobile-call" href={telHref(phone)}><Phone size={16}/>{callText}</a> : null}
             <MobileNav links={links} services={services} phone={phone} buttonText="" buttonUrl=""/>
           </div>
         </div>
