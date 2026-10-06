@@ -79,7 +79,7 @@ header.site{position:sticky;top:0;z-index:50;background:var(--header);border-bot
 .nav-dropdown-menu .nav-dropdown-all{color:var(--blue);font-weight:800;border-bottom:1px solid var(--line)!important;border-radius:9px 9px 0 0;margin-bottom:4px}
 .nav-cta{display:flex;gap:14px;align-items:center}
 .nav-phone{font-weight:800;color:var(--navy)}
-.header-call{padding-inline:20px}.mobile-header-actions{display:none;align-items:center;gap:10px}.mobile-call{min-height:44px;padding:9px 14px;font-size:14px}
+.header-call{padding-inline:20px}.mobile-topbar-phone{display:none!important}.mobile-header-actions{display:none;align-items:center;gap:10px}.mobile-call{min-height:44px;padding:9px 14px;font-size:14px}
 .mobile-nav-wrap{display:none;position:relative}
 .mobile-menu-button{width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--navy);display:grid;place-items:center;cursor:pointer}
 .mobile-nav-panel{position:absolute;right:0;top:calc(100% + 12px);width:min(340px,calc(100vw - 32px));background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 42px rgba(11,37,69,.16);padding:12px;opacity:0;visibility:hidden;transform:translateY(8px);transition:.18s;z-index:90}
@@ -384,12 +384,14 @@ footer a:hover{color:#fff}
 .review-preview-label{display:block;margin-top:2px;color:var(--muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
 
 @media (max-width: 820px){
+  header.site{position:static}
   .topbar .container{padding:8px 10px;line-height:1.35;flex-wrap:wrap}
-  .topbar .container span{width:100%;text-align:center}
-  .nav{min-height:var(--header-mobile-height,105px);gap:12px}
-  .logo img{width:var(--logo-mobile-width,170px);max-height:var(--logo-mobile-max-height,90px)}
+  .topbar .container span{display:none}
+  .topbar .mobile-topbar-phone{display:inline-flex!important;margin:0 auto}
+  .nav{min-height:0;padding:10px 0;gap:12px}
+  .logo img{width:auto;height:52px;max-height:52px}
   .nav-links,.nav-cta{display:none!important}
   .mobile-header-actions{display:flex;margin-left:auto}
   .mobile-nav-wrap{display:block}
 }
-@media (max-width: 480px){.mobile-call{padding:8px 11px}.logo img{max-width:42vw}}
+@media (max-width: 480px){.logo img{width:auto;max-width:none;height:52px;max-height:52px}}
