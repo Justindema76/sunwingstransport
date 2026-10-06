@@ -10,7 +10,7 @@ const FALLBACK_IMAGES = {
   'junk-removal': 'https://sunwingstransport.ca/wp-content/uploads/2026/02/cargo-van-driveway1.png',
 };
 
-export default function ServiceCards({ services = [], compact = false, locationName = '' }) {
+export default function ServiceCards({ services = [], compact = false, locationName = '', cardOverrides = [] }) {
   if (compact) {
     return (
       <div className="grid-2 location-service-grid">
@@ -32,20 +32,27 @@ export default function ServiceCards({ services = [], compact = false, locationN
 
   return (
     <div className="grid-3">
-      {services.map(service => {
-        const image = service.banner_image || FALLBACK_IMAGES[service.slug] || '';
+      {services.map((service, index) => {
+        const override = cardOverrides[index] || {};
+        const image = override.image || service.banner_image || FALLBACK_IMAGES[service.slug] || '';
+        const title = override.title || service.title;
+        const description = override.text || service.intro || service.hero_description;
+        const href = override.url || `/services/${service.slug}`;
+        const linkText = override.linkText || 'Learn more →';
         return (
-          <Link className="card" href={`/services/${service.slug}`} key={service.id || service.slug}>
+          <Link className="card" href={href} key={service.id || service.slug}>
             <div
               className="card-img ph"
               style={image ? { backgroundImage: `url("${image}")` } : undefined}
+              role={override.imageAlt ? 'img' : undefined}
+              aria-label={override.imageAlt || undefined}
             >
               <div className="badge"><ServiceIcon slug={service.slug}/></div>
             </div>
             <div className="card-body">
-              <h3>{service.title}</h3>
-              <p>{service.intro || service.hero_description}</p>
-              <span className="more">Learn more →</span>
+              <h3>{title}</h3>
+              <p>{description}</p>
+              <span className="more">{linkText}</span>
             </div>
           </Link>
         );
