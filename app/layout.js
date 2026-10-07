@@ -11,6 +11,7 @@ export async function generateMetadata() {
   const title = settings.seo_title || 'Sunwings Transport | Moving, Delivery & Commercial Transport';
   const description = settings.seo_description || 'Residential moving, furniture delivery, commercial transport, warehouse support and general labour across Toronto, the GTA, Hamilton and Niagara.';
   const image = settings.seo_image || '';
+  const favicon = settings.favicon_url || '';
 
   const isLiveDomain = baseUrl.includes('sunwingstransport.ca');
 
@@ -45,6 +46,7 @@ export async function generateMetadata() {
     verification: settings.google_site_verification
       ? { google: settings.google_site_verification }
       : undefined,
+    icons: favicon ? { icon: favicon, shortcut: favicon, apple: favicon } : undefined,
   };
 }
 
