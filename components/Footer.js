@@ -113,7 +113,6 @@ export default function Footer({ settings, globalFooter = {}, socialLinks = {} }
 
             <div>
               <h4>{globalFooter.socialTitle || 'Company'}</h4>
-              {globalFooter.socialText ? <p>{globalFooter.socialText}</p> : null}
               <Link href="/pricing">Pricing</Link>
               <Link href="/blog">Moving Tips</Link>
               <Link href="/contact">Contact</Link>
