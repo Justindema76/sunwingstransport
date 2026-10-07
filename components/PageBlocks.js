@@ -295,17 +295,7 @@ export default function PageBlocks({ data, pageId, services = [], locations = []
           <section className={sectionClass(p)} key={key}>
             <div className="container">
               <SectionHead p={p} center={p.align !== 'left'}/>
-              {list.length ? <ServiceCards services={list} cardOverrides={Array.from({ length: 6 }, (_, index) => {
-                const n = index + 1;
-                return {
-                  image: p[`service${n}Image`] || '',
-                  imageAlt: p[`service${n}ImageAlt`] || '',
-                  title: p[`service${n}Title`] || '',
-                  text: p[`service${n}Text`] || '',
-                  linkText: p[`service${n}LinkText`] || '',
-                  url: p[`service${n}Url`] || '',
-                };
-              })}/> : <div className="empty-state">Service Posts will appear here when published.</div>}
+              {list.length ? <ServiceCards services={list}/> : <div className="empty-state">Service Posts will appear here when published.</div>}
               {p.buttonText ? <div style={{ marginTop: 22 }}><SmartLink to={p.buttonUrl || '/services'} className="more">{p.buttonText}</SmartLink></div> : null}
             </div>
           </section>
