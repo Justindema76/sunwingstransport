@@ -16,7 +16,7 @@ function SmartNavLink({ href = '#', children, className = '' }) {
 
 export default function Header({ settings, services = [], globalHeader = {} }) {
   const phone = settings?.phone || '647-526-5132';
-  const logo = globalHeader.logo || settings?.logo_url || 'https://sunwingstransport.ca/wp-content/uploads/2026/01/SUNWING-site-logo.png';
+  const logo = globalHeader.logo || settings?.logo_url || 'https://nowsajdmbpxvlvrhopjg.supabase.co/storage/v1/object/public/site-assets/sunwings/1791334339517-SUNWING-site-logo.png';
   const brand = settings?.site_name || globalHeader.brand || 'Sun Wings';
   const topbarEmphasis = settings?.topbar_emphasis || globalHeader.topbarEmphasis || 'Reliable • On-Time • Professional';
   const topbarText = settings?.topbar_text || globalHeader.topbarText || 'Moving & delivery from Toronto to Niagara';

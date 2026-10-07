@@ -22,7 +22,7 @@ const SOCIAL_NETWORKS = [
 
 export default function Footer({ settings, globalFooter = {}, socialLinks = {} }) {
   const phone = settings?.phone || '647-526-5132';
-  const logo = globalFooter.logo || 'https://sunwingstransport.ca/wp-content/uploads/2026/01/SUNWING-site-logo.png';
+  const logo = globalFooter.logo || 'https://nowsajdmbpxvlvrhopjg.supabase.co/storage/v1/object/public/site-assets/sunwings/1791334339517-SUNWING-site-logo.png';
   const brand = globalFooter.brand || 'Sunwings Transport';
   const tagline = globalFooter.tagline || 'Reliable • On-Time • Professional. Moving, delivery and commercial transport from Toronto to Niagara.';
   const ctaTitle = globalFooter.ctaTitle || 'Ready when you are.';
