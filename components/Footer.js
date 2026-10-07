@@ -84,21 +84,6 @@ export default function Footer({ settings, globalFooter = {}, socialLinks = {} }
             <div>
               {logo ? <Link href="/" aria-label={brand}><img className="foot-logo" src={logo} alt={brand}/></Link> : <h3>{brand}</h3>}
               <p>{tagline}</p>
-            </div>
-
-            <div>
-              <h4>{column1Title}</h4>
-              {links1.map(item => <SmartLink href={item.url} key={`${item.label}-${item.url}`}>{item.label}</SmartLink>)}
-            </div>
-
-            <div>
-              <h4>{column2Title}</h4>
-              {links2.map(item => <SmartLink href={item.url} key={`${item.label}-${item.url}`}>{item.label}</SmartLink>)}
-            </div>
-
-            <div>
-              <h4>{globalFooter.socialTitle || 'Company'}</h4>
-              {globalFooter.socialText ? <p>{globalFooter.socialText}</p> : null}
               {activeSocial.length ? <div className="footer-social-icons">
                 {activeSocial.map(network => (
                   <a
@@ -114,6 +99,21 @@ export default function Footer({ settings, globalFooter = {}, socialLinks = {} }
                   </a>
                 ))}
               </div> : null}
+            </div>
+
+            <div>
+              <h4>{column1Title}</h4>
+              {links1.map(item => <SmartLink href={item.url} key={`${item.label}-${item.url}`}>{item.label}</SmartLink>)}
+            </div>
+
+            <div>
+              <h4>{column2Title}</h4>
+              {links2.map(item => <SmartLink href={item.url} key={`${item.label}-${item.url}`}>{item.label}</SmartLink>)}
+            </div>
+
+            <div>
+              <h4>{globalFooter.socialTitle || 'Company'}</h4>
+              {globalFooter.socialText ? <p>{globalFooter.socialText}</p> : null}
               <Link href="/pricing">Pricing</Link>
               <Link href="/blog">Moving Tips</Link>
               <Link href="/contact">Contact</Link>
