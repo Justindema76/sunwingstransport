@@ -82,7 +82,7 @@ export default function Footer({ settings, globalFooter = {}, socialLinks = {} }
         <div className="container">
           <div className="foot">
             <div>
-              {logo ? <img className="foot-logo" src={logo} alt={brand}/> : <h3>{brand}</h3>}
+              {logo ? <Link href="/" aria-label={brand}><img className="foot-logo" src={logo} alt={brand}/></Link> : <h3>{brand}</h3>}
               <p>{tagline}</p>
             </div>
 
