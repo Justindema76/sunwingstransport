@@ -3,7 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SiteAnalytics from '@/components/SiteAnalytics';
 import QuoteForm from '@/components/QuoteForm';
-import { getBaseUrl, getGlobalBlockProps, getGlobalSection, getGlobalStyles, getServices, getSiteSettings, getSocialLinks, globalStyleVars } from '@/lib/content';
+import { getBaseUrl, getGlobalBlockProps, getGlobalSection, getGlobalStyles, getServices, getSiteSettings, getSocialLinks, globalStyleVars, googleFontsHref } from '@/lib/content';
 
 export async function generateMetadata() {
   const settings = await getSiteSettings();
@@ -61,6 +61,7 @@ export default async function RootLayout({ children }) {
   const headerProps = getGlobalBlockProps(headerSection, 'HeaderBlock');
   const footerProps = getGlobalBlockProps(footerSection, 'FooterBlock');
   const styleVars = globalStyleVars(globalStyles);
+  const fontsHref = googleFontsHref(globalStyles || {});
 
   const sameAs = Object.values(socialLinks || {})
     .filter(value => value?.url && value?.enabled !== false)
@@ -85,6 +86,7 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang="en-CA">
+      {fontsHref ? <link rel="stylesheet" href={fontsHref}/> : null}
       <body style={styleVars}>
         <SiteAnalytics ga4={settings.ga4_measurement_id || ''} metaPixel={settings.meta_pixel_id || ''}/>
         <Header settings={settings} services={services} globalHeader={headerProps} />
