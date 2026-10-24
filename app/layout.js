@@ -3,7 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SiteAnalytics from '@/components/SiteAnalytics';
 import QuoteForm from '@/components/QuoteForm';
-import { getBaseUrl, getGlobalBlockProps, getGlobalSection, getGlobalStyles, getServices, getSiteSettings, getSocialLinks, globalStyleVars, googleFontsHref } from '@/lib/content';
+import { getBaseUrl, getGlobalBlockProps, getGlobalSection, getGlobalStyles, getServices, getSiteSettings, getSocialLinks, globalStyleVars, googleFontsHref, isProductionDeploy } from '@/lib/content';
 
 export async function generateMetadata() {
   const settings = await getSiteSettings();
@@ -13,13 +13,11 @@ export async function generateMetadata() {
   const image = settings.seo_image || '';
   const favicon = settings.favicon_url || '';
 
-  const isLiveDomain = baseUrl.includes('sunwingstransport.ca');
-
   return {
     metadataBase: new URL(baseUrl),
     robots: {
-      index: isLiveDomain,
-      follow: isLiveDomain,
+      index: isProductionDeploy,
+      follow: isProductionDeploy,
     },
     title: {
       default: title,
