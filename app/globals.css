@@ -396,3 +396,18 @@ footer a:hover{color:#fff}
   .mobile-nav-wrap{display:block}
 }
 @media (max-width: 480px){.logo img{width:auto;max-width:none;height:52px;max-height:52px}}
+
+/* Per-service pricing (lib/servicePricing.js) */
+.pricing-nav{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-top:36px;scroll-margin-top:110px}
+.pricing-nav .kicker{margin:0}
+.service-pricing{scroll-margin-top:90px}
+.service-price-grid{align-items:stretch}
+.price-card .amt .amt-prefix{font-size:16px;font-weight:700;color:var(--muted)}
+.price-card .amt .amt-unit{font-size:18px;font-weight:700;color:var(--muted);margin-left:2px}
+.service-price-details{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:28px;background:linear-gradient(135deg,var(--navy),var(--navy-2));border-radius:22px;padding:22px}
+.service-price-details div{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;color:#fff}
+.service-price-details span{font-size:13px;color:#a9c2e2;font-weight:600}
+.service-price-details b{display:block;font-size:22px;margin-top:4px;font-family:var(--font-head)}
+.service-price-details small{color:#a9c2e2}
+.service-price-areas{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:24px}
+.service-price-areas .kicker{margin:0}

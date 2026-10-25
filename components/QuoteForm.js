@@ -52,7 +52,8 @@ export default function QuoteForm({
 
     function openQuoteDrawer(event) {
       const nextPreset = String(event?.detail?.preset || '').trim();
-      if (nextPreset) setForm(current => ({ ...current, service: nextPreset }));
+      const nextPlan = String(event?.detail?.plan || '').trim();
+      if (nextPreset) setForm(current => ({ ...current, service: nextPreset, moveSize: nextPlan || current.moveSize }));
       setState(current => ({ ...current, message: '', fieldErrors: {} }));
       setOpen(true);
     }
@@ -100,7 +101,7 @@ export default function QuoteForm({
       const response = await fetch('/api/quote', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ...form, quickRequest: compact }),
+        body: JSON.stringify({ ...form, quickRequest: compact, snowRequest: snowJob && !compact }),
       });
       const result = await response.json();
 
@@ -131,6 +132,8 @@ export default function QuoteForm({
   }
 
   const errorFor = name => state.fieldErrors?.[name] || '';
+  // Snow removal is done at one property, so it asks for a service address instead of pickup/drop-off.
+  const snowJob = /snow/i.test(form.service);
   const title = compact
     ? (preset ? `Quick Quote — ${preset}` : 'Quick Quote')
     : (preset ? `Quote for ${preset}` : 'Request a Quote');
@@ -171,7 +174,7 @@ export default function QuoteForm({
         <h4>Job details</h4>
         <div className="quote-grid-3">
           <label className={errorFor('preferredDate') ? 'field-has-error' : ''}>
-            Move / Service Date *
+            {snowJob ? 'Start Date *' : 'Move / Service Date *'}
             <input required type="date" name="preferredDate" value={form.preferredDate} onChange={update} aria-invalid={Boolean(errorFor('preferredDate'))}/>
             {errorFor('preferredDate') ? <small className="field-error">{errorFor('preferredDate')}</small> : null}
           </label>
@@ -192,7 +195,17 @@ export default function QuoteForm({
           </label>
         </div>
 
-        {!compact ? <label>Move / Job Size
+        {!compact && snowJob ? <label>Plan
+          <select name="moveSize" value={form.moveSize} onChange={update}>
+            <option value="">Select a plan</option>
+            <option>Seasonal plan</option>
+            <option>One-time clear</option>
+            <option>Large &amp; corner lots</option>
+            <option>Not sure yet</option>
+          </select>
+        </label> : null}
+
+        {!compact && !snowJob ? <label>Move / Job Size
           <select name="moveSize" value={form.moveSize} onChange={update}>
             <option value="">Select size</option>
             <option>Single item</option>
@@ -205,7 +218,32 @@ export default function QuoteForm({
         </label> : null}
       </div>
 
-      {!compact ? <>
+      {!compact && snowJob ? <div className="quote-section">
+        <h4>Property</h4>
+        <label className={errorFor('pickupAddress') ? 'field-has-error' : ''}>
+          Service Address *
+          <input required name="pickupAddress" autoComplete="street-address" value={form.pickupAddress} onChange={update} placeholder="Address to be cleared" aria-invalid={Boolean(errorFor('pickupAddress'))}/>
+          {errorFor('pickupAddress') ? <small className="field-error">{errorFor('pickupAddress')}</small> : null}
+        </label>
+        <div className="row">
+          <label>City
+            <input name="pickupCity" value={form.pickupCity} onChange={update} placeholder="City"/>
+          </label>
+          <label className={errorFor('pickupPostalCode') ? 'field-has-error' : ''}>
+            Postal Code *
+            <input required name="pickupPostalCode" autoComplete="postal-code" value={form.pickupPostalCode} onChange={update} placeholder="Postal code" aria-invalid={Boolean(errorFor('pickupPostalCode'))}/>
+            {errorFor('pickupPostalCode') ? <small className="field-error">{errorFor('pickupPostalCode')}</small> : null}
+          </label>
+        </div>
+        <label>Property Details
+          <textarea rows="3" name="itemList" value={form.itemList} onChange={update} placeholder="Driveway size (single, double, long), corner lot, walkways, front steps…"/>
+        </label>
+        <label>Additional Details
+          <textarea rows="3" name="message" value={form.message} onChange={update} placeholder="Parking, gates, access notes, anything we should know…"/>
+        </label>
+      </div> : null}
+
+      {!compact && !snowJob ? <>
         <div className="quote-section">
           <h4>Pickup</h4>
           <label className={errorFor('pickupAddress') ? 'field-has-error' : ''}>
@@ -299,7 +337,7 @@ export default function QuoteForm({
             <div>
               <span className="kicker">Free Quote</span>
               <h2 id={`${drawerId}-title`}>{title}</h2>
-              <p>Tell us what you need moved and where it is going.</p>
+              <p>{snowJob ? 'Tell us about the property and the plan you want.' : 'Tell us what you need moved and where it is going.'}</p>
             </div>
             <button className="quote-drawer-close" type="button" onClick={closeDrawer} aria-label="Close quote form">
               <X size={21}/>

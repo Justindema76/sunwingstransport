@@ -33,7 +33,11 @@ function validate(body) {
   if (!body.preferredDate) fieldErrors.preferredDate = 'Choose a date.';
   else if (!/^\d{4}-\d{2}-\d{2}$/.test(String(body.preferredDate))) fieldErrors.preferredDate = 'Choose a valid date.';
   const quickRequest = body.quickRequest === true;
-  if (!quickRequest) {
+  const snowRequest = body.snowRequest === true;
+  if (snowRequest) {
+    if (!clean(body.pickupAddress, 220)) fieldErrors.pickupAddress = 'Enter the service address.';
+    if (!clean(body.pickupPostalCode, 24)) fieldErrors.pickupPostalCode = 'Enter the postal code.';
+  } else if (!quickRequest) {
     if (!clean(body.pickupAddress, 220)) fieldErrors.pickupAddress = 'Enter the pickup address.';
     if (!clean(body.pickupPostalCode, 24)) fieldErrors.pickupPostalCode = 'Enter the pickup postal code.';
     if (!clean(body.dropoffAddress, 220)) fieldErrors.dropoffAddress = 'Enter the drop-off address.';
@@ -100,7 +104,8 @@ export async function POST(request) {
     dropoffStairs: clean(body.dropoffStairs, 10),
     itemList: clean(body.itemList, 6000),
     message: clean(body.message, 3000),
-    quickRequest: body.quickRequest === true,
+    // Snow requests have a single service address, so the database's pickup/drop-off checks are skipped.
+    quickRequest: body.quickRequest === true || body.snowRequest === true,
     contactRequest: body.contactRequest === true,
   };
 

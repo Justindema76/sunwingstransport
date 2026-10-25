@@ -4,10 +4,11 @@ export default function QuoteDrawerTrigger({
   children = 'Request Quote',
   className = '',
   preset = '',
+  plan = '',
 }) {
   function openDrawer() {
     window.dispatchEvent(new CustomEvent('sunwings:open-quote', {
-      detail: { preset },
+      detail: { preset, plan },
     }));
   }
 

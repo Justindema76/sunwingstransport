@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import Link from 'next/link';
 import { Phone } from 'lucide-react';
 import BlogArchive from './BlogArchive';
@@ -265,11 +266,19 @@ function RichText({ p }) {
   );
 }
 
-export default function PageBlocks({ data, pageId, services = [], locations = [], settings = {}, posts }) {
+// insertAfter: { [blockType]: node } renders extra content after the first block of that type.
+export default function PageBlocks({ data, pageId, services = [], locations = [], settings = {}, posts, insertAfter = {} }) {
   const blocks = Array.isArray(data?.content) ? data.content : [];
   const firstHeroIndex = blocks.findIndex(b => b?.type === 'SunwingsHeroBlock' || b?.type === 'HeroBlock');
+  const insertIndexes = Object.fromEntries(Object.keys(insertAfter).map(type => [blocks.findIndex(b => b?.type === type), insertAfter[type]]));
 
   return blocks.map((block, index) => {
+    const rendered = renderBlock(block, index);
+    const extra = insertIndexes[index];
+    return extra ? <Fragment key={`with-insert-${index}`}>{rendered}{extra}</Fragment> : rendered;
+  });
+
+  function renderBlock(block, index) {
     const p = block?.props || {};
     const key = p.id || `${block?.type || 'block'}-${index}`;
     const isHomeHero = pageId === 'home' && index === firstHeroIndex;
@@ -427,5 +436,5 @@ export default function PageBlocks({ data, pageId, services = [], locations = []
         }
         return null;
     }
-  });
+  }
 }

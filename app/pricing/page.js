@@ -1,21 +1,54 @@
 import Link from 'next/link';
 import PageHero from '@/components/PageHero';
 import PageBlocks from '@/components/PageBlocks';
-import { getPageBuilderData, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
+import ServicePricing from '@/components/ServicePricing';
+import { getPageBuilderData, getServices, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
+import { servicePricing } from '@/lib/servicePricing';
+
+// Jump links so each service's prices can be linked to and promoted on their own.
+function PricingNav({ services }) {
+  return (
+    <nav className="pricing-nav container" id="pricing-moving" aria-label="Pricing by service">
+      <span className="kicker">Pricing by service</span>
+      <div className="chips">
+        <a className="chip" href="#pricing-moving">Moving &amp; Delivery</a>
+        {services.map(item => <a className="chip" href={`#${item.slug}`} key={item.slug}>{item.label}</a>)}
+      </div>
+    </nav>
+  );
+}
+
+function ServicePricingSections({ services }) {
+  return services.map((item, index) => (
+    <ServicePricing key={item.slug} slug={item.slug} pricing={item} serviceTitle={item.title} soft={index % 2 === 0}/>
+  ));
+}
+
+async function pricedServices() {
+  const services = await getServices();
+  return Object.entries(servicePricing).map(([slug, pricing]) => ({
+    ...pricing,
+    slug,
+    title: services.find(service => service.slug === slug)?.title || pricing.label,
+  }));
+}
 
 export async function generateMetadata() {
   const pageData = await getPageBuilderData('pricing');
   return pageMetadataFromBuilder(pageData, {
     title:'Pricing',
-    description:'Sunwings Transport pricing and quote information for moving, delivery and commercial transport.',
+    description:'Sunwings Transport pricing for moving, delivery, commercial transport and residential snow removal from $175/month.',
     canonical:'/pricing',
   });
 }
 
 export default async function PricingPage() {
-  const [settings, pageData] = await Promise.all([getSiteSettings(), getPageBuilderData('pricing')]);
+  const [settings, pageData, priced] = await Promise.all([getSiteSettings(), getPageBuilderData('pricing'), pricedServices()]);
   if (pageData) {
-    return <PageBlocks data={pageData} pageId="pricing" settings={settings}/>;
+    return <PageBlocks data={pageData} pageId="pricing" settings={settings} insertAfter={{
+      SunwingsHeroBlock: <PricingNav services={priced}/>,
+      SunwingsPricingCardsBlock: <ServicePricingSections services={priced}/>,
+    }}/>;
   }
   return (
     <>
@@ -26,6 +59,8 @@ export default async function PricingPage() {
         image="https://sunwingstransport.ca/wp-content/uploads/2026/02/van-loading-file-cabinet.jpg"
         phone={settings.phone}
       />
+
+      <PricingNav services={priced}/>
 
       <section className="section">
         <div className="container">
@@ -57,6 +92,8 @@ export default async function PricingPage() {
           </div>
         </div>
       </section>
+
+      <ServicePricingSections services={priced}/>
 
       <section className="section section-soft">
         <div className="container split">

@@ -4,7 +4,9 @@ import PageHero from '@/components/PageHero';
 import QuoteForm from '@/components/QuoteForm';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import ServiceIcon from '@/components/ServiceIcon';
+import ServicePricing from '@/components/ServicePricing';
 import { getBaseUrl, getLocations, getServiceBySlug, getServices, getSiteSettings } from '@/lib/content';
+import { getServicePricing } from '@/lib/servicePricing';
 import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
@@ -69,6 +71,8 @@ export default async function ServicePage({ params }) {
         image={service.banner_image}
         phone={settings.phone}
       />
+
+      <ServicePricing slug={service.slug} pricing={getServicePricing(service.slug)} serviceTitle={service.title} showAllLink/>
 
       <section className="section">
         <div className="container with-side">
