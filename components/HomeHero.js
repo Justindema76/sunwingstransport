@@ -20,7 +20,7 @@ export default function HomeHero({ settings }) {
           </p>
           <div className="hero-ctas">
             <Link className="btn btn-accent" href="/contact">Get a Free Quote →</Link>
-            <a className="btn btn-ghost" href={telHref(phone)}><Phone size={18}/> Call {phone}</a>
+            <a className="btn btn-ghost" href={telHref(phone)}><Phone size={18}/> Call Now</a>
           </div>
         </div>
       </div>

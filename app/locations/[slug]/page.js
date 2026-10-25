@@ -120,7 +120,7 @@ export default async function LocationPage({ params }) {
             <QuoteForm services={services} compact replyHours={settings.quote_reply_hours}/>
             <div className="side-card">
               <h3>Call the crew</h3>
-              <a className="btn btn-navy" style={{width:'100%'}} href={`tel:+1${String(settings.phone || '18005555555').replace(/\D/g,'')}`}>{settings.phone || '1-800-555-5555'}</a>
+              <a className="btn btn-navy" style={{width:'100%'}} href={`tel:+1${String(settings.phone || '18005555555').replace(/\D/g,'')}`}>Call Now</a>
             </div>
           </aside>
         </div>

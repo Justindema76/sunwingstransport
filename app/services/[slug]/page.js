@@ -6,12 +6,12 @@ import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import ServiceIcon from '@/components/ServiceIcon';
 import ServicePricing from '@/components/ServicePricing';
 import { getBaseUrl, getLocations, getServiceBySlug, getServices, getSiteSettings } from '@/lib/content';
-import { getServicePricing } from '@/lib/servicePricing';
+import { getServicePricing, withServiceCopy } from '@/lib/servicePricing';
 import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const service = await getServiceBySlug(slug);
+  const service = withServiceCopy(await getServiceBySlug(slug));
   if (!service) return {};
 
   const url = `${getBaseUrl()}/services/${service.slug}`;
@@ -35,16 +35,20 @@ export async function generateMetadata({ params }) {
 export default async function ServicePage({ params }) {
   const { slug } = await params;
   const [service, locations, services, settings] = await Promise.all([
-    getServiceBySlug(slug),
+    getServiceBySlug(slug).then(withServiceCopy),
     getLocations(),
     getServices(),
     getSiteSettings(),
   ]);
   if (!service) notFound();
 
-  const relatedLocations = locations.filter(location =>
-    !Array.isArray(location.service_slugs) || !location.service_slugs.length || location.service_slugs.includes(service.slug)
-  );
+  const pricing = getServicePricing(service.slug);
+  const regionSlugs = (pricing?.regions || []).flatMap(region => region.places.map(place => place.href.replace('/locations/', '')));
+  const relatedLocations = regionSlugs.length
+    ? regionSlugs.map(slug => locations.find(location => location.slug === slug)).filter(Boolean)
+    : locations.filter(location =>
+      !Array.isArray(location.service_slugs) || !location.service_slugs.length || location.service_slugs.includes(service.slug)
+    );
 
   const faqs = Array.isArray(service.faq) ? service.faq.filter(item => item?.question && item?.answer) : [];
 
@@ -72,7 +76,7 @@ export default async function ServicePage({ params }) {
         phone={settings.phone}
       />
 
-      <ServicePricing slug={service.slug} pricing={getServicePricing(service.slug)} serviceTitle={service.title} showAllLink/>
+      <ServicePricing slug={service.slug} pricing={pricing} serviceTitle={service.title} showAllLink/>
 
       <section className="section">
         <div className="container with-side">
@@ -102,7 +106,7 @@ export default async function ServicePage({ params }) {
                 {relatedLocations.map(location => (
                   <Link className="chip" href={`/locations/${location.slug}`} key={location.slug}>{location.title}</Link>
                 ))}
-                <Link className="chip" href="/locations">All areas →</Link>
+                {regionSlugs.length ? null : <Link className="chip" href="/locations">All areas →</Link>}
               </div>
             ) : <p>No published service areas yet.</p>}
 
@@ -117,6 +121,15 @@ export default async function ServicePage({ params }) {
                 ))}
               </div>
             </> : null}
+
+            {pricing?.otherAreas?.length ? (
+              <div className="service-other-areas">
+                <span>Also serving:</span>
+                {pricing.otherAreas.map(area => area.href
+                  ? <Link href={area.href} key={area.label}>{area.label}</Link>
+                  : <span key={area.label}>{area.label}</span>)}
+              </div>
+            ) : null}
           </article>
 
           <aside className="side">

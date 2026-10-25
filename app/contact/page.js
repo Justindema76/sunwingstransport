@@ -24,7 +24,7 @@ export default async function ContactPage() {
         <aside className="side">
           <div className="side-card">
             <h3>Call or text</h3>
-            <a className="btn btn-accent" style={{width:'100%'}} href={`tel:+1${phoneDigits}`}>{settings.phone || '1-800-555-5555'}</a>
+            <a className="btn btn-accent" style={{width:'100%'}} href={`tel:+1${phoneDigits}`}>Call Now</a>
           </div>
           <div className="side-card"><h3>Service area</h3><p className="muted">Toronto, the GTA, Halton, Hamilton &amp; Niagara</p><a className="more" href="/locations">See all areas →</a></div>
         </aside>

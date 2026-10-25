@@ -73,7 +73,7 @@ export default function Footer({ settings, globalFooter = {}, socialLinks = {} }
                 ? <QuoteDrawerTrigger className="btn btn-navy">{ctaPrimaryText}</QuoteDrawerTrigger>
                 : <SmartLink href={ctaPrimaryUrl}><span className="btn btn-navy">{ctaPrimaryText}</span></SmartLink>
             ) : null}
-            {ctaSecondaryText ? <a className="btn btn-line" href={telHref(phone)}>{ctaSecondaryText} {phone}</a> : null}
+            {ctaSecondaryText ? <a className="btn btn-line" href={telHref(phone)}>Call Now</a> : null}
           </div>
         </div>
       </section>
@@ -116,7 +116,7 @@ export default function Footer({ settings, globalFooter = {}, socialLinks = {} }
               <Link href="/pricing">Pricing</Link>
               <Link href="/blog">Moving Tips</Link>
               <Link href="/contact">Contact</Link>
-              <a href={telHref(phone)}>{phone}</a>
+              <a href={telHref(phone)}>Call Now</a>
             </div>
           </div>
 
@@ -131,7 +131,7 @@ export default function Footer({ settings, globalFooter = {}, socialLinks = {} }
       </footer>
 
       <div className="mbar">
-        <a href={telHref(phone)}>Call</a>
+        <a href={telHref(phone)}>Call Now</a>
         <QuoteDrawerTrigger className="mbar-quote">Request Quote</QuoteDrawerTrigger>
       </div>
     </>

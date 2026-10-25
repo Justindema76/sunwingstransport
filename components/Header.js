@@ -48,7 +48,7 @@ export default function Header({ settings, services = [], globalHeader = {} }) {
     <div className="header-system" style={vars}>
       {showTopbar ? <div className="topbar"><div className="container topbar-centered">
         <span><b>{topbarEmphasis}</b>{topbarText ? <> — {topbarText}</> : null}</span>
-        <a className="mobile-topbar-phone" href={telHref(phone)}><Phone size={15}/> {phone}</a>
+        <a className="mobile-topbar-phone" href={telHref(phone)}><Phone size={15}/> Call Now</a>
       </div></div> : null}
       <header className="site">
         <div className="container nav">

@@ -14,6 +14,22 @@ export default function ServicePricing({ slug, pricing, serviceTitle, soft = fal
           {pricing.text ? <p>{pricing.text}</p> : null}
         </div>
 
+        {pricing.regions?.length ? (
+          <div className="service-regions">
+            <span className="kicker">Now booking in</span>
+            <div className="service-region-grid">
+              {pricing.regions.map(region => (
+                <div className="service-region" key={region.label}>
+                  <h3>{region.label}</h3>
+                  <div className="chips">{region.places.map(place => (
+                    <Link className="chip" href={place.href} key={place.label}>{place.label}</Link>
+                  ))}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
         <div className={`${pricing.cards.length === 4 ? 'grid-4' : 'grid-3'} service-price-grid`}>
           {pricing.cards.map(card => (
             <div className={`price-card ${card.featured ? 'pop' : ''}`} key={card.title}>
@@ -46,13 +62,6 @@ export default function ServicePricing({ slug, pricing, serviceTitle, soft = fal
                 {item.note ? <small>{item.note}</small> : null}
               </div>
             ))}
-          </div>
-        ) : null}
-
-        {pricing.areas?.length ? (
-          <div className="service-price-areas">
-            <span className="kicker">Now booking in</span>
-            <div className="chips">{pricing.areas.map(area => <span className="chip" key={area}>{area}</span>)}</div>
           </div>
         ) : null}
 

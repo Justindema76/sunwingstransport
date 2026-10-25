@@ -27,7 +27,7 @@ export default function PageHero({ crumbs = [], title, description, image, phone
         {ctas ? (
           <div className="hero-ctas">
             <QuoteDrawerTrigger className="btn btn-accent">Request a Quote →</QuoteDrawerTrigger>
-            <a className="btn btn-ghost" href={telHref(phone)}><Phone size={18}/> {phone}</a>
+            <a className="btn btn-ghost" href={telHref(phone)}><Phone size={18}/> Call Now</a>
           </div>
         ) : null}
       </div>

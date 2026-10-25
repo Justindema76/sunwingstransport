@@ -81,7 +81,7 @@ export default function MobileNav({ links = [], services = [], phone = '', butto
         </nav>
 
         <div className="mobile-nav-actions">
-          <a className="mobile-nav-phone" href={telHref(phone)} onClick={close}><Phone size={17}/> {phone}</a>
+          <a className="mobile-nav-phone" href={telHref(phone)} onClick={close}><Phone size={17}/> Call Now</a>
           {buttonText ? <SmartLink className="btn btn-accent" href={buttonUrl} onClick={close}>{buttonText}</SmartLink> : null}
         </div>
       </div>
