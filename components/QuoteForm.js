@@ -24,6 +24,7 @@ const initialState = {
   dropoffStairs: '',
   itemList: '',
   message: '',
+  referralSource: '',
   website: '',
 };
 
@@ -101,7 +102,7 @@ export default function QuoteForm({
       const response = await fetch('/api/quote', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ...form, quickRequest: compact, snowRequest: snowJob && !compact }),
+        body: JSON.stringify({ ...form, message: [form.message, form.referralSource ? `How did you hear about us? ${form.referralSource}` : ''].filter(Boolean).join('\n\n'), quickRequest: compact, snowRequest: snowJob && !compact }),
       });
       const result = await response.json();
 
@@ -300,6 +301,21 @@ export default function QuoteForm({
           </label>
         </div>
       </> : null}
+
+      <div className="quote-section">
+        <label>How did you hear about us?
+          <select name="referralSource" value={form.referralSource} onChange={update}>
+            <option value="">Select an option (optional)</option>
+            <option value="Google Search">Google Search</option>
+            <option value="Google Maps">Google Maps</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Friend or family">Friend or family</option>
+            <option value="Returning customer">Returning customer</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+      </div>
 
       <button className="btn btn-accent quote-drawer-submit" disabled={state.sending} type="submit">
         {state.sending ? 'Sending…' : 'Request a Quote →'}
