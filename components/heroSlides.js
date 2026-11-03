@@ -30,6 +30,8 @@ export function heroBackground(image, fallback, position = '') {
     backgroundImage: `linear-gradient(90deg,rgba(11,37,69,.88) 0%,rgba(11,37,69,.7) 38%,rgba(11,37,69,.2) 75%,rgba(11,37,69,.05) 100%),url("${safeHeroImage(image, fallback)}")`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
+    // Phones show the photo on its own (no dark wash) above the text; see globals.css.
+    '--hero-photo': `url("${safeHeroImage(image, fallback)}")`,
     ...(position ? { '--hero-mobile-position': position } : {}),
   };
 }
