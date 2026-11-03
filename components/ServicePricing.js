@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import QuoteDrawerTrigger from './QuoteDrawerTrigger';
 
-export default function ServicePricing({ slug, pricing, serviceTitle, soft = false, showAllLink = false }) {
+// `anchor` is the section's id for links (defaults to the service slug, e.g. /pricing#snow-removal).
+export default function ServicePricing({ slug, anchor, pricing, serviceTitle, soft = false, showAllLink = false }) {
   if (!pricing) return null;
   const preset = serviceTitle || pricing.label;
 
   return (
-    <section className={`section service-pricing ${soft ? 'section-soft' : ''}`} id={slug}>
+    <section className={`section service-pricing ${soft ? 'section-soft' : ''}`} id={anchor || slug}>
       <div className="container">
         <div className="section-head">
           {pricing.eyebrow ? <span className="kicker">{pricing.eyebrow}</span> : null}

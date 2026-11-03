@@ -1,38 +1,20 @@
 import Link from 'next/link';
-import { ArrowRight, BadgeDollarSign, CalendarDays, Clock, MapPin, ShieldCheck, Star, Truck } from 'lucide-react';
+import { ArrowRight, BadgeDollarSign, CalendarDays, MapPin, Star } from 'lucide-react';
+import { CONTENT_DEFAULTS } from '@/lib/contentDefaults';
+import { getSiteContent } from '@/lib/siteContent';
 
-const ICONS = { star: Star, dollar: BadgeDollarSign, calendar: CalendarDays, pin: MapPin, shield: ShieldCheck, truck: Truck, clock: Clock };
+const ICONS = [Star, BadgeDollarSign, CalendarDays, MapPin];
 
-// Google's reviews link for Sunwings Transport (opens the business's reviews panel).
-// The place ID is from its Google Maps listing.
-const GOOGLE_REVIEWS_URL = 'https://search.google.com/local/reviews?placeid=ChIJXTBVHE3zTkcRiUEmU5P3CsI';
-// Sunwings Transport's Google Maps listing (pin, hours, directions).
-const GOOGLE_MAPS_URL = 'https://www.google.com/maps?cid=13982260205252395401';
-
-const DEFAULT_ITEMS = [
-  { icon: 'star', title: 'Google reviews', text: 'Trusted by local customers', href: GOOGLE_REVIEWS_URL },
-  { icon: 'dollar', title: 'Price-match guarantee', text: 'We match any lower written quote', href: '/pricing#price-match' },
-  { icon: 'calendar', title: 'Flexible scheduling', text: 'Evenings & weekends' },
-  { icon: 'pin', title: 'Toronto to Niagara', text: 'GTA, Hamilton & beyond', href: GOOGLE_MAPS_URL },
-];
-
-export default function TrustStrip(props = {}) {
-  const items = DEFAULT_ITEMS.map((fallback, i) => {
-    const n = i + 1;
-    return {
-      icon: props[`item${n}Icon`] || fallback.icon,
-      title: props[`item${n}Title`] ?? fallback.title,
-      // The admin's old price-match line is replaced with the actual guarantee.
-      text: props[`item${n}Text`] === 'Fair, upfront quotes' ? fallback.text : (props[`item${n}Text`] ?? fallback.text),
-      href: props[`item${n}Href`] || fallback.href || '',
-    };
-  }).filter(item => item.title);
+// The 4 boxes under the banner, edited in Admin › Promotions & Banners. A box with a
+// link shows an arrow and opens it (outside links open in a new tab).
+export default async function TrustStrip({ items }) {
+  const list = (items || (await getSiteContent()).trustLinks || CONTENT_DEFAULTS.trust_links).filter(item => item?.title);
 
   return (
     <div className="container trust">
       <div className="trust-grid">
-        {items.map(({ icon, title, text, href }, i) => {
-          const Icon = ICONS[icon] || Star;
+        {list.map(({ title, text, href }, i) => {
+          const Icon = ICONS[i] || Star;
           const body = <>
             <div className="t-ico"><Icon size={22}/></div>
             <div><b>{title}</b><span>{text}</span></div>

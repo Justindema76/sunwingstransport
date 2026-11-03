@@ -8,7 +8,7 @@ import ServiceCards from '@/components/ServiceCards';
 import TrustStrip from '@/components/TrustStrip';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import { getBaseUrl, getLocationBySlug, getLocations, getServices, getSiteSettings } from '@/lib/content';
-import { pricedServicesForLocation } from '@/lib/servicePricing';
+import { getSiteContent, pricedServicesForLocation } from '@/lib/siteContent';
 import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
@@ -34,6 +34,7 @@ export default async function LocationPage({ params }) {
     getLocations(),
     getSiteSettings(),
   ]);
+  const content = await getSiteContent();
   if (!location) notFound();
 
   const relatedServices = services.filter(service =>
@@ -75,7 +76,7 @@ export default async function LocationPage({ params }) {
 
       <TrustStrip/>
 
-      {pricedServicesForLocation(location.slug).map(item => {
+      {pricedServicesForLocation(content, location.slug).map(item => {
         const service = services.find(entry => entry.slug === item.slug);
         const plan = item.cards.find(card => card.featured) || item.cards[0];
         return (

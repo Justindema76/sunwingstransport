@@ -1,6 +1,6 @@
 import PageBlocks from '@/components/PageBlocks';
 import PageHero from '@/components/PageHero';
-import { PAGE_HERO } from '@/components/heroSlides';
+import { getSiteContent } from '@/lib/siteContent';
 import ContactForm from '@/components/ContactForm';
 import { getPageBuilderData, getServices, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
 
@@ -13,8 +13,8 @@ export async function generateMetadata() {
   });
 }
 
-function ContactHero({ settings }) {
-  const copy = PAGE_HERO.contact;
+async function ContactHero({ settings }) {
+  const copy = (await getSiteContent()).pageBanners.contact;
   return (
     <PageHero
       crumbs={[{ label: 'Home', href: '/' }, { label: 'Contact' }]}
@@ -22,7 +22,8 @@ function ContactHero({ settings }) {
       title={copy.heading}
       accent={copy.accent}
       description={copy.text}
-      fallbackImage={copy.image}
+      image={copy.image}
+      imagePosition={copy.mobilePosition}
       phone={settings.phone}
     />
   );

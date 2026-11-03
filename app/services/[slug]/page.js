@@ -7,12 +7,13 @@ import ServiceIcon from '@/components/ServiceIcon';
 import ServicePricing from '@/components/ServicePricing';
 import { priceBadge } from '@/components/heroSlides';
 import { getBaseUrl, getLocations, getServiceBySlug, getServices, getSiteSettings } from '@/lib/content';
-import { getServicePricing, withServiceCopy } from '@/lib/servicePricing';
+import { getSiteContent, servicePricingFor, withServiceCopy } from '@/lib/siteContent';
 import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const service = withServiceCopy(await getServiceBySlug(slug));
+  const [rawService, content] = await Promise.all([getServiceBySlug(slug), getSiteContent()]);
+  const service = withServiceCopy(content, rawService);
   if (!service) return {};
 
   const url = `${getBaseUrl()}/services/${service.slug}`;
@@ -35,15 +36,18 @@ export async function generateMetadata({ params }) {
 
 export default async function ServicePage({ params }) {
   const { slug } = await params;
-  const [service, locations, services, settings] = await Promise.all([
-    getServiceBySlug(slug).then(withServiceCopy),
+  const [[rawService, content], locations, services, settings] = await Promise.all([
+    Promise.all([getServiceBySlug(slug), getSiteContent()]),
     getLocations(),
     getServices(),
     getSiteSettings(),
   ]);
+  const service = withServiceCopy(content, rawService);
   if (!service) notFound();
 
-  const pricing = getServicePricing(service.slug);
+  const pricing = servicePricingFor(content, service.slug);
+  const plan = pricing?.cards?.find(card => card.featured);
+  const planPrice = plan ? String(plan.amount || '').replace(/[^0-9.]/g, '') : '';
   const regionSlugs = (pricing?.regions || []).flatMap(region => region.places.filter(place => place.href).map(place => place.href.replace('/locations/', '')));
   const relatedLocations = regionSlugs.length
     ? regionSlugs.map(slug => locations.find(location => location.slug === slug)).filter(Boolean)
@@ -68,8 +72,14 @@ export default async function ServicePage({ params }) {
     areaServed: pricing?.regions?.length
       ? pricing.regions.flatMap(region => region.places.map(place => ({ '@type': 'City', name: place.label })))
       : undefined,
-    offers: pricing?.schemaOffer
-      ? { '@type': 'Offer', priceCurrency: 'CAD', ...pricing.schemaOffer }
+    offers: planPrice
+      ? {
+        '@type': 'Offer',
+        name: plan.title,
+        price: planPrice,
+        priceCurrency: 'CAD',
+        ...(plan.unit ? { priceSpecification: { '@type': 'UnitPriceSpecification', price: planPrice, priceCurrency: 'CAD', unitText: String(plan.unit).replace('/', '').toUpperCase() } } : {}),
+      }
       : undefined,
   };
 
@@ -81,11 +91,11 @@ export default async function ServicePage({ params }) {
         description={service.intro || service.hero_description}
         image={service.banner_image}
         phone={settings.phone}
-        badge={priceBadge(service.slug)}
+        badge={priceBadge(pricing)}
         preset={service.title}
       />
 
-      <ServicePricing slug={service.slug} pricing={pricing} serviceTitle={service.title} showAllLink/>
+      <ServicePricing slug={service.slug} anchor="plans" pricing={pricing} serviceTitle={service.title} showAllLink/>
 
       <section className="section">
         <div className="container with-side">

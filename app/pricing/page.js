@@ -4,7 +4,7 @@ import PageBlocks from '@/components/PageBlocks';
 import PriceMatch from '@/components/PriceMatch';
 import ServicePricing from '@/components/ServicePricing';
 import { getPageBuilderData, getServices, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
-import { servicePricing } from '@/lib/servicePricing';
+import { getSiteContent } from '@/lib/siteContent';
 
 // Jump links so each service's prices can be linked to and promoted on their own.
 function PricingNav({ services }) {
@@ -26,8 +26,8 @@ function ServicePricingSections({ services }) {
 }
 
 async function pricedServices() {
-  const services = await getServices();
-  return Object.entries(servicePricing).map(([slug, pricing]) => ({
+  const [services, content] = await Promise.all([getServices(), getSiteContent()]);
+  return Object.entries(content.pricing).map(([slug, pricing]) => ({
     ...pricing,
     slug,
     title: services.find(service => service.slug === slug)?.title || pricing.label,

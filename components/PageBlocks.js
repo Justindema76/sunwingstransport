@@ -12,7 +12,8 @@ import ServiceCards from './ServiceCards';
 import TrustStrip from './TrustStrip';
 import HeroSlider from './HeroSlider';
 import PageHero from './PageHero';
-import { PAGE_HERO, PAGES_WITH_SERVICE_SLIDES, pricingPanel, serviceSlides } from './heroSlides';
+import { pricingPanel, serviceSlides } from './heroSlides';
+import { getSiteContent } from '@/lib/siteContent';
 
 function telHref(phone = '') {
   const digits = String(phone).replace(/\D/g, '');
@@ -53,12 +54,13 @@ function sectionClass(p, fallback = '') {
   return `section ${bg === 'soft' || bg === 'light' ? 'section-soft' : ''}`;
 }
 
-function Hero({ p, home, settings, services = [], pageId = '' }) {
+function Hero({ p, home, settings, services = [], pageId = '', content }) {
   if (home) {
-    const slides = serviceSlides(services, { firstImage: p.image, firstHeading: 'h1' });
+    const slides = serviceSlides(services, content, { firstImage: p.image, firstHeading: 'h1' });
     if (slides.length) return <HeroSlider slides={slides}/>;
   }
-  const copy = PAGE_HERO[pageId] || {};
+  // Banner text and photo set in Admin › Promotions & Banners › Page banners.
+  const copy = content.pageBanners[pageId] || {};
   const crumb = p.breadcrumbLabel || p.heading;
   return (
     <PageHero
@@ -67,12 +69,12 @@ function Hero({ p, home, settings, services = [], pageId = '' }) {
       title={copy.heading || p.heading}
       accent={copy.heading ? copy.accent : p.accent}
       description={copy.text || p.text}
-      image={copy.replaceImage ? copy.image : p.image}
-      fallbackImage={copy.image}
-      panel={copy.panel ? pricingPanel() : undefined}
+      image={copy.image || p.image}
+      imagePosition={copy.mobilePosition}
+      panel={pageId === 'pricing' ? pricingPanel(content) : undefined}
       phone={settings?.phone}
       ctas={pageId !== 'privacy'}
-      extraSlides={PAGES_WITH_SERVICE_SLIDES.has(pageId) ? serviceSlides(services) : []}
+      extraSlides={copy.showServiceSlides ? serviceSlides(services, content) : []}
     />
   );
 }
@@ -239,7 +241,8 @@ function RichText({ p }) {
 }
 
 // insertAfter: { [blockType]: node } renders extra content after the first block of that type.
-export default function PageBlocks({ data, pageId, services = [], locations = [], settings = {}, posts, insertAfter = {} }) {
+export default async function PageBlocks({ data, pageId, services = [], locations = [], settings = {}, posts, insertAfter = {} }) {
+  const content = await getSiteContent();
   const blocks = Array.isArray(data?.content) ? data.content : [];
   const firstHeroIndex = blocks.findIndex(b => b?.type === 'SunwingsHeroBlock' || b?.type === 'HeroBlock');
   const insertIndexes = Object.fromEntries(Object.keys(insertAfter).map(type => [blocks.findIndex(b => b?.type === type), insertAfter[type]]));
@@ -257,17 +260,17 @@ export default function PageBlocks({ data, pageId, services = [], locations = []
 
     switch (block?.type) {
       case 'SunwingsHeroBlock':
-        return <Hero key={key} p={p} home={isHomeHero} settings={settings} services={services} pageId={pageId}/>;
+        return <Hero key={key} p={p} home={isHomeHero} settings={settings} services={services} pageId={pageId} content={content}/>;
 
       case 'HeroBlock':
-        return <Hero key={key} home={isHomeHero} settings={settings} services={services} pageId={pageId} p={{
+        return <Hero key={key} home={isHomeHero} settings={settings} services={services} pageId={pageId} content={content} p={{
           ...p,
           primaryButtonText: p.primaryButtonText || p.buttonText,
           primaryButtonUrl: p.primaryButtonUrl || p.buttonUrl,
         }}/>;
 
       case 'SunwingsTrustBlock':
-        return <TrustStrip key={key} {...p}/>;
+        return <TrustStrip key={key} items={content.trustLinks}/>;
 
       case 'SunwingsServicesGridBlock': {
         const limit = Number(p.limit || 0);
