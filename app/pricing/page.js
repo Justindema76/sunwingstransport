@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import PageHero from '@/components/PageHero';
 import PageBlocks from '@/components/PageBlocks';
+import PriceMatch from '@/components/PriceMatch';
 import ServicePricing from '@/components/ServicePricing';
 import { getPageBuilderData, getServices, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
 import { servicePricing } from '@/lib/servicePricing';
@@ -43,11 +44,11 @@ export async function generateMetadata() {
 }
 
 export default async function PricingPage() {
-  const [settings, pageData, priced] = await Promise.all([getSiteSettings(), getPageBuilderData('pricing'), pricedServices()]);
+  const [settings, pageData, priced, services] = await Promise.all([getSiteSettings(), getPageBuilderData('pricing'), pricedServices(), getServices()]);
   if (pageData) {
-    return <PageBlocks data={pageData} pageId="pricing" settings={settings} insertAfter={{
+    return <PageBlocks data={pageData} pageId="pricing" settings={settings} services={services} insertAfter={{
       SunwingsHeroBlock: <PricingNav services={priced}/>,
-      SunwingsPricingCardsBlock: <ServicePricingSections services={priced}/>,
+      SunwingsPricingCardsBlock: <><PriceMatch/><ServicePricingSections services={priced}/></>,
     }}/>;
   }
   return (
@@ -93,6 +94,7 @@ export default async function PricingPage() {
         </div>
       </section>
 
+      <PriceMatch/>
       <ServicePricingSections services={priced}/>
 
       <section className="section section-soft">

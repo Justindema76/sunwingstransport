@@ -1,4 +1,6 @@
 import PageBlocks from '@/components/PageBlocks';
+import PageHero from '@/components/PageHero';
+import { PAGE_HERO } from '@/components/heroSlides';
 import ContactForm from '@/components/ContactForm';
 import { getPageBuilderData, getServices, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
 
@@ -11,13 +13,35 @@ export async function generateMetadata() {
   });
 }
 
+function ContactHero({ settings }) {
+  const copy = PAGE_HERO.contact;
+  return (
+    <PageHero
+      crumbs={[{ label: 'Home', href: '/' }, { label: 'Contact' }]}
+      eyebrow={copy.eyebrow}
+      title={copy.heading}
+      accent={copy.accent}
+      description={copy.text}
+      fallbackImage={copy.image}
+      phone={settings.phone}
+    />
+  );
+}
+
 export default async function ContactPage() {
   const [services, settings, pageData] = await Promise.all([getServices(), getSiteSettings(), getPageBuilderData('contact')]);
   if (pageData) {
-    return <PageBlocks data={pageData} pageId="contact" services={services} settings={settings}/>;
+    return (
+      <>
+        <ContactHero settings={settings}/>
+        <PageBlocks data={pageData} pageId="contact" services={services} settings={settings}/>
+      </>
+    );
   }
   const phoneDigits = String(settings.phone || '18005555555').replace(/\D/g,'');
   return (
+    <>
+    <ContactHero settings={settings}/>
     <section className="section contact-page-section">
       <div className="container with-side contact-layout">
         <ContactForm services={services}/>
@@ -30,5 +54,6 @@ export default async function ContactPage() {
         </aside>
       </div>
     </section>
+    </>
   );
 }

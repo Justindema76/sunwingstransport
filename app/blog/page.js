@@ -1,7 +1,7 @@
 import BlogCards from '@/components/BlogCards';
 import PageHero from '@/components/PageHero';
 import PageBlocks from '@/components/PageBlocks';
-import { getBlogPosts, getPageBuilderData, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
+import { getBlogPosts, getPageBuilderData, getSiteSettings, pageMetadataFromBuilder, getServices } from '@/lib/content';
 
 export async function generateMetadata() {
   const pageData = await getPageBuilderData('blog');
@@ -13,9 +13,9 @@ export async function generateMetadata() {
 }
 
 export default async function BlogPage() {
-  const [settings, pageData, posts] = await Promise.all([getSiteSettings(), getPageBuilderData('blog'), getBlogPosts()]);
+  const [settings, pageData, posts, services] = await Promise.all([getSiteSettings(), getPageBuilderData('blog'), getBlogPosts(), getServices()]);
   if (pageData) {
-    return <PageBlocks data={pageData} pageId="blog" settings={settings} posts={posts}/>;
+    return <PageBlocks data={pageData} pageId="blog" settings={settings} services={services} posts={posts}/>;
   }
   return (
     <>

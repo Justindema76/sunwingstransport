@@ -2,6 +2,7 @@ import Link from 'next/link';
 import BreadcrumbSchema from '@/components/BreadcrumbSchema';
 import { Building2, GraduationCap, MapPin, Mountain, Route, Truck } from 'lucide-react';
 import PageHero from '@/components/PageHero';
+import { rotatingHeroImage } from '@/components/heroSlides';
 import QuoteForm from '@/components/QuoteForm';
 import ServiceCards from '@/components/ServiceCards';
 import TrustStrip from '@/components/TrustStrip';
@@ -64,6 +65,7 @@ export default async function LocationPage({ params }) {
   return (
     <>
       <PageHero
+        fallbackImage={rotatingHeroImage(location.slug)}
         crumbs={[{label:'Home',href:'/'},{label:'Service Areas',href:'/locations'},{label:location.title}]}
         title={location.hero_title || `${location.title} movers & delivery`}
         description={location.intro || location.hero_description}

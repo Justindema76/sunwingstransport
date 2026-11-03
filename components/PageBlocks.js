@@ -1,6 +1,5 @@
 import { Fragment } from 'react';
 import Link from 'next/link';
-import { Phone } from 'lucide-react';
 import BlogArchive from './BlogArchive';
 import BlogCards from './BlogCards';
 import ContactForm from './ContactForm';
@@ -11,6 +10,9 @@ import ReviewsBlock from './ReviewsBlock';
 import ServiceAreaGrid from './ServiceAreaGrid';
 import ServiceCards from './ServiceCards';
 import TrustStrip from './TrustStrip';
+import HeroSlider from './HeroSlider';
+import PageHero from './PageHero';
+import { PAGE_HERO, PAGES_WITH_SERVICE_SLIDES, pricingPanel, serviceSlides } from './heroSlides';
 
 function telHref(phone = '') {
   const digits = String(phone).replace(/\D/g, '');
@@ -32,13 +34,16 @@ function lines(value) {
   return String(value || '').split('\n').map(s => s.trim()).filter(Boolean);
 }
 
+// Admin helper text ("... Posts appear here automatically") that should never show to visitors.
+const ADMIN_HINT = /posts appear here|appear here automatically/i;
+
 function SectionHead({ p, center = false }) {
   if (!p.eyebrow && !p.heading && !p.text) return null;
   return (
     <div className={`section-head ${center ? 'center' : ''}`}>
       {p.eyebrow ? <span className="kicker">{p.eyebrow}</span> : null}
       {p.heading ? <h2>{p.heading}</h2> : null}
-      {p.text ? <p>{p.text}</p> : null}
+      {p.text && !ADMIN_HINT.test(p.text) ? <p>{p.text}</p> : null}
     </div>
   );
 }
@@ -48,60 +53,27 @@ function sectionClass(p, fallback = '') {
   return `section ${bg === 'soft' || bg === 'light' ? 'section-soft' : ''}`;
 }
 
-function Hero({ p, home, settings }) {
-  const phone = settings?.phone || '647-526-5132';
-  const isCallButton = p.showCallButton !== false;
-  const secondaryText = isCallButton ? 'Call Now' : (p.secondaryButtonText || '');
-  const secondaryUrl = isCallButton ? telHref(phone) : (p.secondaryButtonUrl || '#');
-  const actions = (
-    <div className="hero-ctas">
-      <SmartLink to={p.primaryButtonUrl || '/contact'} action={p.primaryButtonAction}>{p.primaryButtonText}</SmartLink>
-      {secondaryText ? (
-        <SmartLink to={secondaryUrl} className="btn btn-ghost">
-          {isCallButton ? <Phone size={18}/> : null} {secondaryText}
-        </SmartLink>
-      ) : null}
-    </div>
-  );
-
+function Hero({ p, home, settings, services = [], pageId = '' }) {
   if (home) {
-    const style = p.image
-      ? { backgroundImage: `linear-gradient(100deg,rgba(11,37,69,.94),rgba(19,49,92,.78)),url("${p.image}")`, backgroundSize: 'cover', backgroundPosition: 'center' }
-      : undefined;
-    return (
-      <section className="hero" style={style}>
-        <div className="container">
-          <div className="hero-inner">
-            {p.eyebrow ? <div className="hero-tag"><i/> {p.eyebrow}</div> : null}
-            <h1>{p.heading}{p.accent ? <> <em>{p.accent}</em></> : null}</h1>
-            {p.text ? <p className="lead">{p.text}</p> : null}
-            {actions}
-          </div>
-        </div>
-        <svg className="wave" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0 40c240-40 480-40 720 0s480 40 720 0v30H0z" fill="#fff"/>
-        </svg>
-      </section>
-    );
+    const slides = serviceSlides(services, { firstImage: p.image, firstHeading: 'h1' });
+    if (slides.length) return <HeroSlider slides={slides}/>;
   }
-
-  const style = p.image ? { '--page-hero-img': `url("${p.image}")` } : undefined;
+  const copy = PAGE_HERO[pageId] || {};
   const crumb = p.breadcrumbLabel || p.heading;
   return (
-    <section className="page-hero" style={style}>
-      <div className="container">
-        {p.showBreadcrumbs !== false && crumb ? (
-          <div className="crumbs">
-            <span className="crumb-part"><Link href="/">Home</Link><span className="crumb-sep">›</span></span>
-            <span className="crumb-part"><b>{crumb}</b></span>
-          </div>
-        ) : null}
-        {p.eyebrow ? <span className="kicker" style={{ color: 'var(--accent-2)' }}>{p.eyebrow}</span> : null}
-        <h1>{p.heading}{p.accent ? <> <span style={{ color: 'var(--accent-2)' }}>{p.accent}</span></> : null}</h1>
-        {p.text ? <p>{p.text}</p> : null}
-        {p.primaryButtonText || secondaryText ? actions : null}
-      </div>
-    </section>
+    <PageHero
+      crumbs={p.showBreadcrumbs !== false && crumb ? [{ label: 'Home', href: '/' }, { label: crumb }] : []}
+      eyebrow={copy.eyebrow ?? p.eyebrow}
+      title={copy.heading || p.heading}
+      accent={copy.heading ? copy.accent : p.accent}
+      description={copy.text || p.text}
+      image={copy.replaceImage ? copy.image : p.image}
+      fallbackImage={copy.image}
+      panel={copy.panel ? pricingPanel() : undefined}
+      phone={settings?.phone}
+      ctas={pageId !== 'privacy'}
+      extraSlides={PAGES_WITH_SERVICE_SLIDES.has(pageId) ? serviceSlides(services) : []}
+    />
   );
 }
 
@@ -285,10 +257,10 @@ export default function PageBlocks({ data, pageId, services = [], locations = []
 
     switch (block?.type) {
       case 'SunwingsHeroBlock':
-        return <Hero key={key} p={p} home={isHomeHero} settings={settings}/>;
+        return <Hero key={key} p={p} home={isHomeHero} settings={settings} services={services} pageId={pageId}/>;
 
       case 'HeroBlock':
-        return <Hero key={key} home={isHomeHero} settings={settings} p={{
+        return <Hero key={key} home={isHomeHero} settings={settings} services={services} pageId={pageId} p={{
           ...p,
           primaryButtonText: p.primaryButtonText || p.buttonText,
           primaryButtonUrl: p.primaryButtonUrl || p.buttonUrl,

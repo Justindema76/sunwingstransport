@@ -5,6 +5,7 @@ import QuoteForm from '@/components/QuoteForm';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import ServiceIcon from '@/components/ServiceIcon';
 import ServicePricing from '@/components/ServicePricing';
+import { priceBadge } from '@/components/heroSlides';
 import { getBaseUrl, getLocations, getServiceBySlug, getServices, getSiteSettings } from '@/lib/content';
 import { getServicePricing, withServiceCopy } from '@/lib/servicePricing';
 import { notFound } from 'next/navigation';
@@ -80,6 +81,8 @@ export default async function ServicePage({ params }) {
         description={service.intro || service.hero_description}
         image={service.banner_image}
         phone={settings.phone}
+        badge={priceBadge(service.slug)}
+        preset={service.title}
       />
 
       <ServicePricing slug={service.slug} pricing={pricing} serviceTitle={service.title} showAllLink/>

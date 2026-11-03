@@ -3,6 +3,7 @@ import BreadcrumbSchema from '@/components/BreadcrumbSchema';
 import { notFound } from 'next/navigation';
 import BlogCards from '@/components/BlogCards';
 import PageHero from '@/components/PageHero';
+import { rotatingHeroImage } from '@/components/heroSlides';
 import QuoteForm from '@/components/QuoteForm';
 import { getBaseUrl, getBlogPostBySlug, getBlogPosts, getServices, getSiteSettings } from '@/lib/content';
 
@@ -147,6 +148,7 @@ export default async function BlogPostPage({ params }) {
   return (
     <>
       <PageHero
+        fallbackImage={rotatingHeroImage(post.slug)}
         crumbs={[{label:'Home',href:'/'},{label:'Moving Tips',href:'/blog'},{label:post.tag || 'Article'}]}
         title={post.title}
         description={[post.author_name || 'Sunwings Transport', date, read].filter(Boolean).join(' · ')}
