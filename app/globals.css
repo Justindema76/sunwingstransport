@@ -518,12 +518,12 @@ h1,h2,h3{text-transform:capitalize}
    sits underneath on solid navy, and the whole banner is about 600px tall. */
 @media (max-width:700px){
   .hero-slide{position:relative;background:var(--navy)!important}
-  /* The photo fills the top 250px, cropped (not stretched), starting right under the header. */
-  .hero-slide::before{content:"";position:absolute;top:0;left:0;right:0;height:250px;background:var(--hero-photo) var(--hero-mobile-position,center)/cover no-repeat}
-  /* Fades the bottom of the photo into the navy behind the text. */
-  .hero-slide::after{content:"";position:absolute;top:150px;left:0;right:0;height:100px;background:linear-gradient(180deg,rgba(11,37,69,0),var(--navy))}
+  /* The photo fills the banner, cropped (not stretched), clear at the top... */
+  .hero-slide::before{content:"";position:absolute;inset:0;background:var(--hero-photo) var(--hero-mobile-position,center top)/cover no-repeat}
+  /* ...and fades into solid navy behind the text at the bottom. */
+  .hero-slide::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,37,69,0) 0,rgba(11,37,69,0) 34%,rgba(11,37,69,.88) 52%,var(--navy) 62%)}
   .hero-slide>.container{position:relative;z-index:1}
-  .hero .hero-slide .container{padding:200px 16px 12px}
+  .hero .hero-slide .container{padding:16px 16px 12px}
   .hero-slide .crumbs{font-size:12px;margin-bottom:8px}
   .hero-slide .hero-tag{font-size:11.5px;padding:5px 10px;margin-bottom:10px;background:rgba(11,37,69,.7)}
   .hero .hero-title{font-size:29px;line-height:1.1}
@@ -539,4 +539,27 @@ h1,h2,h3{text-transform:capitalize}
   .hero-slider-arrow{width:34px;height:34px}
   .hero .wave{height:34px}
   .trust{margin-top:-28px}
+}
+
+
+/* One banner height on every page: 600px on phones, 720px on desktop. */
+.hero-slider{display:flex;flex-direction:column;min-height:720px}
+.hero-slides{flex:1}
+.hero-slide{display:flex;flex-direction:column;justify-content:center}
+.hero-slide p.lead{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+@media (max-width:700px){
+  .hero-slider{min-height:600px}
+  /* Text and buttons sit at the bottom, so the buttons land at the same spot on every page. */
+  .hero-slide{justify-content:stretch}
+  .hero-slide>.container{flex:1;display:flex;flex-direction:column;justify-content:flex-end;width:100%}
+  /* Pages with one banner have no arrows/dots; leave the same space so buttons line up. */
+  .hero-slider:not(:has(.hero-slider-controls)) .hero-slide>.container{padding-bottom:102px}
+}
+/* Desktop: slightly less space above/below the text so the tallest slides fit in 700px. */
+/* Desktop: arrows/dots sit under the text in the normal flow (never on top of it). Single-banner
+   pages keep the same space so everything lines up. */
+@media (min-width:701px){
+  .hero-slide>.container{padding-top:72px;padding-bottom:24px}
+  .hero-slider-controls{position:relative;bottom:auto;padding:0 0 84px}
+  .hero-slider:not(:has(.hero-slider-controls)) .hero-slide>.container{padding-bottom:132px}
 }
