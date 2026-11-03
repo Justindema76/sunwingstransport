@@ -43,7 +43,7 @@ export default async function ServicePage({ params }) {
   if (!service) notFound();
 
   const pricing = getServicePricing(service.slug);
-  const regionSlugs = (pricing?.regions || []).flatMap(region => region.places.map(place => place.href.replace('/locations/', '')));
+  const regionSlugs = (pricing?.regions || []).flatMap(region => region.places.filter(place => place.href).map(place => place.href.replace('/locations/', '')));
   const relatedLocations = regionSlugs.length
     ? regionSlugs.map(slug => locations.find(location => location.slug === slug)).filter(Boolean)
     : locations.filter(location =>
@@ -64,6 +64,12 @@ export default async function ServicePage({ params }) {
       telephone: settings.phone || '1-800-555-5555',
       url: getBaseUrl(),
     },
+    areaServed: pricing?.regions?.length
+      ? pricing.regions.flatMap(region => region.places.map(place => ({ '@type': 'City', name: place.label })))
+      : undefined,
+    offers: pricing?.schemaOffer
+      ? { '@type': 'Offer', priceCurrency: 'CAD', ...pricing.schemaOffer }
+      : undefined,
   };
 
   return (

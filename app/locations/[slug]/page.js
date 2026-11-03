@@ -5,7 +5,9 @@ import PageHero from '@/components/PageHero';
 import QuoteForm from '@/components/QuoteForm';
 import ServiceCards from '@/components/ServiceCards';
 import TrustStrip from '@/components/TrustStrip';
+import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import { getBaseUrl, getLocationBySlug, getLocations, getServices, getSiteSettings } from '@/lib/content';
+import { pricedServicesForLocation } from '@/lib/servicePricing';
 import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
@@ -70,6 +72,28 @@ export default async function LocationPage({ params }) {
       />
 
       <TrustStrip/>
+
+      {pricedServicesForLocation(location.slug).map(item => {
+        const service = services.find(entry => entry.slug === item.slug);
+        const plan = item.cards.find(card => card.featured) || item.cards[0];
+        return (
+          <section className="section location-promo" key={item.slug}>
+            <div className="container">
+              <div className="cta-inline">
+                <div>
+                  <span className="kicker" style={{color:'var(--accent-2)'}}>Now booking in {location.title}</span>
+                  <h3>{item.label} in {location.title} from {plan.amount}{plan.unit || ''}</h3>
+                  <p>{plan.features.slice(0, 3).join(' · ')}. Limited spots available.</p>
+                </div>
+                <div className="location-promo-actions">
+                  <QuoteDrawerTrigger className="btn btn-accent" preset={service?.title || item.label} plan={plan.title}>{plan.buttonText || 'Book now'}</QuoteDrawerTrigger>
+                  <Link className="btn btn-line location-promo-link" href={`/services/${item.slug}`}>See {item.label.toLowerCase()} details →</Link>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      })}
 
       <section className="section">
         <div className="container with-side">

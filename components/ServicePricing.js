@@ -21,9 +21,9 @@ export default function ServicePricing({ slug, pricing, serviceTitle, soft = fal
               {pricing.regions.map(region => (
                 <div className="service-region" key={region.label}>
                   <h3>{region.label}</h3>
-                  <div className="chips">{region.places.map(place => (
-                    <Link className="chip" href={place.href} key={place.label}>{place.label}</Link>
-                  ))}</div>
+                  <div className="chips">{region.places.map(place => place.href
+                    ? <Link className="chip" href={place.href} key={place.label}>{place.label}</Link>
+                    : <span className="chip" key={place.label}>{place.label}</span>)}</div>
                 </div>
               ))}
             </div>

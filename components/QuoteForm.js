@@ -35,6 +35,27 @@ function YesNo({ name, value, onChange }) {
   </div>;
 }
 
+// Partner referral links (e.g. ?ref=justin). The code is remembered for 90 days so a
+// visitor who books later is still credited to the partner who sent them.
+const REFERRERS = { justin: 'Referred by Justin DeMatteis' };
+const REFERRAL_KEY = 'sunwings_ref';
+const REFERRAL_DAYS = 90;
+
+function readReferral() {
+  try {
+    const fromUrl = new URLSearchParams(window.location.search).get('ref')?.trim().toLowerCase();
+    if (fromUrl && REFERRERS[fromUrl]) {
+      window.localStorage.setItem(REFERRAL_KEY, JSON.stringify({ code: fromUrl, at: Date.now() }));
+      return REFERRERS[fromUrl];
+    }
+    const saved = JSON.parse(window.localStorage.getItem(REFERRAL_KEY) || 'null');
+    if (saved?.code && REFERRERS[saved.code] && Date.now() - saved.at < REFERRAL_DAYS * 86400000) return REFERRERS[saved.code];
+  } catch {
+    // Storage can be blocked; the referral then only counts on the page the link opened.
+  }
+  return '';
+}
+
 export default function QuoteForm({
   services = [],
   compact = false,
@@ -47,6 +68,14 @@ export default function QuoteForm({
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ ...initialState, service: preset });
   const [state, setState] = useState({ sending: false, message: '', fieldErrors: {} });
+  const [referral, setReferral] = useState('');
+
+  useEffect(() => {
+    const label = readReferral();
+    if (!label) return;
+    setReferral(label);
+    setForm(current => ({ ...current, referralSource: current.referralSource || label }));
+  }, []);
 
   useEffect(() => {
     if (!global) return undefined;
@@ -102,7 +131,11 @@ export default function QuoteForm({
       const response = await fetch('/api/quote', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ...form, message: [form.message, form.referralSource ? `How did you hear about us? ${form.referralSource}` : ''].filter(Boolean).join('\n\n'), quickRequest: compact, snowRequest: snowJob && !compact }),
+        body: JSON.stringify({ ...form, message: [
+          form.message,
+          form.referralSource ? `How did you hear about us? ${form.referralSource}` : '',
+          referral && form.referralSource !== referral ? `Partner referral link: ${referral}` : '',
+        ].filter(Boolean).join('\n\n'), quickRequest: compact, snowRequest: snowJob && !compact }),
       });
       const result = await response.json();
 
@@ -118,7 +151,7 @@ export default function QuoteForm({
       trackEvent('generate_lead', { lead_source: compact ? 'quick_quote' : 'full_quote', service:form.service || preset || '' });
       if (typeof window !== 'undefined' && typeof window.fbq === 'function') window.fbq('track', 'Lead');
 
-      setForm({ ...initialState, service: preset });
+      setForm({ ...initialState, service: preset, referralSource: referral });
       const timing = String(replyHours || '').trim();
       setState({
         sending: false,
@@ -306,6 +339,7 @@ export default function QuoteForm({
         <label>How did you hear about us?
           <select name="referralSource" value={form.referralSource} onChange={update}>
             <option value="">Select an option (optional)</option>
+            {referral ? <option value={referral}>{referral}</option> : null}
             <option value="Google Search">Google Search</option>
             <option value="Google Maps">Google Maps</option>
             <option value="Facebook">Facebook</option>

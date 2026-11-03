@@ -411,9 +411,16 @@ footer a:hover{color:#fff}
 .service-price-details small{color:#a9c2e2}
 .service-regions{margin:-12px 0 34px}
 .service-regions>.kicker{margin-bottom:14px}
-.service-region-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.service-region-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
 .service-region{border:1px solid var(--line);border-radius:18px;padding:18px 20px;background:#fff}
 .service-region h3{font-size:18px;margin-bottom:12px}
 .service-other-areas{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:36px;padding-top:18px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
 .service-other-areas a{color:var(--muted);text-decoration:underline}
 @media (max-width:900px){.service-region-grid{grid-template-columns:1fr}}
+.location-promo{padding:28px 0 0}
+.location-promo .cta-inline{margin:0}
+.location-promo-actions{display:flex;gap:10px;flex-wrap:wrap}
+.location-promo-link{color:#fff;border-color:rgba(255,255,255,.5)}
+
+/* Title Case every heading site-wide, whatever casing the admin content uses. */
+h1,h2,h3{text-transform:capitalize}
