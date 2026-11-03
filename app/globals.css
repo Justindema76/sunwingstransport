@@ -525,7 +525,7 @@ h1,h2,h3{text-transform:capitalize}
   .hero .hero-title{font-size:31px;line-height:1.1}
   .hero-slide p.lead{font-size:15.5px;margin:12px 0 18px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .hero-slide .hero-ctas{gap:10px}
-  .hero-slide .hero-ctas .btn{flex:1 1 0;min-width:0;padding:12px 10px;font-size:14px;justify-content:center;text-align:center}
+  .hero-slide .hero-ctas .btn{flex:1 1 0;min-width:0;padding:10px 10px;font-size:13.5px;line-height:1.2;white-space:normal;justify-content:center;text-align:center;min-height:46px}
   .hero-badge,.hero-price-panel{display:none}
   .hero-slider-controls{bottom:62px;gap:10px}
   .hero-slider-arrow{width:34px;height:34px}
