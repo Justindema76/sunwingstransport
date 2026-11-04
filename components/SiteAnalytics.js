@@ -14,7 +14,21 @@ export default function SiteAnalytics({ ga4 = '', metaPixel = '' }) {
       const link = event.target?.closest?.('a[href]');
       if (!link) return;
       const href = String(link.getAttribute('href') || '');
-      if (href.startsWith('tel:')) trackEvent('phone_click', { link_url: href });
+      if (/^tel:/i.test(href)) {
+        const location = link.closest('.mobile-nav-panel') ? 'mobile_menu'
+          : link.closest('.mbar') ? 'mobile_bottom_bar'
+          : link.closest('header') ? 'header'
+          : link.closest('.topbar') ? 'top_bar'
+          : link.closest('footer') ? 'footer'
+          : link.closest('.cta-band') ? 'footer_cta'
+          : 'page_content';
+        trackEvent('phone_click', {
+          link_url: href,
+          page_path: window.location.pathname,
+          page_location: window.location.href,
+          button_location: location,
+        });
+      }
       if (href.startsWith('mailto:')) trackEvent('email_click', { link_url: href });
     }
     document.addEventListener('click', click);
