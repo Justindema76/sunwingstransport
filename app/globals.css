@@ -564,3 +564,14 @@ h1,h2,h3{text-transform:capitalize}
   .hero-slider-controls{position:relative;bottom:auto;padding:0 0 84px}
   .hero-slider:not(:has(.hero-slider-controls)) .hero-slide>.container{padding-bottom:132px}
 }
+
+/* Quote form photos (components/QuoteForm.js) */
+.quote-photos .quote-choice-label small{font-weight:500;color:var(--muted)}
+.quote-photos-hint{margin:0 0 10px;font-size:13px;color:var(--muted)}
+.quote-photo-list{list-style:none;margin:0 0 10px;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px}
+.quote-photo-list li{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:var(--sky)}
+.quote-photo-list img{width:100%;height:100%;object-fit:cover;display:block}
+.quote-photo-list button{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(11,37,69,.85);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}
+.quote-photo-add{position:relative;width:100%;cursor:pointer}
+.quote-photo-add input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}

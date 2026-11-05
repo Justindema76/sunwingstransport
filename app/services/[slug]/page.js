@@ -87,9 +87,11 @@ export default async function ServicePage({ params }) {
     <>
       <PageHero
         crumbs={[{label:'Home',href:'/'},{label:'Services',href:'/services'},{label:service.title}]}
+        eyebrow={service.eyebrow}
         title={service.hero_title || service.title}
-        description={service.intro || service.hero_description}
+        description={service.hero_description || service.intro}
         image={service.banner_image}
+        imageAlt={service.banner_alt}
         phone={settings.phone}
         badge={priceBadge(pricing)}
         preset={service.title}

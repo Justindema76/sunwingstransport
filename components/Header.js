@@ -1,11 +1,8 @@
 import Link from 'next/link';
 import { ChevronDown, Phone } from 'lucide-react';
 import MobileNav from './MobileNav';
+import { telHref } from '@/lib/phone';
 
-function telHref(phone = '') {
-  const digits = String(phone).replace(/\D/g, '');
-  return digits ? `tel:+${digits.startsWith('1') ? digits : `1${digits}`}` : '#';
-}
 function on(value, fallback=true){return value==null||value===''?fallback:String(value)!=='false'}
 function px(value,fallback){const n=Number(value);return Number.isFinite(n)?n:fallback}
 

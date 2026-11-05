@@ -87,7 +87,7 @@ export default async function HomePage() {
             <div>
               <span className="kicker" style={{color:'var(--accent-2)'}}>Pricing</span>
               <h2>Straight answers on price.</h2>
-              <p>Every quote is based on crew size, truck time and distance. Found a lower written quote? We’ll match it.</p>
+              <p>Clear, upfront quotes tailored to your job, based on crew size, truck time and distance.</p>
               <Link className="btn btn-accent" href="/pricing" style={{marginTop:24}}>See pricing →</Link>
             </div>
             <div className="pcs">

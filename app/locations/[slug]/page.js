@@ -10,6 +10,7 @@ import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import { getBaseUrl, getLocationBySlug, getLocations, getServices, getSiteSettings } from '@/lib/content';
 import { getSiteContent, pricedServicesForLocation } from '@/lib/siteContent';
 import { notFound } from 'next/navigation';
+import { telHref } from '@/lib/phone';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -68,9 +69,11 @@ export default async function LocationPage({ params }) {
       <PageHero
         fallbackImage={rotatingHeroImage(location.slug)}
         crumbs={[{label:'Home',href:'/'},{label:'Service Areas',href:'/locations'},{label:location.title}]}
+        eyebrow={location.eyebrow}
         title={location.hero_title || `${location.title} movers & delivery`}
-        description={location.intro || location.hero_description}
+        description={location.hero_description || location.intro}
         image={location.banner_image}
+        imageAlt={location.banner_alt}
         phone={settings.phone}
       />
 
@@ -101,6 +104,7 @@ export default async function LocationPage({ params }) {
       <section className="section">
         <div className="container with-side">
           <article className="prose">
+            {location.intro && location.hero_description ? <p className="lead-p">{location.intro}</p> : null}
             <span className="kicker">Services in {location.title}</span>
             <h2 style={{marginTop:0}}>Everything we do in {location.title}</h2>
             {relatedServices.length ? <ServiceCards services={relatedServices} compact locationName={location.title}/> : <div className="empty-state">No published services linked yet.</div>}
@@ -130,6 +134,14 @@ export default async function LocationPage({ params }) {
 
             {location.body_html ? <div dangerouslySetInnerHTML={{__html:location.body_html}}/> : null}
 
+            <div className="cta-inline">
+              <div>
+                <h3>{location.cta_title || `Moving in ${location.title}?`}</h3>
+                <p>{location.cta_text || 'Get an upfront price, usually the same day.'}</p>
+              </div>
+              <QuoteDrawerTrigger className="btn btn-accent">Request a Quote →</QuoteDrawerTrigger>
+            </div>
+
             {faqs.length ? <>
               <h2>{location.title} moving FAQs</h2>
               {faqs.map(item => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}
@@ -147,7 +159,7 @@ export default async function LocationPage({ params }) {
             <QuoteForm services={services} compact replyHours={settings.quote_reply_hours}/>
             <div className="side-card">
               <h3>Call the crew</h3>
-              <a className="btn btn-navy" style={{width:'100%'}} href={`tel:+1${String(settings.phone || '18005555555').replace(/\D/g,'')}`}>Call Now</a>
+              <a className="btn btn-navy" style={{width:'100%'}} href={telHref(settings.phone)}>Call Now</a>
             </div>
           </aside>
         </div>

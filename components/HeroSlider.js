@@ -45,6 +45,7 @@ export default function HeroSlider({ slides = [] }) {
             aria-hidden={i !== index}
             inert={i !== index ? '' : undefined}
           >
+            {slide.imageAlt ? <span className="sr-only" role="img" aria-label={slide.imageAlt}/> : null}
             <div className="container">
               <div className="hero-inner">{slide.content}</div>
             </div>

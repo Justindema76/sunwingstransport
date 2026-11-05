@@ -56,7 +56,7 @@ export default async function PricingPage() {
       <PageHero
         crumbs={[{label:'Home',href:'/'},{label:'Pricing'}]}
         title="Straight answers on price"
-        description="Upfront quotes based on crew size, truck time and distance, backed by our price-match guarantee."
+        description="Clear, upfront quotes tailored to your job, based on crew size, truck time and distance."
         image="https://sunwingstransport.ca/wp-content/uploads/2026/02/van-loading-file-cabinet.jpg"
         phone={settings.phone}
       />
@@ -111,9 +111,9 @@ export default async function PricingPage() {
           </div>
           <div className="price-band" style={{gridTemplateColumns:'1fr'}}>
             <div>
-              <span className="kicker" style={{color:'var(--accent-2)'}}>Price-match guarantee</span>
-              <h2 style={{fontSize:30}}>Found a lower written quote?</h2>
-              <p>Show us a lower written quote for the same job and we’ll match it.</p>
+              <span className="kicker" style={{color:'var(--accent-2)'}}>Upfront quotes</span>
+              <h2 style={{fontSize:30}}>Clear, upfront quotes tailored to your job.</h2>
+              <p>Tell us what you’re moving and where. We’ll confirm the price before anything is booked.</p>
             </div>
           </div>
         </div>

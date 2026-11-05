@@ -1,10 +1,7 @@
 import Link from 'next/link';
 import QuoteDrawerTrigger from './QuoteDrawerTrigger';
+import { telHref } from '@/lib/phone';
 
-function telHref(phone = '') {
-  const digits = String(phone).replace(/\D/g, '');
-  return digits ? `tel:+${digits.startsWith('1') ? digits : `1${digits}`}` : '#';
-}
 
 function SmartLink({ href = '#', children }) {
   if (!children) return null;

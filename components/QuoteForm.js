@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import { trackEvent } from './SiteAnalytics';
 
@@ -27,6 +27,80 @@ const initialState = {
   referralSource: '',
   website: '',
 };
+
+const MAX_PHOTOS = 6;
+const PHOTO_MAX_SIDE = 1600;
+
+function newUploadId() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, ch => {
+    const r = Math.random() * 16 | 0;
+    return (ch === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+  });
+}
+
+function loadImage(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error(`${file.name || 'A photo'} could not be read. Try a JPG or PNG.`)); };
+    img.src = url;
+  });
+}
+
+// Phone photos are often 3–10 MB. Shrink to a JPEG (longest side 1600px) before sending.
+async function shrinkPhoto(file) {
+  const img = await loadImage(file);
+  const scale = Math.min(1, PHOTO_MAX_SIDE / Math.max(img.naturalWidth, img.naturalHeight));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+  canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.82));
+  if (!blob) throw new Error(`${file.name || 'A photo'} could not be prepared.`);
+  return blob;
+}
+
+async function uploadPhotos(files) {
+  if (!files.length) return [];
+  const uploadId = newUploadId();
+  const paths = [];
+  for (const [index, file] of files.entries()) {
+    const blob = await shrinkPhoto(file);
+    const response = await fetch(`/api/quote/photo?upload=${uploadId}&n=${index}`, {
+      method: 'POST',
+      headers: { 'content-type': 'image/jpeg' },
+      body: blob,
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result.path) throw new Error(result.error || 'A photo did not upload. Please try again.');
+    paths.push(result.path);
+  }
+  return paths;
+}
+
+function PhotoPicker({ photos, onAdd, onRemove, error, disabled }) {
+  const inputId = useId();
+  return <div className={`quote-photos ${error ? 'field-has-error' : ''}`}>
+    <span className="quote-choice-label">Photos <small>(optional, up to {MAX_PHOTOS})</small></span>
+    <p className="quote-photos-hint">Photos of the items, stairs or driveway help us quote accurately.</p>
+    {photos.length ? <ul className="quote-photo-list">
+      {photos.map((photo, index) => <li key={photo.preview}>
+        <img src={photo.preview} alt={`Photo ${index + 1}`}/>
+        <button type="button" onClick={() => onRemove(index)} disabled={disabled} aria-label={`Remove photo ${index + 1}`}><X size={14}/></button>
+      </li>)}
+    </ul> : null}
+    {photos.length < MAX_PHOTOS ? <label className="btn btn-line quote-photo-add" htmlFor={inputId}>
+      {photos.length ? 'Add more photos' : 'Add photos'}
+      <input id={inputId} type="file" accept="image/*" multiple onChange={onAdd} disabled={disabled}/>
+    </label> : null}
+    {error ? <small className="field-error">{error}</small> : null}
+  </div>;
+}
 
 function YesNo({ name, value, onChange }) {
   return <div className="quote-choice-row" role="group" aria-label={name}>
@@ -69,6 +143,28 @@ export default function QuoteForm({
   const [form, setForm] = useState({ ...initialState, service: preset });
   const [state, setState] = useState({ sending: false, message: '', fieldErrors: {} });
   const [referral, setReferral] = useState('');
+  const [photos, setPhotos] = useState([]);
+
+  const photosRef = useRef(photos);
+  photosRef.current = photos;
+  useEffect(() => () => photosRef.current.forEach(photo => URL.revokeObjectURL(photo.preview)), []);
+
+  function addPhotos(event) {
+    const picked = [...(event.target.files || [])].filter(file => /^image\//.test(file.type) || /\.(jpe?g|png|webp|heic|heif)$/i.test(file.name));
+    event.target.value = '';
+    setPhotos(current => [
+      ...current,
+      ...picked.slice(0, MAX_PHOTOS - current.length).map(file => ({ file, preview: URL.createObjectURL(file) })),
+    ]);
+    setState(current => ({ ...current, fieldErrors: { ...current.fieldErrors, photos: '' } }));
+  }
+
+  function removePhoto(index) {
+    setPhotos(current => {
+      if (current[index]) URL.revokeObjectURL(current[index].preview);
+      return current.filter((_, itemIndex) => itemIndex !== index);
+    });
+  }
 
   useEffect(() => {
     const label = readReferral();
@@ -125,7 +221,20 @@ export default function QuoteForm({
 
   async function submit(event) {
     event.preventDefault();
-    setState({ sending: true, message: '', fieldErrors: {} });
+    const needsItems = !/snow/i.test(form.service);
+    if (form.service && needsItems && !form.itemList.trim()) {
+      setState({ sending: false, message: 'Please correct the highlighted fields.', fieldErrors: { itemList: 'List the items to be moved or delivered.' } });
+      return;
+    }
+    setState({ sending: true, message: photos.length ? 'Uploading photos…' : '', fieldErrors: {} });
+
+    let photoPaths = [];
+    try {
+      photoPaths = await uploadPhotos(photos.map(photo => photo.file));
+    } catch (error) {
+      setState({ sending: false, message: error.message || 'A photo did not upload.', fieldErrors: { photos: error.message || 'A photo did not upload.' } });
+      return;
+    }
 
     try {
       const response = await fetch('/api/quote', {
@@ -135,7 +244,7 @@ export default function QuoteForm({
           form.message,
           form.referralSource ? `How did you hear about us? ${form.referralSource}` : '',
           referral && form.referralSource !== referral ? `Partner referral link: ${referral}` : '',
-        ].filter(Boolean).join('\n\n'), quickRequest: compact, snowRequest: snowJob && !compact }),
+        ].filter(Boolean).join('\n\n'), photos: photoPaths, quickRequest: compact, snowRequest: snowJob && !compact }),
       });
       const result = await response.json();
 
@@ -152,6 +261,8 @@ export default function QuoteForm({
       if (typeof window !== 'undefined' && typeof window.fbq === 'function') window.fbq('track', 'Lead');
 
       setForm({ ...initialState, service: preset, referralSource: referral });
+      photos.forEach(photo => URL.revokeObjectURL(photo.preview));
+      setPhotos([]);
       const timing = String(replyHours || '').trim();
       setState({
         sending: false,
@@ -228,6 +339,11 @@ export default function QuoteForm({
             {errorFor('service') ? <small className="field-error">{errorFor('service')}</small> : null}
           </label>
         </div>
+
+        {compact && !snowJob ? <label className={errorFor('itemList') ? 'field-has-error' : ''}>What are we moving? *
+          <textarea required rows="3" name="itemList" value={form.itemList} onChange={update} placeholder="E.g. queen bed, sofa, 10 boxes" aria-invalid={Boolean(errorFor('itemList'))}/>
+          {errorFor('itemList') ? <small className="field-error">{errorFor('itemList')}</small> : null}
+        </label> : null}
 
         {!compact && snowJob ? <label>Plan
           <select name="moveSize" value={form.moveSize} onChange={update}>
@@ -326,14 +442,19 @@ export default function QuoteForm({
 
         <div className="quote-section">
           <h4>Items & notes</h4>
-          <label>Item List
-            <textarea rows="5" name="itemList" value={form.itemList} onChange={update} placeholder="List the furniture, boxes, equipment or other items to be transported"/>
+          <label className={errorFor('itemList') ? 'field-has-error' : ''}>Item List *
+            <textarea required rows="5" name="itemList" value={form.itemList} onChange={update} placeholder="List the furniture, boxes, equipment or other items to be transported" aria-invalid={Boolean(errorFor('itemList'))}/>
+            {errorFor('itemList') ? <small className="field-error">{errorFor('itemList')}</small> : null}
           </label>
           <label>Additional Details
             <textarea rows="3" name="message" value={form.message} onChange={update} placeholder="Heavy items, access details, packing, disassembly, special instructions…"/>
           </label>
         </div>
       </> : null}
+
+      <div className="quote-section">
+        <PhotoPicker photos={photos} onAdd={addPhotos} onRemove={removePhoto} error={errorFor('photos')} disabled={state.sending}/>
+      </div>
 
       <div className="quote-section">
         <label>How did you hear about us?

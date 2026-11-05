@@ -1,6 +1,8 @@
 const SUPABASE_URL = process.env.SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
 
+const PHOTO_PATH = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-5]\.jpg$/;
+
 function clean(value, max = 1000) {
   return String(value || '').trim().slice(0, max);
 }
@@ -34,6 +36,8 @@ function validate(body) {
   else if (!/^\d{4}-\d{2}-\d{2}$/.test(String(body.preferredDate))) fieldErrors.preferredDate = 'Choose a valid date.';
   const quickRequest = body.quickRequest === true;
   const snowRequest = body.snowRequest === true;
+  // Moving, delivery and every other non-snow job needs to say what is being moved.
+  if (!/snow/i.test(clean(body.service, 160)) && !clean(body.itemList, 6000)) fieldErrors.itemList = 'List the items to be moved or delivered.';
   if (snowRequest) {
     if (!clean(body.pickupAddress, 220)) fieldErrors.pickupAddress = 'Enter the service address.';
     if (!clean(body.pickupPostalCode, 24)) fieldErrors.pickupPostalCode = 'Enter the postal code.';
@@ -104,6 +108,7 @@ export async function POST(request) {
     dropoffStairs: clean(body.dropoffStairs, 10),
     itemList: clean(body.itemList, 6000),
     message: clean(body.message, 3000),
+    photos: (Array.isArray(body.photos) ? body.photos : []).map(item => clean(item, 80)).filter(item => PHOTO_PATH.test(item)).slice(0, 6),
     // Snow requests have a single service address, so the database's pickup/drop-off checks are skipped.
     quickRequest: body.quickRequest === true || body.snowRequest === true,
     contactRequest: body.contactRequest === true,

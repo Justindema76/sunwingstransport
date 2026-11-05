@@ -3,11 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ChevronDown, Menu, Phone, X } from 'lucide-react';
+import { telHref } from '@/lib/phone';
 
-function telHref(phone = '') {
-  const digits = String(phone).replace(/\D/g, '');
-  return digits ? `tel:+${digits.startsWith('1') ? digits : `1${digits}`}` : '#';
-}
 
 function SmartLink({ href = '#', children, onClick, className = '' }) {
   if (/^(https?:|tel:|mailto:)/i.test(String(href))) {

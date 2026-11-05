@@ -3,6 +3,7 @@ import { Phone } from 'lucide-react';
 import QuoteDrawerTrigger from './QuoteDrawerTrigger';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { featuredPrice } from '@/lib/siteContent';
+import { telHref } from '@/lib/phone';
 
 // Shared banner content for every page: the homepage slider style (pill tag, headline
 // with an orange second line, white subtitle, swirl at the bottom).
@@ -36,10 +37,6 @@ export function heroBackground(image, fallback, position = '') {
   };
 }
 
-function telHref(phone = '') {
-  const digits = String(phone).replace(/\D/g, '');
-  return digits ? `tel:+${digits.startsWith('1') ? digits : `1${digits}`}` : '#';
-}
 
 // A box of price points shown on the right of a banner (used on the Pricing page).
 function PricePanel({ items }) {
@@ -107,9 +104,10 @@ export function serviceSlides(services = [], content, { firstImage = '', firstHe
 }
 
 // The page's own slide: breadcrumbs, tag, headline, subtitle and quote/call buttons.
-export function pageSlide({ crumbs = [], eyebrow, heading, accent, text, image, fallbackImage, imagePosition, phone, ctas = true, badge, panel, preset = '' }) {
+export function pageSlide({ crumbs = [], eyebrow, heading, accent, text, image, imageAlt = '', fallbackImage, imagePosition, phone, ctas = true, badge, panel, preset = '' }) {
   return {
     key: 'page',
+    imageAlt,
     style: heroBackground(image, fallbackImage, imagePosition),
     content: (
       <div className="hero-slide-layout">

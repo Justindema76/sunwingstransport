@@ -1,10 +1,7 @@
 import Link from 'next/link';
 import { Phone } from 'lucide-react';
+import { telHref } from '@/lib/phone';
 
-function telHref(phone = '') {
-  const digits = String(phone).replace(/\D/g, '');
-  return digits ? `tel:+${digits.startsWith('1') ? digits : `1${digits}`}` : '#';
-}
 
 export default function HomeHero({ settings }) {
   const phone = settings?.phone || '647-526-5132';

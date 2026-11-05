@@ -14,11 +14,8 @@ import HeroSlider from './HeroSlider';
 import PageHero from './PageHero';
 import { pricingPanel, serviceSlides } from './heroSlides';
 import { getSiteContent } from '@/lib/siteContent';
+import { telHref } from '@/lib/phone';
 
-function telHref(phone = '') {
-  const digits = String(phone).replace(/\D/g, '');
-  return digits ? `tel:+${digits.startsWith('1') ? digits : `1${digits}`}` : '#';
-}
 
 function SmartLink({ to, className = 'btn btn-accent', children, action = '' }) {
   if (!children) return null;
@@ -216,7 +213,7 @@ function ContactPanel({ p, services, settings }) {
       <div className="container with-side contact-layout">
         <ContactForm services={services} title={p.formTitle || 'Contact Sunwings'} text={p.formText || 'Send us a message and we’ll get back to you.'}/>
         <aside className="side">
-          <div className="side-card"><h3>{p.callTitle || 'Call or text'}</h3><a className="btn btn-accent" style={{ width: '100%' }} href={telHref(phone)}>Call Now</a></div>
+          <div className="side-card"><h3>{p.callTitle || 'Call us'}</h3><a className="btn btn-accent" style={{ width: '100%' }} href={telHref(phone)}>Call Now</a></div>
           {p.hours ? <div className="side-card"><h3>{p.hoursTitle || 'Hours'}</h3><p className="muted" style={{ whiteSpace: 'pre-line' }}>{p.hours}</p></div> : null}
           <div className="side-card"><h3>{p.areaTitle || 'Service area'}</h3><p className="muted">{p.areaText || 'Toronto, the GTA, Halton, Hamilton & Niagara'}</p><Link className="more" href="/locations">See all areas →</Link></div>
         </aside>

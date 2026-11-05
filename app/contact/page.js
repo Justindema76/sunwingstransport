@@ -3,6 +3,7 @@ import PageHero from '@/components/PageHero';
 import { getSiteContent } from '@/lib/siteContent';
 import ContactForm from '@/components/ContactForm';
 import { getPageBuilderData, getServices, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
+import { telHref } from '@/lib/phone';
 
 export async function generateMetadata() {
   const pageData = await getPageBuilderData('contact');
@@ -39,7 +40,6 @@ export default async function ContactPage() {
       </>
     );
   }
-  const phoneDigits = String(settings.phone || '18005555555').replace(/\D/g,'');
   return (
     <>
     <ContactHero settings={settings}/>
@@ -48,8 +48,8 @@ export default async function ContactPage() {
         <ContactForm services={services}/>
         <aside className="side">
           <div className="side-card">
-            <h3>Call or text</h3>
-            <a className="btn btn-accent" style={{width:'100%'}} href={`tel:+1${phoneDigits}`}>Call Now</a>
+            <h3>Call us</h3>
+            <a className="btn btn-accent" style={{width:'100%'}} href={telHref(settings.phone)}>Call Now</a>
           </div>
           <div className="side-card"><h3>Service area</h3><p className="muted">Toronto, the GTA, Halton, Hamilton &amp; Niagara</p><a className="more" href="/locations">See all areas →</a></div>
         </aside>
