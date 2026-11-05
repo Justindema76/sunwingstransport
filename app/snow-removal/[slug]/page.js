@@ -4,6 +4,7 @@ import BreadcrumbSchema from '@/components/BreadcrumbSchema';
 import PageHero from '@/components/PageHero';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import QuoteForm from '@/components/QuoteForm';
+import ServiceIcon from '@/components/ServiceIcon';
 import ServicePricing from '@/components/ServicePricing';
 import { priceBadge } from '@/components/heroSlides';
 import { getBaseUrl, getLocationBySlug, getLocations, getServiceBySlug, getServices, getSiteSettings } from '@/lib/content';
@@ -48,6 +49,9 @@ export default async function SnowTownPage({ params }) {
   const otherTowns = locations.filter(item => item.slug !== location.slug && offersSnow(item));
   const faqs = Array.isArray(service.faq) ? service.faq.filter(item => item?.question && item?.answer) : [];
   const neighbourhoods = Array.isArray(location.neighbourhoods) ? location.neighbourhoods : [];
+  // The town's other services, as ticked in Admin › Locations (none ticked = every service).
+  const townSlugs = Array.isArray(location.service_slugs) ? location.service_slugs : [];
+  const otherServices = services.filter(item => item.slug !== SNOW_SLUG && (!townSlugs.length || townSlugs.includes(item.slug)));
   const crumbs = [{ label: 'Home', href: '/' }, { label: 'Snow Removal', href: `/services/${SNOW_SLUG}` }, { label: location.title }];
 
   const schema = {
@@ -128,9 +132,16 @@ export default async function SnowTownPage({ params }) {
               <a className="btn btn-navy" style={{ width: '100%' }} href={telHref(settings.phone)}>Call Now</a>
             </div>
             <div className="side-card">
-              <h3>Moving in {location.title}?</h3>
-              <p className="muted">Moving, delivery and junk removal have their own page.</p>
-              <Link className="more" href={`/locations/${location.slug}`}>{location.title} movers & delivery →</Link>
+              <h3>Other services in {location.title}</h3>
+              {otherServices.length ? <div className="side-links service-side-links">
+                {otherServices.map(item => (
+                  <Link href={`/services/${item.slug}`} key={item.slug}>
+                    <span className="service-side-icon"><ServiceIcon slug={item.slug} size={19}/></span>
+                    <span>{item.title}</span>
+                  </Link>
+                ))}
+              </div> : null}
+              <Link className="more" href={`/locations/${location.slug}`}>All services in {location.title} →</Link>
             </div>
           </aside>
         </div>
