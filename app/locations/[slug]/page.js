@@ -8,7 +8,7 @@ import ServiceCards from '@/components/ServiceCards';
 import TrustStrip from '@/components/TrustStrip';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import { getBaseUrl, getLocationBySlug, getLocations, getServices, getSiteSettings } from '@/lib/content';
-import { getSiteContent, pricedServicesForLocation } from '@/lib/siteContent';
+import { SNOW_SLUG, getSiteContent, pricedServicesForLocation, snowTownHref } from '@/lib/siteContent';
 import { notFound } from 'next/navigation';
 import { telHref } from '@/lib/phone';
 
@@ -93,7 +93,7 @@ export default async function LocationPage({ params }) {
                 </div>
                 <div className="location-promo-actions">
                   <QuoteDrawerTrigger className="btn btn-accent" preset={service?.title || item.label} plan={plan.title}>{plan.buttonText || 'Book now'}</QuoteDrawerTrigger>
-                  <Link className="btn btn-line location-promo-link" href={`/services/${item.slug}`}>See {item.label.toLowerCase()} details →</Link>
+                  <Link className="btn btn-line location-promo-link" href={item.slug === SNOW_SLUG ? snowTownHref(location.slug) : `/services/${item.slug}`}>See {item.label.toLowerCase()} in {location.title} →</Link>
                 </div>
               </div>
             </div>
@@ -107,7 +107,7 @@ export default async function LocationPage({ params }) {
             {location.intro && location.hero_description ? <p className="lead-p">{location.intro}</p> : null}
             <span className="kicker">Services in {location.title}</span>
             <h2 style={{marginTop:0}}>Everything we do in {location.title}</h2>
-            {relatedServices.length ? <ServiceCards services={relatedServices} compact locationName={location.title}/> : <div className="empty-state">No published services linked yet.</div>}
+            {relatedServices.length ? <ServiceCards services={relatedServices} compact locationName={location.title} locationSlug={location.slug}/> : <div className="empty-state">No published services linked yet.</div>}
 
             {(location.neighbourhoods || []).length ? <>
               <h2>Neighbourhoods we cover</h2>

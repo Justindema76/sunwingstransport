@@ -1,4 +1,5 @@
 import { getBaseUrl, getBlogPosts, getLocations, getServices } from '@/lib/content';
+import { offersSnow, snowTownHref } from '@/lib/siteContent';
 
 function lastModified(item) {
   const value = item?.updated_at || item?.publishedAt || item?.published_at || '';
@@ -25,6 +26,12 @@ export default async function sitemap() {
     })),
     ...locations.map(location => ({
       url: `${base}/locations/${location.slug}`,
+      lastModified: lastModified(location),
+      changeFrequency: 'monthly',
+      priority: .8,
+    })),
+    ...locations.filter(offersSnow).map(location => ({
+      url: `${base}${snowTownHref(location.slug)}`,
       lastModified: lastModified(location),
       changeFrequency: 'monthly',
       priority: .8,

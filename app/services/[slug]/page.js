@@ -48,7 +48,7 @@ export default async function ServicePage({ params }) {
   const pricing = servicePricingFor(content, service.slug);
   const plan = pricing?.cards?.find(card => card.featured);
   const planPrice = plan ? String(plan.amount || '').replace(/[^0-9.]/g, '') : '';
-  const regionSlugs = (pricing?.regions || []).flatMap(region => region.places.filter(place => place.href).map(place => place.href.replace('/locations/', '')));
+  const regionSlugs = (pricing?.regions || []).flatMap(region => region.places.filter(place => place.href).map(place => place.href.replace(/^\/(locations|snow-removal)\//, '')));
   const relatedLocations = regionSlugs.length
     ? regionSlugs.map(slug => locations.find(location => location.slug === slug)).filter(Boolean)
     : locations.filter(location =>
@@ -125,7 +125,7 @@ export default async function ServicePage({ params }) {
             {relatedLocations.length ? (
               <div className="chips">
                 {relatedLocations.map(location => (
-                  <Link className="chip" href={`/locations/${location.slug}`} key={location.slug}>{location.title}</Link>
+                  <Link className="chip" href={service.slug === 'snow-removal' ? `/snow-removal/${location.slug}` : `/locations/${location.slug}`} key={location.slug}>{location.title}</Link>
                 ))}
                 {regionSlugs.length ? null : <Link className="chip" href="/locations">All areas →</Link>}
               </div>

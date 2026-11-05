@@ -10,12 +10,13 @@ const FALLBACK_IMAGES = {
   'junk-removal': 'https://sunwingstransport.ca/wp-content/uploads/2026/02/cargo-van-driveway1.png',
 };
 
-export default function ServiceCards({ services = [], compact = false, locationName = '', cardOverrides = [] }) {
+// On a city page (locationSlug), the Snow Removal card opens that city's own snow page.
+export default function ServiceCards({ services = [], compact = false, locationName = '', locationSlug = '', cardOverrides = [] }) {
   if (compact) {
     return (
       <div className="grid-2 location-service-grid">
         {services.map(service => (
-          <Link className="card location-service-card" href={`/services/${service.slug}`} key={service.id || service.slug}>
+          <Link className="card location-service-card" href={locationSlug && service.slug === 'snow-removal' ? `/snow-removal/${locationSlug}` : `/services/${service.slug}`} key={service.id || service.slug}>
             <div className="card-body tight">
               <h3 className="service-card-heading">
                 <span className="service-card-icon"><ServiceIcon slug={service.slug} size={20}/></span>
