@@ -29,7 +29,7 @@ export default function OfferPopup({ image, eyebrow, heading, price, text, prima
   return (
     <>
       <aside className={`offer-card ${state === 'open' ? 'is-open' : ''}`} aria-labelledby="offer-card-title" aria-hidden={state !== 'open'} inert={state !== 'open' ? '' : undefined}>
-        {image ? <div className="offer-card-image" style={{ backgroundImage: `url("${image}")` }}/> : null}
+        {image ? <div className="offer-card-image"><img src={image} alt="" loading="lazy"/></div> : null}
         <div className="offer-card-top">
           <button className="offer-card-close" type="button" onClick={close} aria-label="Close offer"><X size={18}/></button>
           {eyebrow ? <span className="offer-card-eyebrow">{eyebrow}</span> : null}
