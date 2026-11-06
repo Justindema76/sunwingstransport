@@ -59,6 +59,7 @@ export default function Header({ settings, services = [], globalHeader = {} }) {
                 <div className="nav-dropdown-menu">
                   <Link className="nav-dropdown-all" href="/services">All Services</Link>
                   {services.map(service => <Link href={`/services/${service.slug}`} key={service.id || service.slug}>{service.title}</Link>)}
+                  <Link href="/long-distance">Long Distance Moving</Link>
                 </div>
               </div>
             ) : <SmartNavLink href={item.url || '#'} key={`${item.label}-${item.url}`}>{item.label}</SmartNavLink>)}

@@ -29,13 +29,14 @@ export async function generateMetadata({ params }) {
   if (!town) return {};
   const { location, service } = town;
   const url = `${getBaseUrl()}${snowTownHref(location.slug)}`;
-  const title = `Snow Removal ${location.title} | Driveways, Walkways & Steps | Sunwings Transport`;
+  const title = `Snow Removal in ${location.title} | Sunwings Transport`;
   const description = `Residential snow removal in ${location.title}: driveways, walkways and front steps cleared after every 5 cm snowfall. Get a quote for your property.`;
   return {
     title: { absolute: title },
     description,
     alternates: { canonical: url },
-    openGraph: { type: 'website', url, title, description, images: service.banner_image ? [{ url: service.banner_image, alt: service.banner_alt || `Snow removal in ${location.title}` }] : [] },
+    openGraph: { type: 'website', url, title, description, siteName: 'Sunwings Transport', locale: 'en_CA', images: service.banner_image ? [{ url: service.banner_image, alt: service.banner_alt || `Snow removal in ${location.title}` }] : [] },
+    twitter: { card: 'summary_large_image', title, description, images: service.banner_image ? [service.banner_image] : [] },
   };
 }
 

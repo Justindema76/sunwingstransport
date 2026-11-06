@@ -7,10 +7,15 @@ import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { getBaseUrl, getSiteSettings } from '@/lib/content';
 import { ROUTES, ROUTE_GROUPS, ROUTE_SERVICE, routeHref } from '@/lib/routes';
 
+const TITLE = 'Long-Distance Movers Toronto, Hamilton & Niagara | Sunwings';
+const DESCRIPTION = 'Long-distance and intercity moves between Toronto, Hamilton, Mississauga, St. Catharines and Niagara Falls. One crew and one truck, door to door. Free quote.';
+
 export const metadata = {
-  title: { absolute: 'Long-Distance Movers: Hamilton, Niagara & Toronto | Sunwings Transport' },
-  description: 'Long-distance and intercity moves between Toronto, Hamilton, Mississauga, St. Catharines and Niagara Falls. One crew and one truck, door to door. Free quote.',
+  title: { absolute: TITLE },
+  description: DESCRIPTION,
   alternates: { canonical: '/long-distance' },
+  openGraph: { type: 'website', url: '/long-distance', title: TITLE, description: DESCRIPTION, siteName: 'Sunwings Transport', locale: 'en_CA', images: [{ url: HERO_IMAGE_OPTIONS.truck, alt: 'Sunwings moving truck' }] },
+  twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: [HERO_IMAGE_OPTIONS.truck] },
 };
 
 export default async function LongDistancePage() {
@@ -25,6 +30,7 @@ export default async function LongDistancePage() {
         accent="One crew, door to door."
         description="Toronto, Hamilton, Mississauga and Niagara. We load your home, drive it straight to the new place and unload it with the same crew. Send your move for a free quote."
         image={HERO_IMAGE_OPTIONS.truck}
+        imageAlt="Sunwings moving truck"
         phone={settings.phone}
         preset={ROUTE_SERVICE}
       />
@@ -62,6 +68,12 @@ export default async function LongDistancePage() {
       </section>
 
       <BreadcrumbSchema baseUrl={getBaseUrl()} items={crumbs}/>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'Long-distance moving routes',
+        itemListElement: ROUTES.map((route, index) => ({ '@type': 'ListItem', position: index + 1, name: `${route.from} to ${route.to} movers`, url: `${getBaseUrl()}${routeHref(route)}` })),
+      }) }}/>
     </>
   );
 }

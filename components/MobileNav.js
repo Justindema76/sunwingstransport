@@ -70,6 +70,7 @@ export default function MobileNav({ links = [], services = [], phone = '', butto
                 {services.map(service => (
                   <Link href={`/services/${service.slug}`} onClick={close} key={service.id || service.slug}>{service.title}</Link>
                 ))}
+                <Link href="/long-distance" onClick={close}>Long Distance Moving</Link>
               </div> : null}
             </div>
           ) : (

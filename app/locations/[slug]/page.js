@@ -152,6 +152,7 @@ export default async function LocationPage({ params }) {
               <h2>Long-distance moves to and from {location.title}</h2>
               <div className="chips">
                 {routesForTown(location.slug).map(route => <Link className="chip" href={routeHref(route)} key={route.slug}>{route.from} to {route.to} movers</Link>)}
+                <Link className="chip" href="/long-distance">All long-distance moves →</Link>
               </div>
             </> : null}
 

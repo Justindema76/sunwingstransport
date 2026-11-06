@@ -9,7 +9,7 @@ import TrustStrip from '@/components/TrustStrip';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { getBaseUrl, getLocations, getServices, getSiteSettings } from '@/lib/content';
 import { telHref } from '@/lib/phone';
-import { ROUTES, ROUTE_SERVICE, reverseRoute, routeBySlug, routeHref } from '@/lib/routes';
+import { ROUTES, ROUTE_SERVICE, reverseRoute, routeBySlug, routeHref, routeTips, townAreas } from '@/lib/routes';
 
 // One landing page per moving route (e.g. /long-distance/hamilton-to-toronto), made for ads.
 // No prices: the visitor sends the job and gets a quote.
@@ -23,13 +23,15 @@ export async function generateMetadata({ params }) {
   const route = routeBySlug(slug);
   if (!route) return {};
   const url = `${getBaseUrl()}${routeHref(route)}`;
-  const title = `${route.from} to ${route.to} Movers | Free Moving Quote | Sunwings Transport`;
-  const description = `Moving from ${route.from} to ${route.to}? One crew and one truck, door to door. Send your move details and photos for a free quote.`;
+  const title = `${route.from} to ${route.to} Movers | Free Quote | Sunwings Transport`;
+  const description = `${route.from} to ${route.to} movers: one crew and one truck, door to door, ${route.distance}. Condos, apartments, houses and single items. Get a free moving quote.`;
+  const image = { url: HERO_IMAGE_OPTIONS.truck, alt: `Sunwings moving truck for ${route.from} to ${route.to} moves` };
   return {
     title: { absolute: title },
     description,
     alternates: { canonical: url },
-    openGraph: { type: 'website', url, title, description, images: [{ url: HERO_IMAGE_OPTIONS.truck, alt: `${route.from} to ${route.to} movers` }] },
+    openGraph: { type: 'website', url, title, description, siteName: 'Sunwings Transport', locale: 'en_CA', images: [image] },
+    twitter: { card: 'summary_large_image', title, description, images: [image.url] },
   };
 }
 
@@ -43,6 +45,9 @@ export default async function RoutePage({ params }) {
   const back = reverseRoute(route);
   const others = ROUTES.filter(item => item.slug !== route.slug && item.slug !== back?.slug);
   const townPage = townSlug => locations.find(location => location.slug === townSlug);
+  const fromAreas = townAreas(route.fromSlug);
+  const toAreas = townAreas(route.toSlug);
+  const tips = routeTips(route);
   const crumbs = [{ label: 'Home', href: '/' }, { label: 'Long Distance', href: '/long-distance' }, { label: `${route.from} to ${route.to}` }];
 
   const faqs = [
@@ -58,6 +63,7 @@ export default async function RoutePage({ params }) {
     name: `${route.from} to ${route.to} Movers`,
     serviceType: 'Long-distance moving',
     url: `${getBaseUrl()}${routeHref(route)}`,
+    description: route.intro,
     areaServed: [{ '@type': 'City', name: route.from }, { '@type': 'City', name: route.to }],
     provider: { '@type': 'MovingCompany', name: settings.site_name || 'Sunwings Transport', telephone: settings.phone || undefined, url: getBaseUrl() },
   };
@@ -70,6 +76,7 @@ export default async function RoutePage({ params }) {
         title={`${route.from} to ${route.to} Movers`}
         description={route.intro}
         image={HERO_IMAGE_OPTIONS.truck}
+        imageAlt={`Sunwings moving truck for ${route.from} to ${route.to} moves`}
         phone={settings.phone}
         preset={ROUTE_SERVICE}
         quoteFill={fill}
@@ -91,6 +98,17 @@ export default async function RoutePage({ params }) {
               <li>Condos, apartments, houses and single items</li>
               <li>Evenings and weekends available</li>
             </ul>
+
+            {fromAreas.length || toAreas.length ? <>
+              <h2>Where we pick up and deliver</h2>
+              {fromAreas.length ? <><h3>Picking up in {route.from}</h3><div className="chips">{fromAreas.map(area => <span className="chip" key={area}>{area}</span>)}</div></> : null}
+              {toAreas.length ? <><h3>Delivering in {route.to}</h3><div className="chips">{toAreas.map(area => <span className="chip" key={area}>{area}</span>)}</div></> : null}
+            </> : null}
+
+            {tips.length ? <>
+              <h2>Tips for a {route.from} to {route.to} move</h2>
+              <ul className="checks one">{tips.map(tip => <li key={tip}>{tip}</li>)}</ul>
+            </> : null}
 
             <h2>How it works</h2>
             <HowItWorks
