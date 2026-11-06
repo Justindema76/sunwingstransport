@@ -560,12 +560,12 @@ h1,h2,h3{text-transform:capitalize}
   .hero-slider:not(:has(.hero-slider-controls)) .hero-slide>.container{padding-bottom:102px}
 }
 /* Desktop: slightly less space above/below the text so the tallest slides fit in 700px. */
-/* Desktop: arrows/dots sit under the text in the normal flow (never on top of it). Single-banner
-   pages keep the same space so everything lines up. */
+/* Desktop: the photo runs all the way down to the white wave (no navy strip under it). The
+   arrows/dots sit on the photo, in space kept free below the text so they never cover it.
+   Single-banner pages keep the same space so everything lines up. */
 @media (min-width:701px){
-  .hero-slide>.container{padding-top:72px;padding-bottom:24px}
-  .hero-slider-controls{position:relative;bottom:auto;padding:0 0 84px}
-  .hero-slider:not(:has(.hero-slider-controls)) .hero-slide>.container{padding-bottom:132px}
+  .hero-slide>.container{padding-top:72px;padding-bottom:148px}
+  .hero-slider-controls{position:absolute;left:0;right:0;bottom:84px;padding:0}
 }
 
 /* Quote form photos (components/QuoteForm.js) */
