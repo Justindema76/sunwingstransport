@@ -11,6 +11,7 @@ import { getBaseUrl, getLocationBySlug, getLocations, getServices, getSiteSettin
 import { SNOW_SLUG, getSiteContent, pricedServicesForLocation, snowTownHref } from '@/lib/siteContent';
 import { notFound } from 'next/navigation';
 import { telHref } from '@/lib/phone';
+import { routeHref, routesForTown } from '@/lib/routes';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -145,6 +146,13 @@ export default async function LocationPage({ params }) {
             {faqs.length ? <>
               <h2>{location.title} moving FAQs</h2>
               {faqs.map(item => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}
+            </> : null}
+
+            {routesForTown(location.slug).length ? <>
+              <h2>Long-distance moves to and from {location.title}</h2>
+              <div className="chips">
+                {routesForTown(location.slug).map(route => <Link className="chip" href={routeHref(route)} key={route.slug}>{route.from} to {route.to} movers</Link>)}
+              </div>
             </> : null}
 
             {nearby.length ? <>

@@ -108,6 +108,7 @@ export async function POST(request) {
     dropoffStairs: clean(body.dropoffStairs, 10),
     itemList: clean(body.itemList, 6000),
     message: clean(body.message, 3000),
+    leadSource: clean(body.leadSource, 300),
     photos: (Array.isArray(body.photos) ? body.photos : []).map(item => clean(item, 80)).filter(item => PHOTO_PATH.test(item)).slice(0, 6),
     // Snow requests have a single service address, so the database's pickup/drop-off checks are skipped.
     quickRequest: body.quickRequest === true || body.snowRequest === true,

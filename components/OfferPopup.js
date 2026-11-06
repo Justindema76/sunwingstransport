@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Snowflake, X } from 'lucide-react';
 
 // Short pause so the card visibly slides up after the page appears.
@@ -11,6 +12,8 @@ const DELAY_MS = 400;
 // Closing it leaves a small tab that reopens it.
 export default function OfferPopup({ image, eyebrow, heading, price, text, primary, preset, plan, secondary, secondaryHref, tabLabel }) {
   const [state, setState] = useState('hidden'); // hidden | open | tab
+  // Long-distance ad landing pages stay focused on the move quote: no snow promo, no prices.
+  const hidden = (usePathname() || '').startsWith('/long-distance');
 
   useEffect(() => {
     const timer = window.setTimeout(() => setState(current => (current === 'hidden' ? 'open' : current)), DELAY_MS);
@@ -25,6 +28,8 @@ export default function OfferPopup({ image, eyebrow, heading, price, text, prima
     close();
     window.dispatchEvent(new CustomEvent('sunwings:open-quote', { detail: { preset, plan } }));
   }
+
+  if (hidden) return null;
 
   return (
     <>

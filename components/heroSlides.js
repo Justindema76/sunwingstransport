@@ -104,7 +104,7 @@ export function serviceSlides(services = [], content, { firstImage = '', firstHe
 }
 
 // The page's own slide: breadcrumbs, tag, headline, subtitle and quote/call buttons.
-export function pageSlide({ crumbs = [], eyebrow, heading, accent, text, image, imageAlt = '', fallbackImage, imagePosition, phone, ctas = true, badge, panel, preset = '' }) {
+export function pageSlide({ crumbs = [], eyebrow, heading, accent, text, image, imageAlt = '', fallbackImage, imagePosition, phone, ctas = true, badge, panel, preset = '', quoteFill = null }) {
   return {
     key: 'page',
     imageAlt,
@@ -127,7 +127,7 @@ export function pageSlide({ crumbs = [], eyebrow, heading, accent, text, image, 
           {text ? <p className="lead">{text}</p> : null}
           {ctas ? (
             <div className="hero-ctas">
-              <QuoteDrawerTrigger className="btn btn-accent" preset={preset}>Request a Quote →</QuoteDrawerTrigger>
+              <QuoteDrawerTrigger className="btn btn-accent" preset={preset} fill={quoteFill}>Request a Quote →</QuoteDrawerTrigger>
               <a className="btn btn-ghost" href={telHref(phone)}><Phone size={18}/> Call Now</a>
             </div>
           ) : null}

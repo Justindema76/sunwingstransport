@@ -1,5 +1,6 @@
 import { getBaseUrl, getBlogPosts, getLocations, getServices } from '@/lib/content';
 import { offersSnow, snowTownHref } from '@/lib/siteContent';
+import { ROUTES, routeHref } from '@/lib/routes';
 
 function lastModified(item) {
   const value = item?.updated_at || item?.publishedAt || item?.published_at || '';
@@ -36,6 +37,8 @@ export default async function sitemap() {
       changeFrequency: 'monthly',
       priority: .8,
     })),
+    { url: `${base}/long-distance`, changeFrequency: 'monthly', priority: .9 },
+    ...ROUTES.map(route => ({ url: `${base}${routeHref(route)}`, changeFrequency: 'monthly', priority: .9 })),
     ...posts.map(post => ({
       url: `${base}/blog/${post.slug}`,
       lastModified: lastModified(post),

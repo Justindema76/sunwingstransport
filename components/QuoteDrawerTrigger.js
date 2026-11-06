@@ -5,10 +5,11 @@ export default function QuoteDrawerTrigger({
   className = '',
   preset = '',
   plan = '',
+  fill = null, // e.g. { pickupCity: 'Hamilton', dropoffCity: 'Toronto' }
 }) {
   function openDrawer() {
     window.dispatchEvent(new CustomEvent('sunwings:open-quote', {
-      detail: { preset, plan },
+      detail: { preset, plan, fill },
     }));
   }
 

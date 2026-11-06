@@ -102,6 +102,43 @@ function PhotoPicker({ photos, onAdd, onRemove, error, disabled }) {
   </div>;
 }
 
+// Where a quote came from: the page it was sent from, the first page of the visit and any
+// ad tags (utm_*, Google Ads click). Saved with the quote so ads can be measured.
+const VISIT_KEY = 'sunwings_visit';
+const FILL_KEYS = ['pickupCity', 'dropoffCity'];
+
+function rememberVisit() {
+  try {
+    if (window.sessionStorage.getItem(VISIT_KEY)) return;
+    const params = new URLSearchParams(window.location.search);
+    const ad = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term'].map(key => params.get(key)).filter(Boolean).join(' / ');
+    window.sessionStorage.setItem(VISIT_KEY, JSON.stringify({
+      landing: window.location.pathname,
+      ad,
+      googleAds: params.has('gclid') || params.has('gbraid') || params.has('wbraid'),
+      referrer: document.referrer && !document.referrer.includes(window.location.host) ? new URL(document.referrer).host : '',
+    }));
+  } catch {
+    // Storage can be blocked; the quote then only records the page it was sent from.
+  }
+}
+
+function leadSource() {
+  let visit = {};
+  try { visit = JSON.parse(window.sessionStorage.getItem(VISIT_KEY) || '{}') || {}; } catch { visit = {}; }
+  return [
+    `Sent from ${window.location.pathname}`,
+    visit.landing && visit.landing !== window.location.pathname ? `landed on ${visit.landing}` : '',
+    visit.ad ? `ad: ${visit.ad}` : '',
+    visit.googleAds ? 'Google Ads click' : '',
+    !visit.ad && !visit.googleAds && visit.referrer ? `from ${visit.referrer}` : '',
+  ].filter(Boolean).join(' · ').slice(0, 300);
+}
+
+function pickFill(fill) {
+  return Object.fromEntries(FILL_KEYS.filter(key => fill?.[key]).map(key => [key, String(fill[key])]));
+}
+
 function YesNo({ name, value, onChange }) {
   return <div className="quote-choice-row" role="group" aria-label={name}>
     <label><input type="radio" name={name} value="yes" checked={value === 'yes'} onChange={onChange}/> Yes</label>
@@ -137,10 +174,11 @@ export default function QuoteForm({
   replyHours = '',
   triggerText = 'Request a Quote',
   global = false,
+  fill = null,
 }) {
   const drawerId = useId();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ ...initialState, service: preset });
+  const [form, setForm] = useState({ ...initialState, service: preset, ...pickFill(fill) });
   const [state, setState] = useState({ sending: false, message: '', fieldErrors: {} });
   const [referral, setReferral] = useState('');
   const [photos, setPhotos] = useState([]);
@@ -166,6 +204,8 @@ export default function QuoteForm({
     });
   }
 
+  useEffect(() => { rememberVisit(); }, []);
+
   useEffect(() => {
     const label = readReferral();
     if (!label) return;
@@ -179,7 +219,9 @@ export default function QuoteForm({
     function openQuoteDrawer(event) {
       const nextPreset = String(event?.detail?.preset || '').trim();
       const nextPlan = String(event?.detail?.plan || '').trim();
+      const nextFill = pickFill(event?.detail?.fill);
       if (nextPreset) setForm(current => ({ ...current, service: nextPreset, moveSize: nextPlan || current.moveSize }));
+      if (Object.keys(nextFill).length) setForm(current => ({ ...current, ...nextFill }));
       setState(current => ({ ...current, message: '', fieldErrors: {} }));
       setOpen(true);
     }
@@ -244,7 +286,7 @@ export default function QuoteForm({
           form.message,
           form.referralSource ? `How did you hear about us? ${form.referralSource}` : '',
           referral && form.referralSource !== referral ? `Partner referral link: ${referral}` : '',
-        ].filter(Boolean).join('\n\n'), photos: photoPaths, quickRequest: compact, snowRequest: snowJob && !compact }),
+        ].filter(Boolean).join('\n\n'), photos: photoPaths, leadSource: leadSource(), quickRequest: compact, snowRequest: snowJob && !compact }),
       });
       const result = await response.json();
 
@@ -260,7 +302,7 @@ export default function QuoteForm({
       trackEvent('generate_lead', { lead_source: compact ? 'quick_quote' : 'full_quote', service:form.service || preset || '' });
       if (typeof window !== 'undefined' && typeof window.fbq === 'function') window.fbq('track', 'Lead');
 
-      setForm({ ...initialState, service: preset, referralSource: referral });
+      setForm({ ...initialState, service: preset, referralSource: referral, ...pickFill(fill) });
       photos.forEach(photo => URL.revokeObjectURL(photo.preview));
       setPhotos([]);
       const timing = String(replyHours || '').trim();
@@ -339,6 +381,15 @@ export default function QuoteForm({
             {errorFor('service') ? <small className="field-error">{errorFor('service')}</small> : null}
           </label>
         </div>
+
+        {compact && fill ? <div className="row">
+          <label>Moving from
+            <input name="pickupCity" value={form.pickupCity} onChange={update} placeholder="City"/>
+          </label>
+          <label>Moving to
+            <input name="dropoffCity" value={form.dropoffCity} onChange={update} placeholder="City"/>
+          </label>
+        </div> : null}
 
         {compact && !snowJob ? <label className={errorFor('itemList') ? 'field-has-error' : ''}>What are we moving? *
           <textarea required rows="3" name="itemList" value={form.itemList} onChange={update} placeholder="E.g. queen bed, sofa, 10 boxes" aria-invalid={Boolean(errorFor('itemList'))}/>
