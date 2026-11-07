@@ -26,9 +26,9 @@ export default async function LongDistancePage() {
       <PageHero
         crumbs={crumbs}
         eyebrow="Long-distance & intercity moving"
-        title="Moving between cities?"
-        accent="One crew, door to door."
-        description="Toronto, Hamilton, Mississauga and Niagara. We load your home, drive it straight to the new place and unload it with the same crew. Send your move for a free quote."
+        title="Long-distance"
+        accent="moving."
+        description="Toronto, Hamilton, Mississauga and Niagara. One crew loads, drives and unloads your move."
         image={HERO_IMAGE_OPTIONS.truck}
         imageAlt="Sunwings moving truck"
         phone={settings.phone}

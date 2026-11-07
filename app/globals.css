@@ -484,6 +484,9 @@ h1,h2,h3{text-transform:capitalize}
 /* Slide headlines can be h1 or h2 (one h1 per page); style them the same. */
 .hero .hero-title{font-size:clamp(40px,5.6vw,66px);font-weight:800;color:#fff;line-height:1.12;letter-spacing:-.02em}
 .hero .hero-title em{font-style:normal;display:block;background:linear-gradient(135deg,var(--accent-2),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+/* The orange gradient is clipped to the text box, which is shorter than letters with tails
+   (g, y, p). Extra room at the bottom (taken back with a negative margin) shows the whole letter. */
+.hero .hero-title em,.hero h1 em{padding-bottom:.16em;margin-bottom:-.16em}
 .hero-slide .crumbs{margin-bottom:18px}
 @media (max-width:900px){.hero .hero-title{font-size:40px}}
 

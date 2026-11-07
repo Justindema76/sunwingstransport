@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Phone } from 'lucide-react';
 import QuoteDrawerTrigger from './QuoteDrawerTrigger';
-import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
+import { HERO_IMAGE_OPTIONS, RETIRED_HERO_IMAGES } from '@/lib/contentDefaults';
 import { featuredPrice } from '@/lib/siteContent';
 import { telHref } from '@/lib/phone';
 
@@ -21,6 +21,7 @@ export function rotatingHeroImage(key = '') {
 
 export function safeHeroImage(image, fallback = HERO_IMAGES.van) {
   const url = String(image || '').trim();
+  if (RETIRED_HERO_IMAGES[url]) return RETIRED_HERO_IMAGES[url];
   return url && !/sunwingstransport\.ca\/wp-content\//.test(url) ? url : fallback;
 }
 
