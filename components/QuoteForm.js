@@ -109,9 +109,12 @@ const FILL_KEYS = ['pickupCity', 'dropoffCity'];
 
 function rememberVisit() {
   try {
-    if (window.sessionStorage.getItem(VISIT_KEY)) return;
     const params = new URLSearchParams(window.location.search);
     const ad = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term'].map(key => params.get(key)).filter(Boolean).join(' / ');
+    const fromAd = Boolean(ad) || params.has('gclid') || params.has('gbraid') || params.has('wbraid');
+    // Keep the first page of the visit, unless this page was opened from an ad: an ad click
+    // always wins, so a quote is credited to the ad even if they browsed the site earlier.
+    if (window.sessionStorage.getItem(VISIT_KEY) && !fromAd) return;
     window.sessionStorage.setItem(VISIT_KEY, JSON.stringify({
       landing: window.location.pathname,
       ad,
