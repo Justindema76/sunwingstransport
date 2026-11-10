@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import BreadcrumbSchema from '@/components/BreadcrumbSchema';
 import PageHero from '@/components/PageHero';
+import PhotoGallery from '@/components/PhotoGallery';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import TrustStrip from '@/components/TrustStrip';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
@@ -62,14 +63,7 @@ export default async function LongDistancePage() {
             <h2 id="moving-work-heading">Real homes. Carefully prepared moves.</h2>
             <p>Photos from Sunwings residential moving jobs, showing loading access, protected furniture and household belongings. Your route, crew, vehicle and service scope are confirmed for your own move.</p>
           </div>
-          <div className="grid-3">
-            {movingPhotos.map(photo => <figure key={photo.file} style={{ margin: 0 }}>
-              <a href={`${PHOTO_ROOT}${photo.file}`} aria-label={`View larger: ${photo.alt}`}>
-                <img src={imagePreview(`${PHOTO_ROOT}${photo.file}`, 640, 640)} alt={photo.alt} width="640" height="640" loading="lazy" decoding="async" style={{ width: '100%', height: 300, objectFit: 'cover', borderRadius: 20 }}/>
-              </a>
-              <figcaption style={{ marginTop: 12 }}>{photo.caption}</figcaption>
-            </figure>)}
-          </div>
+          <PhotoGallery photos={movingPhotos.map(photo => ({ thumb: imagePreview(`${PHOTO_ROOT}${photo.file}`, 640, 640), full: imagePreview(`${PHOTO_ROOT}${photo.file}`, 1600, 1600).replace('resize=cover', 'resize=contain'), alt: photo.alt, caption: photo.caption }))}/>
         </div>
       </section>
 
