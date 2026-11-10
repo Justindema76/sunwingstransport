@@ -12,8 +12,9 @@ const DELAY_MS = 400;
 // Closing it leaves a small tab that reopens it.
 export default function OfferPopup({ image, eyebrow, heading, price, text, primary, preset, plan, secondary, secondaryHref, tabLabel }) {
   const [state, setState] = useState('hidden'); // hidden | open | tab
-  // Long-distance ad landing pages stay focused on the move quote: no snow promo, no prices.
-  const hidden = (usePathname() || '').startsWith('/long-distance');
+  // Only on the homepage and the snow removal pages; every other page stays clear.
+  const path = usePathname() || '/';
+  const hidden = !(path === '/' || path === '/services/snow-removal' || path.startsWith('/snow-removal'));
 
   useEffect(() => {
     const timer = window.setTimeout(() => setState(current => (current === 'hidden' ? 'open' : current)), DELAY_MS);
