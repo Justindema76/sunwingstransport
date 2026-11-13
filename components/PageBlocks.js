@@ -5,6 +5,7 @@ import BlogCards from './BlogCards';
 import ContactForm from './ContactForm';
 import HowItWorks from './HowItWorks';
 import QuoteForm from './QuoteForm';
+import QuoteAside from './QuoteAside';
 import QuoteDrawerTrigger from './QuoteDrawerTrigger';
 import ReviewsBlock from './ReviewsBlock';
 import ServiceAreaGrid from './ServiceAreaGrid';
@@ -12,7 +13,7 @@ import ServiceCards from './ServiceCards';
 import TrustStrip from './TrustStrip';
 import HeroSlider from './HeroSlider';
 import PageHero from './PageHero';
-import { pricingPanel, serviceSlides } from './heroSlides';
+import { photoSettings, pricingPanel, serviceSlides } from './heroSlides';
 import { getSiteContent } from '@/lib/siteContent';
 import { telHref } from '@/lib/phone';
 
@@ -67,7 +68,7 @@ function Hero({ p, home, settings, services = [], pageId = '', content }) {
       accent={copy.heading ? copy.accent : p.accent}
       description={copy.text || p.text}
       image={copy.image || p.image}
-      imagePosition={copy.mobilePosition}
+      imagePosition={photoSettings(copy)}
       panel={pageId === 'pricing' ? pricingPanel(content) : undefined}
       phone={settings?.phone}
       ctas={pageId !== 'privacy'}
@@ -357,13 +358,10 @@ export default async function PageBlocks({ data, pageId, services = [], location
       case 'SunwingsQuoteFormBlock':
         return (
           <section className={sectionClass(p, 'soft')} key={key}>
-            <div className="container split">
-              <div>
-                {p.eyebrow ? <span className="kicker">{p.eyebrow}</span> : null}
-                <h2>{p.heading}</h2>
-                {p.text ? <p className="muted" style={{ marginTop: 14, fontSize: 17 }}>{p.text}</p> : null}
-                {p.buttonText ? <div style={{ marginTop: 24 }}><SmartLink to={p.buttonUrl || '/contact'} action={p.buttonAction}>{p.buttonText}</SmartLink></div> : null}
-              </div>
+            <div className="container split quote-split">
+              <QuoteAside eyebrow={p.eyebrow} heading={p.heading} text={p.text} replyHours={settings?.quote_reply_hours} phone={settings?.phone}>
+                {p.buttonText ? <div className="quote-aside-cta"><SmartLink to={p.buttonUrl || '/contact'} action={p.buttonAction}>{p.buttonText}</SmartLink></div> : null}
+              </QuoteAside>
               <QuoteForm services={services} compact={p.compact !== false && p.compact !== 'false'} replyHours={settings?.quote_reply_hours}/>
             </div>
           </section>

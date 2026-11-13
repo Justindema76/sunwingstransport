@@ -25,18 +25,31 @@ export function safeHeroImage(image, fallback = HERO_IMAGES.van) {
   return url && !/sunwingstransport\.ca\/wp-content\//.test(url) ? url : fallback;
 }
 
-// `position` is the CSS background position, e.g. 'center' or '70% center', so the
-// important part of the photo stays in view on phones.
+// `position` is either a CSS background position for phones (older settings, e.g. '70% center')
+// or the photo settings from the admin's position editor:
+// { desktopPosition, desktopSize, mobilePosition, mobileSize } ("X% Y%" / "W% auto"; blank = default).
 export function heroBackground(image, fallback, position = '') {
+  const photo = typeof position === 'object' && position ? position : { mobilePosition: position };
+  const url = safeHeroImage(image, fallback);
   return {
-    backgroundImage: `linear-gradient(90deg,rgba(11,37,69,.88) 0%,rgba(11,37,69,.7) 38%,rgba(11,37,69,.2) 75%,rgba(11,37,69,.05) 100%),url("${safeHeroImage(image, fallback)}")`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+    backgroundImage: `linear-gradient(90deg,rgba(11,37,69,.88) 0%,rgba(11,37,69,.7) 38%,rgba(11,37,69,.2) 75%,rgba(11,37,69,.05) 100%),url("${url}")`,
+    backgroundSize: photo.desktopSize ? `auto, ${photo.desktopSize}` : 'cover',
+    backgroundPosition: photo.desktopPosition ? `center, ${photo.desktopPosition}` : 'center',
+    backgroundRepeat: 'no-repeat',
     // Phones show the photo on its own (no dark wash) above the text; see globals.css.
-    '--hero-photo': `url("${safeHeroImage(image, fallback)}")`,
-    ...(position ? { '--hero-mobile-position': position } : {}),
+    '--hero-photo': `url("${url}")`,
+    ...(photo.mobilePosition ? { '--hero-mobile-position': photo.mobilePosition } : {}),
+    ...(photo.mobileSize ? { '--hero-mobile-size': photo.mobileSize } : {}),
   };
 }
+
+// The photo settings saved with a slide or banner.
+export const photoSettings = (item = {}) => ({
+  desktopPosition: item.desktopPosition || '',
+  desktopSize: item.desktopSize || '',
+  mobilePosition: item.mobilePosition || '',
+  mobileSize: item.mobileSize || '',
+});
 
 
 // A box of price points shown on the right of a banner (used on the Pricing page).
@@ -85,7 +98,7 @@ export function serviceSlides(services = [], content, { firstImage = '', firstHe
       : (slide.badgeMain ? { top: slide.badgeTop, main: slide.badgeMain, bottom: slide.badgeBottom } : null);
     return {
       key: `${slide.slug}-${index}`,
-      style: heroBackground(slide.image || (index === 0 && firstImage ? firstImage : service.banner_image), undefined, slide.mobilePosition),
+      style: heroBackground(slide.image || (index === 0 && firstImage ? firstImage : service.banner_image), undefined, photoSettings(slide)),
       content: (
         <div className="hero-slide-layout">
           <div>

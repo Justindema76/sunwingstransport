@@ -1,5 +1,6 @@
 import PageBlocks from '@/components/PageBlocks';
 import PageHero from '@/components/PageHero';
+import { photoSettings } from '@/components/heroSlides';
 import { getSiteContent } from '@/lib/siteContent';
 import ContactForm from '@/components/ContactForm';
 import { getPageBuilderData, getServices, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
@@ -24,7 +25,7 @@ async function ContactHero({ settings }) {
       accent={copy.accent}
       description={copy.text}
       image={copy.image}
-      imagePosition={copy.mobilePosition}
+      imagePosition={photoSettings(copy)}
       phone={settings.phone}
     />
   );

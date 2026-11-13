@@ -1,25 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Snowflake, X } from 'lucide-react';
 
-// Short pause so the card visibly slides up after the page appears.
-const DELAY_MS = 400;
-
-// Promo card that slides up from the bottom-left corner as soon as the page loads.
-// Closing it leaves a small tab that reopens it.
+// Promo card in the bottom-left corner. It starts closed as a small tab; tapping the tab opens it.
 export default function OfferPopup({ image, eyebrow, heading, price, text, primary, preset, plan, secondary, secondaryHref, tabLabel }) {
-  const [state, setState] = useState('hidden'); // hidden | open | tab
-  // Only on the homepage and the snow removal pages; every other page stays clear.
+  const [state, setState] = useState('tab'); // open | tab
+  // Only on the snow removal pages; every other page stays clear.
   const path = usePathname() || '/';
-  const hidden = !(path === '/' || path === '/services/snow-removal' || path.startsWith('/snow-removal'));
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setState(current => (current === 'hidden' ? 'open' : current)), DELAY_MS);
-    return () => window.clearTimeout(timer);
-  }, []);
+  // The homepage shows it as a band under the slideshow instead (components/SnowBanner.js).
+  const hidden = !(path === '/services/snow-removal' || path.startsWith('/snow-removal'));
 
   function close() {
     setState('tab');

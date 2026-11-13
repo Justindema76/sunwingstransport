@@ -25,8 +25,27 @@ const initialState = {
   itemList: '',
   message: '',
   referralSource: '',
+  helpAtEnds: '',
+  snowAreas: [],
   website: '',
 };
+
+// Service-specific questions. Their answers are written into the item list / notes on send,
+// so they show in Admin › Quotes without new database columns.
+const HELP_OPTIONS = ['Yes, at both ends', 'Pickup only', 'Drop-off only', 'No, the crew does it all'];
+const SNOW_AREAS = ['Driveway', 'Front walkway', 'Front steps', 'Sidewalk', 'Side or back path', 'Parking pad'];
+
+function ChoiceList({ name, options, value, onChange, multiple = false }) {
+  const picked = multiple ? value : [value];
+  return <div className="quote-choice-list" role="group">
+    {options.map(option => <label key={option} className={picked.includes(option) ? 'is-on' : ''}>
+      <input type={multiple ? 'checkbox' : 'radio'} name={name} value={option} checked={picked.includes(option)} onChange={onChange}/>
+      {option}
+    </label>)}
+  </div>;
+}
+
+export const LONG_DISTANCE = 'Long Distance Moving';
 
 const MAX_PHOTOS = 6;
 const PHOTO_MAX_SIDE = 1600;
@@ -254,8 +273,13 @@ export default function QuoteForm({
   }
 
   function update(event) {
-    const { name, value } = event.target;
-    setForm(current => ({ ...current, [name]: value }));
+    const { name, value, type, checked } = event.target;
+    setForm(current => ({
+      ...current,
+      [name]: type === 'checkbox'
+        ? (checked ? [...current[name], value] : current[name].filter(item => item !== value))
+        : value,
+    }));
     setState(current => ({
       ...current,
       fieldErrors: current.fieldErrors?.[name]
@@ -267,6 +291,10 @@ export default function QuoteForm({
   async function submit(event) {
     event.preventDefault();
     const needsItems = !/snow/i.test(form.service);
+    if (/snow/i.test(form.service) && !form.pickupAddress.trim()) {
+      setState({ sending: false, message: 'Please correct the highlighted fields.', fieldErrors: { pickupAddress: 'Enter the property address.' } });
+      return;
+    }
     if (form.service && needsItems && !form.itemList.trim()) {
       setState({ sending: false, message: 'Please correct the highlighted fields.', fieldErrors: { itemList: 'List the items to be moved or delivered.' } });
       return;
@@ -285,7 +313,11 @@ export default function QuoteForm({
       const response = await fetch('/api/quote', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ...form, message: [
+        body: JSON.stringify({ ...form, helpAtEnds: undefined, snowAreas: undefined, itemList: [
+          snowJob && form.snowAreas.length ? `Areas to clear: ${form.snowAreas.join(', ')}` : '',
+          form.itemList,
+        ].filter(Boolean).join('\n\n'), message: [
+          assistJob && form.helpAtEnds ? `Help available at both ends? ${form.helpAtEnds}` : '',
           form.message,
           form.referralSource ? `How did you hear about us? ${form.referralSource}` : '',
           referral && form.referralSource !== referral ? `Partner referral link: ${referral}` : '',
@@ -324,6 +356,14 @@ export default function QuoteForm({
   const errorFor = name => state.fieldErrors?.[name] || '';
   // Snow removal is done at one property, so it asks for a service address instead of pickup/drop-off.
   const snowJob = /snow/i.test(form.service);
+  const assistJob = /client assist/i.test(form.service);
+  // Long distance is its own page, not a service in the list, so it's added here. A preset that
+  // isn't in the list (e.g. from an older link) is kept as an option so the select shows it.
+  const serviceOptions = [...new Set([
+    ...services.map(service => service.title),
+    LONG_DISTANCE,
+    ...(form.service ? [form.service] : []),
+  ])];
   const title = compact
     ? (preset ? `Quick Quote — ${preset}` : 'Quick Quote')
     : (preset ? `Quote for ${preset}` : 'Request a Quote');
@@ -368,7 +408,7 @@ export default function QuoteForm({
             <input required type="date" name="preferredDate" value={form.preferredDate} onChange={update} aria-invalid={Boolean(errorFor('preferredDate'))}/>
             {errorFor('preferredDate') ? <small className="field-error">{errorFor('preferredDate')}</small> : null}
           </label>
-          <label>Preferred Time
+          <label>Time Window
             <select name="preferredTime" value={form.preferredTime} onChange={update}>
               <option value="">Flexible</option>
               <option value="Morning">Morning</option>
@@ -379,11 +419,27 @@ export default function QuoteForm({
           <label className={errorFor('service') ? 'field-has-error' : ''}>Type of Service *
             <select required name="service" value={form.service} onChange={update} aria-invalid={Boolean(errorFor('service'))}>
               <option value="">Select a service</option>
-              {services.map(service => <option value={service.title} key={service.slug}>{service.title}</option>)}
+              {serviceOptions.map(title => <option value={title} key={title}>{title}</option>)}
             </select>
             {errorFor('service') ? <small className="field-error">{errorFor('service')}</small> : null}
           </label>
         </div>
+
+        {assistJob ? <div className="quote-choice-block">
+          <span className="quote-choice-label">Will someone be there to help at both ends?</span>
+          <ChoiceList name="helpAtEnds" options={HELP_OPTIONS} value={form.helpAtEnds} onChange={update}/>
+        </div> : null}
+
+        {compact && snowJob ? <>
+          <label className={errorFor('pickupAddress') ? 'field-has-error' : ''}>Property address *
+            <input required name="pickupAddress" autoComplete="street-address" value={form.pickupAddress} onChange={update} placeholder="Address to be cleared" aria-invalid={Boolean(errorFor('pickupAddress'))}/>
+            {errorFor('pickupAddress') ? <small className="field-error">{errorFor('pickupAddress')}</small> : null}
+          </label>
+          <div className="quote-choice-block">
+            <span className="quote-choice-label">Areas to clear</span>
+            <ChoiceList name="snowAreas" options={SNOW_AREAS} value={form.snowAreas} onChange={update} multiple/>
+          </div>
+        </> : null}
 
         {compact && fill ? <div className="row">
           <label>Moving from
@@ -439,10 +495,14 @@ export default function QuoteForm({
             {errorFor('pickupPostalCode') ? <small className="field-error">{errorFor('pickupPostalCode')}</small> : null}
           </label>
         </div>
-        <label>Property Details
-          <textarea rows="3" name="itemList" value={form.itemList} onChange={update} placeholder="Driveway size (single, double, long), corner lot, walkways, front steps…"/>
+        <div className="quote-choice-block">
+          <span className="quote-choice-label">Areas to clear</span>
+          <ChoiceList name="snowAreas" options={SNOW_AREAS} value={form.snowAreas} onChange={update} multiple/>
+        </div>
+        <label>Property Details <small className="quote-optional">(optional)</small>
+          <textarea rows="3" name="itemList" value={form.itemList} onChange={update} placeholder="Driveway size (single, double, long), corner lot…"/>
         </label>
-        <label>Additional Details
+        <label>Additional Details <small className="quote-optional">(optional)</small>
           <textarea rows="3" name="message" value={form.message} onChange={update} placeholder="Parking, gates, access notes, anything we should know…"/>
         </label>
       </div> : null}
@@ -500,7 +560,7 @@ export default function QuoteForm({
             <textarea required rows="5" name="itemList" value={form.itemList} onChange={update} placeholder="List the furniture, boxes, equipment or other items to be transported" aria-invalid={Boolean(errorFor('itemList'))}/>
             {errorFor('itemList') ? <small className="field-error">{errorFor('itemList')}</small> : null}
           </label>
-          <label>Additional Details
+          <label>Additional Details <small className="quote-optional">(optional)</small>
             <textarea rows="3" name="message" value={form.message} onChange={update} placeholder="Heavy items, access details, packing, disassembly, special instructions…"/>
           </label>
         </div>

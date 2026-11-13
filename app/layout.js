@@ -4,6 +4,8 @@ import Footer from '@/components/Footer';
 import SiteAnalytics from '@/components/SiteAnalytics';
 import QuoteForm from '@/components/QuoteForm';
 import SnowOffer from '@/components/SnowOffer';
+import BackToTop from '@/components/BackToTop';
+import { featuredPrice, getSiteContent } from '@/lib/siteContent';
 import { getBaseUrl, getGlobalBlockProps, getGlobalSection, getGlobalStyles, getServices, getSiteSettings, getSocialLinks, globalStyleVars, googleFontsHref, isProductionDeploy } from '@/lib/content';
 
 export async function generateMetadata() {
@@ -58,6 +60,14 @@ export default async function RootLayout({ children }) {
     getGlobalSection('footer'),
     getSocialLinks(),
   ]);
+  // Snow offer (Admin › Promotions & Banners › Pop-up) flips into the top bar on every page.
+  const { popup, pricing } = await getSiteContent();
+  const promoService = popup.enabled === false ? null : services.find(item => item.slug === popup.serviceSlug);
+  const topbarPromo = promoService ? {
+    label: promoService.title,
+    price: popup.price || featuredPrice(pricing[popup.serviceSlug]),
+    href: `/services/${promoService.slug}`,
+  } : null;
   const baseUrl = getBaseUrl();
   const headerProps = getGlobalBlockProps(headerSection, 'HeaderBlock');
   const footerProps = getGlobalBlockProps(footerSection, 'FooterBlock');
@@ -90,10 +100,11 @@ export default async function RootLayout({ children }) {
       {fontsHref ? <link rel="stylesheet" href={fontsHref}/> : null}
       <body style={styleVars}>
         <SiteAnalytics ga4={settings.ga4_measurement_id || ''} metaPixel={settings.meta_pixel_id || ''}/>
-        <Header settings={settings} services={services} globalHeader={headerProps} />
+        <Header settings={settings} services={services} globalHeader={headerProps} promo={topbarPromo} />
         <QuoteForm services={services} replyHours={settings.quote_reply_hours} triggerText="Request a Quote" global />
         <SnowOffer services={services}/>
         <main>{children}</main>
+        <BackToTop/>
         <Footer settings={settings} globalFooter={footerProps} socialLinks={socialLinks} />
         <script
           type="application/ld+json"

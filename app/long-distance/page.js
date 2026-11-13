@@ -37,7 +37,7 @@ export const metadata = {
 
 export default async function LongDistancePage() {
   const [settings, services] = await Promise.all([getSiteSettings(), getServices()]);
-  const movingService = services.find(service => service.slug === 'residential-moving')?.title || ROUTE_SERVICE;
+  const movingService = ROUTE_SERVICE;
   const crumbs = [{ label: 'Home', href: '/' }, { label: 'Long Distance' }];
   return (
     <>

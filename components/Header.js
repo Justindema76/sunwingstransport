@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { ChevronDown, Phone } from 'lucide-react';
+import { ChevronDown, Phone, Snowflake } from 'lucide-react';
 import MobileNav from './MobileNav';
+import TopbarFlip from './TopbarFlip';
 import { telHref } from '@/lib/phone';
 
 function on(value, fallback=true){return value==null||value===''?fallback:String(value)!=='false'}
@@ -11,7 +12,7 @@ function SmartNavLink({ href = '#', children, className = '' }) {
   return <Link className={className} href={href}>{children}</Link>;
 }
 
-export default function Header({ settings, services = [], globalHeader = {} }) {
+export default function Header({ settings, services = [], globalHeader = {}, promo = null }) {
   const phone = settings?.phone || '647-526-5132';
   const logo = globalHeader.logo || settings?.logo_url || 'https://nowsajdmbpxvlvrhopjg.supabase.co/storage/v1/object/public/site-assets/sunwings/1791334339517-SUNWING-site-logo.png';
   const brand = settings?.site_name || globalHeader.brand || 'Sun Wings';
@@ -43,10 +44,16 @@ export default function Header({ settings, services = [], globalHeader = {} }) {
 
   return (
     <div className="header-system" style={vars}>
-      {showTopbar ? <div className="topbar"><div className="container topbar-centered">
-        <span><b>{topbarEmphasis}</b>{topbarText ? <> — {topbarText}</> : null}</span>
-        <a className="mobile-topbar-phone" href={telHref(phone)}><Phone size={15}/> Call Now</a>
-      </div></div> : null}
+      {showTopbar ? <div className="topbar">{promo ? <TopbarFlip>
+        <div className="container topbar-centered">
+          <span className="topbar-msg"><b>{topbarEmphasis}</b>{topbarText ? <i className="topbar-more"> — {topbarText}</i> : null}</span>
+        </div>
+        <div className="container topbar-centered">
+          <Link className="topbar-promo" href={promo.href}><Snowflake size={14}/> <b>{promo.label}</b>{promo.price ? <>&nbsp;{promo.price.replace(/^From/, 'from')}</> : null} · <u>See plans →</u></Link>
+        </div>
+      </TopbarFlip> : <div className="container topbar-centered">
+        <span className="topbar-msg"><b>{topbarEmphasis}</b>{topbarText ? <i className="topbar-more"> — {topbarText}</i> : null}</span>
+      </div>}</div> : null}
       <header className="site">
         <div className="container nav">
           <Link className="logo" href="/" aria-label={brand}>
