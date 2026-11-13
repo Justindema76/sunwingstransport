@@ -527,10 +527,12 @@ h1,h2,h3{text-transform:capitalize}
    sits underneath on solid navy, and the whole banner is about 600px tall. */
 @media (max-width:700px){
   .hero-slide{position:relative;background:var(--navy)!important}
-  /* Every photo gets the same box across the top (3:2, full width), filled edge to edge, so the
+  /* Every photo gets the same box across the top (3:2 on the slider, 5:4 on single banners), filled edge to edge, so the
      text always starts at the same spot no matter what shape the uploaded photo is. Tall photos
      show their lower part (the room, not the ceiling) unless the admin sets a phone position... */
   .hero-slide{--hero-photo-h:66.667vw}
+  /* Pages with a single banner (no arrows/dots) give the photo a taller 5:4 box instead. */
+  .hero-slider:not(:has(.hero-slider-controls)) .hero-slide{--hero-photo-h:80vw}
   .hero-slide::before{content:"";position:absolute;top:0;left:0;right:0;height:var(--hero-photo-h);background:var(--hero-photo) var(--hero-mobile-position,center 80%)/var(--hero-mobile-size,cover) no-repeat}
   /* ...with a short fade at its bottom edge into the navy behind the text. */
   .hero-slide::after{content:"";position:absolute;top:0;left:0;right:0;height:var(--hero-photo-h);background:linear-gradient(180deg,rgba(11,37,69,0) 0,rgba(11,37,69,0) calc(100% - 70px),rgba(11,37,69,.75) calc(100% - 25px),var(--navy) 100%)}
@@ -565,7 +567,7 @@ h1,h2,h3{text-transform:capitalize}
   .hero-slide{justify-content:stretch}
   .hero-slide>.container{flex:1;display:flex;flex-direction:column;justify-content:flex-end;width:100%}
   /* Pages with one banner have no arrows/dots; leave the same space so buttons line up. */
-  .hero-slider:not(:has(.hero-slider-controls)) .hero-slide>.container{padding-bottom:102px}
+  .hero-slider:not(:has(.hero-slider-controls)) .hero-slide>.container{padding-bottom:48px}
 }
 /* Desktop: slightly less space above/below the text so the tallest slides fit in 700px. */
 /* Desktop: the photo runs all the way down to the white wave (no navy strip under it). The
