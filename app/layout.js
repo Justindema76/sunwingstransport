@@ -106,7 +106,7 @@ export default async function RootLayout({ children }) {
         <SiteChrome><SnowOffer services={services}/></SiteChrome>
         <main>{children}</main>
         <BackToTop/>
-        <SiteChrome><Footer settings={settings} globalFooter={footerProps} socialLinks={socialLinks} /></SiteChrome>
+        <Footer settings={settings} globalFooter={footerProps} socialLinks={socialLinks} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}

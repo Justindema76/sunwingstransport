@@ -126,7 +126,17 @@ function PhotoPicker({ photos, onAdd, onRemove, error, disabled }) {
 const VISIT_KEY = 'sunwings_visit';
 const FILL_KEYS = ['pickupCity', 'dropoffCity'];
 
+// Hamilton & Niagara is Justin's branch: a visit to that section is remembered for 90 days,
+// so a quote sent later from anywhere on the site is still credited to the branch.
+const HN_KEY = 'sunwings_hn';
+const HN_DAYS = 90;
+
 function rememberVisit() {
+  try {
+    if (window.location.pathname.startsWith('/hamilton-niagara')) window.localStorage.setItem(HN_KEY, String(Date.now()));
+  } catch {
+    // Storage can be blocked; the quote then only records the pages of this visit.
+  }
   try {
     const params = new URLSearchParams(window.location.search);
     const ad = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term'].map(key => params.get(key)).filter(Boolean).join(' / ');
@@ -148,7 +158,11 @@ function rememberVisit() {
 function leadSource() {
   let visit = {};
   try { visit = JSON.parse(window.sessionStorage.getItem(VISIT_KEY) || '{}') || {}; } catch { visit = {}; }
+  let hnVisit = false;
+  try { hnVisit = Date.now() - Number(window.localStorage.getItem(HN_KEY) || 0) < HN_DAYS * 86400000; } catch { hnVisit = false; }
+  const inHn = [window.location.pathname, visit.landing].some(path => String(path || '').startsWith('/hamilton-niagara'));
   return [
+    hnVisit && !inHn ? 'visited Hamilton & Niagara section' : '',
     `Sent from ${window.location.pathname}`,
     visit.landing && visit.landing !== window.location.pathname ? `landed on ${visit.landing}` : '',
     visit.ad ? `ad: ${visit.ad}` : '',

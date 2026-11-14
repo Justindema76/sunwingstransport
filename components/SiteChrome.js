@@ -1,8 +1,8 @@
 'use client';
 import { usePathname } from 'next/navigation';
 
-// The main site header, footer and snow offer. Hidden inside the Hamilton & Niagara
-// section, which has its own header and footer (so visitors stay in that section).
+// The main site header and snow offer. Hidden inside the Hamilton & Niagara section,
+// which has its own header menu (the footer is shared).
 export const SECTION_PREFIX = '/hamilton-niagara';
 
 export default function SiteChrome({ children }) {

@@ -12,8 +12,8 @@ function SmartNavLink({ href = '#', children, className = '' }) {
   return <Link className={className} href={href}>{children}</Link>;
 }
 
-// navLinks / homeHref / topbarLine: used by the Hamilton & Niagara section, which has its own menu.
-export default function Header({ settings, services = [], globalHeader = {}, promo = null, navLinks = null, homeHref = '/', topbarLine = '' }) {
+// navLinks / homeHref / topbarLine / badge: used by the Hamilton & Niagara section, which has its own menu.
+export default function Header({ settings, services = [], globalHeader = {}, promo = null, navLinks = null, homeHref = '/', topbarLine = '', badge = '' }) {
   const phone = settings?.phone || '647-526-5132';
   const logo = globalHeader.logo || settings?.logo_url || 'https://nowsajdmbpxvlvrhopjg.supabase.co/storage/v1/object/public/site-assets/sunwings/1791334339517-SUNWING-site-logo.png';
   const brand = settings?.site_name || globalHeader.brand || 'Sun Wings';
@@ -59,6 +59,7 @@ export default function Header({ settings, services = [], globalHeader = {}, pro
         <div className="container nav">
           <Link className="logo" href={homeHref} aria-label={brand}>
             {logo ? <img src={logo} alt={brand}/> : <strong>{brand}</strong>}
+            {badge ? <span className="logo-badge">{badge}</span> : null}
           </Link>
           <nav className="nav-links" aria-label="Main navigation">
             {links.map(item => item.url === '/services' ? (
