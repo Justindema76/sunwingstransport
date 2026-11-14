@@ -23,8 +23,23 @@ export default async function GoogleReviews() {
   const settings = await getSiteSettings();
   const data = readSnapshot(settings.google_reviews);
   const reviews = (data?.reviews || []).filter(review => review.text && review.stars >= 4).slice(0, 3);
-  if (!reviews.length) return null;
+  if (!reviews.length && !data?.rating) return null;
   const link = data.url || REVIEWS_LINK;
+  // Google sometimes sends only the rating (no review text): show the rating on its own.
+  if (!reviews.length) {
+    return (
+      <section className="section">
+        <div className="container">
+          <div className="section-head">
+            <span className="kicker">Google reviews</span>
+            <h2>Rated {data.rating.toFixed(1)} out of 5 by our customers</h2>
+            <p><span className="stars" aria-hidden="true">★★★★★</span> <b>{data.rating.toFixed(1)}</b> from {data.count} Google ratings</p>
+          </div>
+          <p style={{ fontWeight: 700 }}><a href={link} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--blue)' }}>Read our reviews on Google →</a></p>
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="section">
       <div className="container">
