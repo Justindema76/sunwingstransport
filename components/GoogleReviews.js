@@ -23,6 +23,15 @@ function trustindexId(value = '') {
   return /^[a-z0-9]{6,}$/i.test(text) ? text : '';
 }
 
+function featuredReviews(value) {
+  try {
+    const list = typeof value === 'string' ? JSON.parse(value || '[]') : value;
+    return Array.isArray(list) ? list.map(item => ({ name: String(item.name || 'Google customer'), stars: Number(item.stars) || 5, text: String(item.text || ''), when: String(item.when || '') })) : [];
+  } catch {
+    return [];
+  }
+}
+
 function clip(text = '', max = 260) {
   const clean = String(text).replace(/\s+/g, ' ').trim();
   return clean.length > max ? `${clean.slice(0, max).replace(/\s+\S*$/, '')}…` : clean;
@@ -31,7 +40,9 @@ function clip(text = '', max = 260) {
 export default async function GoogleReviews() {
   const settings = await getSiteSettings();
   const data = readSnapshot(settings.google_reviews);
-  const reviews = (data?.reviews || []).filter(review => review.text && review.stars >= 4).slice(0, 3);
+  // Google's own reviews when it sends them; otherwise the ones copied in under Admin › Integrations › Featured reviews.
+  const reviews = [...(data?.reviews || []), ...featuredReviews(settings.featured_reviews)]
+    .filter(review => review.text && review.stars >= 4).slice(0, 3);
   const widget = trustindexId(settings.trustindex_widget_id);
   // Trustindex shows the actual Google review text (Google's own feed leaves it out for Sunwings).
   if (widget) {
@@ -49,7 +60,7 @@ export default async function GoogleReviews() {
     );
   }
   if (!reviews.length && !data?.rating) return null;
-  const link = data.url || REVIEWS_LINK;
+  const link = data?.url || REVIEWS_LINK;
   // Google sometimes sends only the rating (no review text): show the rating on its own.
   if (!reviews.length) {
     return (
@@ -71,7 +82,7 @@ export default async function GoogleReviews() {
         <div className="section-head">
           <span className="kicker">Google reviews</span>
           <h2>What customers say</h2>
-          {data.rating ? <p><span className="stars" aria-hidden="true">★★★★★</span> <b>{data.rating.toFixed(1)}</b> out of 5 from {data.count} Google ratings</p> : null}
+          {data?.rating ? <p><span className="stars" aria-hidden="true">★★★★★</span> <b>{data.rating.toFixed(1)}</b> out of 5 from {data.count} Google ratings</p> : null}
         </div>
         <div className="grid-3" style={{ alignItems: 'start' }}>
           {reviews.map((review, i) => (
