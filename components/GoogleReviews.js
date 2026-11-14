@@ -1,4 +1,5 @@
 import { getSiteSettings } from '@/lib/content';
+import TrustindexWidget from './TrustindexWidget';
 
 // "What customers say" on the homepage: rating + latest Google reviews, synced in
 // Admin › Integrations › Sync Google Reviews (saved as the "google_reviews" setting).
@@ -14,6 +15,14 @@ function readSnapshot(value) {
   }
 }
 
+// The Trustindex widget ID, from the setting (accepts the ID or the whole embed code).
+function trustindexId(value = '') {
+  const text = String(value || '').trim();
+  const fromCode = text.match(/loader\.js\?([a-z0-9]+)/i);
+  if (fromCode) return fromCode[1];
+  return /^[a-z0-9]{6,}$/i.test(text) ? text : '';
+}
+
 function clip(text = '', max = 260) {
   const clean = String(text).replace(/\s+/g, ' ').trim();
   return clean.length > max ? `${clean.slice(0, max).replace(/\s+\S*$/, '')}…` : clean;
@@ -23,6 +32,22 @@ export default async function GoogleReviews() {
   const settings = await getSiteSettings();
   const data = readSnapshot(settings.google_reviews);
   const reviews = (data?.reviews || []).filter(review => review.text && review.stars >= 4).slice(0, 3);
+  const widget = trustindexId(settings.trustindex_widget_id);
+  // Trustindex shows the actual Google review text (Google's own feed leaves it out for Sunwings).
+  if (widget) {
+    return (
+      <section className="section">
+        <div className="container">
+          <div className="section-head">
+            <span className="kicker">Google reviews</span>
+            <h2>What customers say</h2>
+            {data?.rating ? <p><span className="stars" aria-hidden="true">★★★★★</span> <b>{data.rating.toFixed(1)}</b> out of 5 from {data.count} Google ratings</p> : null}
+          </div>
+          <TrustindexWidget id={widget}/>
+        </div>
+      </section>
+    );
+  }
   if (!reviews.length && !data?.rating) return null;
   const link = data.url || REVIEWS_LINK;
   // Google sometimes sends only the rating (no review text): show the rating on its own.
