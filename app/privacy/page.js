@@ -16,7 +16,7 @@ export default async function PrivacyPage() {
   if (pageData) return <PageBlocks data={pageData} pageId="privacy"/>;
   return (
     <>
-      <PageHero crumbs={[{label:'Home',href:'/'},{label:'Privacy Policy'}]} title="Privacy Policy" ctas={false}/>
+      <PageHero placement="privacy" crumbs={[{label:'Home',href:'/'},{label:'Privacy Policy'}]} title="Privacy Policy" ctas={false}/>
       <section className="section">
         <div className="container prose" style={{maxWidth:820}}>
           <p>Sunwings Transport uses information submitted through this website to respond to quote requests and service enquiries.</p>

@@ -18,7 +18,7 @@ export async function generateMetadata() {
 async function ContactHero({ settings }) {
   const copy = (await getSiteContent()).pageBanners.contact;
   return (
-    <PageHero
+    <PageHero placement="contact"
       crumbs={[{ label: 'Home', href: '/' }, { label: 'Contact' }]}
       eyebrow={copy.eyebrow}
       title={copy.heading}

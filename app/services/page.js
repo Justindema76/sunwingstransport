@@ -20,7 +20,7 @@ export default async function ServicesPage() {
   }
   return (
     <>
-      <PageHero
+      <PageHero placement="services"
         crumbs={[{label:'Home',href:'/'},{label:'Services'}]}
         title="Moving, delivery & transport services"
         description="Residential, commercial and warehouse services across Toronto, the GTA, Hamilton and Niagara."

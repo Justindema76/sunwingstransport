@@ -19,7 +19,7 @@ export default async function BlogPage() {
   }
   return (
     <>
-      <PageHero
+      <PageHero placement="blog"
         crumbs={[{label:'Home',href:'/'},{label:'Moving Tips'}]}
         title="Moving tips & guides"
         description="Straight advice on pricing, condo moves, deliveries and planning your move."

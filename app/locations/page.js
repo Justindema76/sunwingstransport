@@ -21,7 +21,7 @@ export default async function LocationsPage() {
   }
   return (
     <>
-      <PageHero
+      <PageHero placement="locations"
         crumbs={[{label:'Home',href:'/'},{label:'Service Areas'}]}
         title="Service areas: Toronto to Niagara"
         description="Pick your city to see local services, neighbourhoods we cover and answers to local questions."

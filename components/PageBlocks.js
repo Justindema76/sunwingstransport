@@ -14,6 +14,8 @@ import TrustStrip from './TrustStrip';
 import HeroSlider from './HeroSlider';
 import PageHero from './PageHero';
 import { photoSettings, pricingPanel, serviceSlides } from './heroSlides';
+import CodeStudioBanner from './CodeStudioBanner';
+import { getCodeStudioBanner } from '@/lib/codeStudio';
 import { getSiteContent } from '@/lib/siteContent';
 import { telHref } from '@/lib/phone';
 
@@ -52,7 +54,10 @@ function sectionClass(p, fallback = '') {
   return `section ${bg === 'soft' || bg === 'light' ? 'section-soft' : ''}`;
 }
 
-function Hero({ p, home, settings, services = [], pageId = '', content }) {
+async function Hero({ p, home, first = false, settings, services = [], pageId = '', content }) {
+  // A banner picked in Admin › Banner Studio replaces the page's first banner.
+  const studio = first ? await getCodeStudioBanner(pageId) : null;
+  if (studio) return <CodeStudioBanner {...studio}/>;
   if (home) {
     const slides = serviceSlides(services, content, { firstImage: p.image, firstHeading: 'h1' });
     if (slides.length) return <HeroSlider slides={slides}/>;
@@ -258,10 +263,10 @@ export default async function PageBlocks({ data, pageId, services = [], location
 
     switch (block?.type) {
       case 'SunwingsHeroBlock':
-        return <Hero key={key} p={p} home={isHomeHero} settings={settings} services={services} pageId={pageId} content={content}/>;
+        return <Hero key={key} p={p} home={isHomeHero} first={index === firstHeroIndex} settings={settings} services={services} pageId={pageId} content={content}/>;
 
       case 'HeroBlock':
-        return <Hero key={key} home={isHomeHero} settings={settings} services={services} pageId={pageId} content={content} p={{
+        return <Hero key={key} home={isHomeHero} first={index === firstHeroIndex} settings={settings} services={services} pageId={pageId} content={content} p={{
           ...p,
           primaryButtonText: p.primaryButtonText || p.buttonText,
           primaryButtonUrl: p.primaryButtonUrl || p.buttonUrl,

@@ -53,7 +53,7 @@ export default async function PricingPage() {
   }
   return (
     <>
-      <PageHero
+      <PageHero placement="pricing"
         crumbs={[{label:'Home',href:'/'},{label:'Pricing'}]}
         title="Straight answers on price"
         description="Clear, upfront quotes tailored to your job, based on crew size, truck time and distance."

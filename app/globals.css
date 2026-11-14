@@ -123,6 +123,8 @@ header.site{position:sticky;top:0;z-index:50;background:var(--header);border-bot
 
 /* TRUST */
 .trust{margin-top:-46px;position:relative;z-index:5}
+/* A Banner Studio banner has no wave to sit on: keep the boxes below it (its dashes stay visible). */
+.code-studio-banner + .trust{margin-top:24px}
 .trust-grid{background:#fff;border-radius:20px;box-shadow:var(--shadow);display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line)}
 .trust-item{padding:22px 24px;display:flex;gap:14px;align-items:center}
 .trust-item+.trust-item{border-left:1px solid var(--line)}
@@ -553,6 +555,7 @@ h1,h2,h3{text-transform:capitalize}
   .hero-slider-arrow{width:34px;height:34px}
   .hero .wave{height:34px}
   .trust{margin-top:-28px}
+  .code-studio-banner + .trust{margin-top:16px}
 }
 
 
