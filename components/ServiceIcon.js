@@ -1,4 +1,4 @@
-import { Armchair, Building2, House, PackageCheck, Trash2, Truck, UsersRound } from 'lucide-react';
+import { Armchair, Building2, House, PackageCheck, Route, Trash2, Truck, UsersRound } from 'lucide-react';
 
 const ICONS = {
   'residential-moving': House,
@@ -8,6 +8,7 @@ const ICONS = {
   'warehouse-container-unloading': Truck,
   'general-labour': UsersRound,
   'junk-removal': Trash2,
+  'long-distance': Route,
 };
 
 export default function ServiceIcon({ slug, size = 22 }) {

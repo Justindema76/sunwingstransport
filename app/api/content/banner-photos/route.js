@@ -1,6 +1,7 @@
 import { getPageBuilderData, getServices } from '@/lib/content';
 import { getSiteContent } from '@/lib/siteContent';
 import { safeHeroImage } from '@/components/heroSlides';
+import { RETIRED_HERO_IMAGES } from '@/lib/contentDefaults';
 
 // The exact photo each banner shows on the live site, so the admin's photo position
 // editor previews the same picture. Uses the same rules as the pages themselves.
@@ -23,6 +24,8 @@ export async function GET() {
     slides: content.heroSlides.map((slide, index) => safeHeroImage(slide.image || (index === 0 && homeImage ? homeImage : banner(slide.slug)))),
     pages: Object.fromEntries(PAGES.map((id, i) => [id, safeHeroImage(content.pageBanners?.[id]?.image || heroImage(pages[i]))])),
     services: Object.fromEntries(services.map(service => [service.slug, safeHeroImage(service.banner_image)])),
+    // Old photos the site swaps for newer ones, so the admin can show (and save) the photo that's really live.
+    retired: RETIRED_HERO_IMAGES,
   };
   return Response.json(body, { headers: { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-store' } });
 }

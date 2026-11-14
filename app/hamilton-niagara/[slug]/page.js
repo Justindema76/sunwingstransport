@@ -3,19 +3,15 @@ import { notFound } from 'next/navigation';
 import PageHero from '@/components/PageHero';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import TrustStrip from '@/components/TrustStrip';
-import { rotatingHeroImage } from '@/components/heroSlides';
+import { photoSettings, rotatingHeroImage } from '@/components/heroSlides';
 import { getLocations, getServices, getSiteSettings } from '@/lib/content';
-import { HN, HN_ROUTES, HN_SERVICES, HN_TRUST, hnRouteHref, isHnTown, keepLinksInSection } from '@/lib/hamiltonNiagara';
+import { HN, HN_ROUTES, HN_SERVICES, HN_TRUST, getHnContent, hnRouteHref, isHnTown, keepLinksInSection } from '@/lib/hamiltonNiagara';
 import { ROUTE_SERVICE } from '@/lib/routes';
 
 // One page per Hamilton & Niagara town (/hamilton-niagara/grimsby) and per section service
 // (/hamilton-niagara/furniture-delivery). Links on these pages stay inside the section.
-const LONG_DISTANCE = {
-  title: 'Long-distance moving', accent: 'Hamilton & Niagara ↔ Toronto.',
-  text: 'Full home moves between Hamilton, Burlington, Grimsby, St. Catharines, Niagara Falls and Toronto, Mississauga and the GTA. Planned around access at both ends, quoted in writing before you book.',
-  image: 'https://nowsajdmbpxvlvrhopjg.supabase.co/storage/v1/object/public/blog-images/sunwings/1794229390663-IMG_8141.jpeg',
-};
-
+// Town pages use the town's Location Post; service page banners are edited in
+// Admin › Banners & Pop-up › Hamilton & Niagara (blank = the main site's Service Post).
 async function findPage(slug) {
   const service = HN_SERVICES.find(item => item.slug === slug);
   if (service) return { kind: 'service', service };
@@ -107,22 +103,26 @@ export default async function HnSlugPage({ params }) {
 
   // Service page
   const { service } = page;
-  const services = await getServices();
+  const [services, content] = await Promise.all([getServices(), getHnContent()]);
   const main = services.find(item => item.slug === service.serviceSlug);
   const isLong = service.slug === 'long-distance';
-  const title = isLong ? LONG_DISTANCE.title : (main?.hero_title || service.label);
-  const description = isLong ? LONG_DISTANCE.text : (main?.hero_description || main?.intro || '');
+  const copy = content[service.slug] || {};
+  const title = copy.heading || (isLong ? service.label : (main?.hero_title || service.label));
+  const description = copy.text || (isLong ? '' : (main?.hero_description || main?.intro || ''));
+  const image = copy.image || (isLong ? '' : main?.banner_image);
+  const sendList = (copy.sendList || []).filter(Boolean);
   const preset = service.preset || main?.title || service.label;
   return (
     <>
       <PageHero
         placement={`hamilton-niagara-${service.slug}`}
         crumbs={[{ label: 'Hamilton & Niagara', href: HN }, { label: service.label }]}
-        eyebrow="Hamilton & Niagara"
+        eyebrow={copy.eyebrow}
         title={title}
-        accent={isLong ? LONG_DISTANCE.accent : 'Hamilton & Niagara.'}
+        accent={copy.accent}
         description={description}
-        image={isLong ? LONG_DISTANCE.image : main?.banner_image}
+        image={image}
+        imagePosition={photoSettings(copy)}
         imageAlt={main?.banner_alt || service.label}
         phone={settings.phone}
         preset={preset}
@@ -137,12 +137,10 @@ export default async function HnSlugPage({ params }) {
             <div className="side-links" style={{ marginTop: 10 }}>
               {HN_ROUTES.map(route => <Link key={route.slug} href={hnRouteHref(route)}>{route.from} → {route.to}</Link>)}
             </div>
-            <h2>What to send for your quote</h2>
-            <ul>
-              <li>Pickup and delivery cities and addresses, and your moving date.</li>
-              <li>Home size or item list, with photos of large or awkward pieces.</li>
-              <li>Stairs, elevators, parking and carrying distance at both ends.</li>
-            </ul>
+            {sendList.length ? <>
+              <h2>What to send for your quote</h2>
+              <ul>{sendList.map(line => <li key={line}>{line}</li>)}</ul>
+            </> : null}
           </> : null}
           <h2>Towns we serve</h2>
           <div className="chips">{towns.map(town => <Link className="chip" key={town.slug} href={`${HN}/${town.slug}`}>{town.title}</Link>)}</div>

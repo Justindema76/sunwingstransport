@@ -2,17 +2,18 @@ import Link from 'next/link';
 import PageHero from '@/components/PageHero';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import TrustStrip from '@/components/TrustStrip';
+import { photoSettings } from '@/components/heroSlides';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { getBaseUrl, getLocations, getSiteSettings } from '@/lib/content';
 import { ROUTE_SERVICE } from '@/lib/routes';
-import { HN, HN_ROUTES, HN_TRUST, hnRouteHref } from '@/lib/hamiltonNiagara';
+import { HN, HN_CONTENT_DEFAULTS, HN_ROUTES, HN_TRUST, getHnContent, hnRouteHref } from '@/lib/hamiltonNiagara';
 
+// Banner, service boxes and FAQs are edited in Admin › Banners & Pop-up › Hamilton & Niagara.
 // Hamilton & Niagara regional hub: the landing page for regional ads. Long-distance
 // moving and transportation between Hamilton/Niagara and Toronto/GTA is the lead service.
 const TITLE = 'Hamilton & Niagara Movers | Long-Distance Moving & Transport | Sunwings';
 const DESCRIPTION = 'Moving, furniture delivery and long-distance transport across Hamilton, Burlington, Grimsby, St. Catharines, Niagara Falls and the Niagara Region, and to Toronto and the GTA. Free tailored quotes.';
 const PATH = HN;
-const HERO = 'https://nowsajdmbpxvlvrhopjg.supabase.co/storage/v1/object/public/blog-images/sunwings/1792805164536-image.png';
 
 const REGIONS = [
   { key: 'Hamilton Region', title: 'Hamilton', note: 'Hamilton, Stoney Creek, Ancaster, Dundas and Waterdown' },
@@ -20,29 +21,22 @@ const REGIONS = [
   { key: 'Halton Region', title: 'Halton', note: 'Burlington, Oakville and Milton' },
 ];
 
-const SERVICES = [
-  { title: 'Long-distance moves', text: 'Full home moves between Hamilton or Niagara and Toronto, Mississauga and the GTA, planned around access at both ends.', href: `${HN}/long-distance`, cta: 'Long-distance moving' },
-  { title: 'Furniture & store delivery', text: 'Store pickups, Marketplace finds and single large items brought from anywhere in the region and placed in the room you want.', href: `${HN}/furniture-delivery`, cta: 'Furniture delivery' },
-  { title: 'Commercial & large-item transport', text: 'Office moves, equipment, inventory and business deliveries between cities, one-off or on a schedule.', href: `${HN}/commercial-transport`, cta: 'Commercial transport' },
-];
-
-const FAQS = [
-  { question: 'Do you move between Niagara and Toronto?', answer: 'Yes. Moves and deliveries between the Niagara Region, Hamilton and Toronto or the GTA are our main long-distance routes. Send both addresses and your date for a tailored quote.' },
-  { question: 'Which towns do you cover in Hamilton and Niagara?', answer: 'Hamilton, Stoney Creek, Ancaster, Dundas, Waterdown, Burlington, Grimsby, Lincoln, St. Catharines, Niagara Falls, Welland, Thorold and Fort Erie, plus nearby towns on request.' },
-  { question: 'Can you deliver one large item from Hamilton or Niagara to Toronto?', answer: 'Yes. Furniture, appliances and other large items can be picked up and delivered between cities. Tell us the item, size, stairs and both addresses.' },
-  { question: 'How is a long-distance quote priced?', answer: 'It depends on the route, the amount being moved, the crew and vehicle needed, and access at both ends. You get a written quote before anything is booked.' },
-];
-
-export const metadata = {
-  title: { absolute: TITLE },
-  description: DESCRIPTION,
-  alternates: { canonical: PATH },
-  openGraph: { type: 'website', url: PATH, title: TITLE, description: DESCRIPTION, siteName: 'Sunwings Transport', locale: 'en_CA', images: [{ url: HERO, alt: 'Sunwings Transport cargo van' }] },
-  twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: [HERO] },
-};
+export async function generateMetadata() {
+  const hero = (await getHnContent()).home.image || HN_CONTENT_DEFAULTS.home.image;
+  return {
+    title: { absolute: TITLE },
+    description: DESCRIPTION,
+    alternates: { canonical: PATH },
+    openGraph: { type: 'website', url: PATH, title: TITLE, description: DESCRIPTION, siteName: 'Sunwings Transport', locale: 'en_CA', images: [{ url: hero, alt: 'Sunwings Transport cargo van' }] },
+    twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: [hero] },
+  };
+}
 
 export default async function HamiltonNiagaraPage() {
-  const [settings, locations] = await Promise.all([getSiteSettings(), getLocations()]);
+  const [settings, locations, content] = await Promise.all([getSiteSettings(), getLocations(), getHnContent()]);
+  const { home } = content;
+  const SERVICES = home.cards;
+  const FAQS = home.faqs.filter(item => item?.question && item?.answer);
   const crumbs = [];
   const regionalRoutes = HN_ROUTES;
 
@@ -51,11 +45,12 @@ export default async function HamiltonNiagaraPage() {
       <PageHero
         placement="hamilton-niagara"
         crumbs={crumbs}
-        eyebrow="Hamilton · Burlington · Grimsby · Niagara"
-        title="Hamilton & Niagara"
-        accent="movers & transport."
-        description="Long-distance moves, furniture delivery and large-item transport across Hamilton and the Niagara Region, and to Toronto and the GTA. Tell us where it’s going and get a tailored quote."
-        image={HERO}
+        eyebrow={home.eyebrow}
+        title={home.heading}
+        accent={home.accent}
+        description={home.text}
+        image={home.image}
+        imagePosition={photoSettings(home)}
         fallbackImage={HERO_IMAGE_OPTIONS.truck}
         imageAlt="Sunwings Transport cargo van"
         phone={settings.phone}
@@ -72,11 +67,11 @@ export default async function HamiltonNiagaraPage() {
             <p>From one sofa to a full house, between towns or into Toronto. Every job is quoted in writing before it’s booked.</p>
           </div>
           <div className="grid-3">
-            {SERVICES.map(item => (
-              <div className="side-card" key={item.title}>
+            {SERVICES.map((item, index) => (
+              <div className="side-card" key={index}>
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
-                <Link href={item.href} style={{ fontWeight: 700, color: 'var(--blue)' }}>{item.cta} →</Link>
+                <Link href={item.href} style={{ fontWeight: 700, color: 'var(--blue)' }}>{item.cta || 'Learn more'} →</Link>
               </div>
             ))}
           </div>

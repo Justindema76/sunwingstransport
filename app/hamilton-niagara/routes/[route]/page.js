@@ -4,9 +4,10 @@ import HowItWorks from '@/components/HowItWorks';
 import PageHero from '@/components/PageHero';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import TrustStrip from '@/components/TrustStrip';
+import { photoSettings } from '@/components/heroSlides';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { getLocations, getSiteSettings } from '@/lib/content';
-import { HN, HN_ROUTES, HN_TRUST, hnRouteHref, isHnTown } from '@/lib/hamiltonNiagara';
+import { HN, HN_ROUTES, HN_TRUST, getHnContent, hnRouteHref, isHnTown } from '@/lib/hamiltonNiagara';
 import { ROUTE_SERVICE, reverseRoute, routeHref, routeTips, townAreas } from '@/lib/routes';
 
 // Route pages inside the Hamilton & Niagara section (/hamilton-niagara/routes/grimsby-...).
@@ -26,7 +27,9 @@ export default async function HnRoutePage({ params }) {
   const { route: slug } = await params;
   const route = HN_ROUTES.find(item => item.slug === slug);
   if (!route) notFound();
-  const [settings, locations] = await Promise.all([getSiteSettings(), getLocations()]);
+  const [settings, locations, content] = await Promise.all([getSiteSettings(), getLocations(), getHnContent()]);
+  // Banner photo for every route page: Admin › Banners & Pop-up › Hamilton & Niagara › Route pages.
+  const banner = content.routes || {};
   const hnTowns = new Set(locations.filter(isHnTown).map(town => town.slug));
   const back = reverseRoute(route);
   const others = HN_ROUTES.filter(item => item.slug !== route.slug && item.slug !== back?.slug);
@@ -43,7 +46,8 @@ export default async function HnRoutePage({ params }) {
         eyebrow={`Long-distance moving · ${route.from} → ${route.to}`}
         title={`${route.from} to ${route.to} Movers`}
         description={route.intro}
-        image={HERO_IMAGE_OPTIONS.truck}
+        image={banner.image || HERO_IMAGE_OPTIONS.truck}
+        imagePosition={photoSettings(banner)}
         imageAlt={`Sunwings moving truck for ${route.from} to ${route.to} moves`}
         phone={settings.phone}
         preset={ROUTE_SERVICE}

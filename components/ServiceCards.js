@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import ServiceIcon from './ServiceIcon';
+import { getHnContent } from '@/lib/hamiltonNiagara';
 
 const FALLBACK_IMAGES = {
   'residential-moving': 'https://sunwingstransport.ca/wp-content/uploads/elementor/thumbs/happy-couple-move-rjw992tbb61z2n9hhbnvscs9srjnmxwvlts7dp1qbi.jpg',
@@ -11,7 +12,9 @@ const FALLBACK_IMAGES = {
 };
 
 // On a city page (locationSlug), the Snow Removal card opens that city's own snow page.
-export default function ServiceCards({ services = [], compact = false, locationName = '', locationSlug = '', cardOverrides = [] }) {
+// The full grid ends with a Long-Distance Moving card that opens the Hamilton & Niagara section
+// (edited in Admin › Banners & Pop-up › Hamilton & Niagara › Services page card).
+export default async function ServiceCards({ services = [], compact = false, locationName = '', locationSlug = '', cardOverrides = [] }) {
   if (compact) {
     return (
       <div className="grid-2 location-service-grid">
@@ -30,6 +33,9 @@ export default function ServiceCards({ services = [], compact = false, locationN
       </div>
     );
   }
+
+  const extra = (await getHnContent()).servicesCard;
+  const longDistance = extra?.enabled !== false && extra?.title ? extra : null;
 
   return (
     <div className="grid-3">
@@ -58,6 +64,18 @@ export default function ServiceCards({ services = [], compact = false, locationN
           </Link>
         );
       })}
+      {longDistance ? (
+        <Link className="card" href={longDistance.url || '/hamilton-niagara/long-distance'}>
+          <div className="card-img ph" style={longDistance.image ? { backgroundImage: `url("${longDistance.image}")` } : undefined}>
+            <div className="badge"><ServiceIcon slug="long-distance"/></div>
+          </div>
+          <div className="card-body">
+            <h3>{longDistance.title}</h3>
+            <p>{longDistance.text}</p>
+            <span className="more">{longDistance.linkText || 'Learn more →'}</span>
+          </div>
+        </Link>
+      ) : null}
     </div>
   );
 }
