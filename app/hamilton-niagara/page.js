@@ -1,17 +1,17 @@
 import Link from 'next/link';
-import BreadcrumbSchema from '@/components/BreadcrumbSchema';
 import PageHero from '@/components/PageHero';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import TrustStrip from '@/components/TrustStrip';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { getBaseUrl, getLocations, getSiteSettings } from '@/lib/content';
-import { ROUTES, ROUTE_SERVICE, routeHref } from '@/lib/routes';
+import { ROUTE_SERVICE } from '@/lib/routes';
+import { HN, HN_ROUTES, HN_TRUST, hnRouteHref } from '@/lib/hamiltonNiagara';
 
 // Hamilton & Niagara regional hub: the landing page for regional ads. Long-distance
 // moving and transportation between Hamilton/Niagara and Toronto/GTA is the lead service.
 const TITLE = 'Hamilton & Niagara Movers | Long-Distance Moving & Transport | Sunwings';
 const DESCRIPTION = 'Moving, furniture delivery and long-distance transport across Hamilton, Burlington, Grimsby, St. Catharines, Niagara Falls and the Niagara Region, and to Toronto and the GTA. Free tailored quotes.';
-const PATH = '/hamilton-niagara';
+const PATH = HN;
 const HERO = 'https://nowsajdmbpxvlvrhopjg.supabase.co/storage/v1/object/public/blog-images/sunwings/1792805164536-image.png';
 
 const REGIONS = [
@@ -21,9 +21,9 @@ const REGIONS = [
 ];
 
 const SERVICES = [
-  { title: 'Long-distance moves', text: 'Full home moves between Hamilton or Niagara and Toronto, Mississauga and the GTA, planned around access at both ends.', href: '/long-distance', cta: 'Long-distance moving' },
-  { title: 'Furniture & store delivery', text: 'Store pickups, Marketplace finds and single large items brought from anywhere in the region and placed in the room you want.', href: '/services/furniture-delivery', cta: 'Furniture delivery' },
-  { title: 'Commercial & large-item transport', text: 'Office moves, equipment, inventory and business deliveries between cities, one-off or on a schedule.', href: '/services/commercial-transport', cta: 'Commercial transport' },
+  { title: 'Long-distance moves', text: 'Full home moves between Hamilton or Niagara and Toronto, Mississauga and the GTA, planned around access at both ends.', href: `${HN}/long-distance`, cta: 'Long-distance moving' },
+  { title: 'Furniture & store delivery', text: 'Store pickups, Marketplace finds and single large items brought from anywhere in the region and placed in the room you want.', href: `${HN}/furniture-delivery`, cta: 'Furniture delivery' },
+  { title: 'Commercial & large-item transport', text: 'Office moves, equipment, inventory and business deliveries between cities, one-off or on a schedule.', href: `${HN}/commercial-transport`, cta: 'Commercial transport' },
 ];
 
 const FAQS = [
@@ -43,8 +43,8 @@ export const metadata = {
 
 export default async function HamiltonNiagaraPage() {
   const [settings, locations] = await Promise.all([getSiteSettings(), getLocations()]);
-  const crumbs = [{ label: 'Home', href: '/' }, { label: 'Hamilton & Niagara' }];
-  const regionalRoutes = ROUTES.filter(route => route.group === 'hamilton' || route.group === 'niagara');
+  const crumbs = [];
+  const regionalRoutes = HN_ROUTES;
 
   return (
     <>
@@ -62,7 +62,7 @@ export default async function HamiltonNiagaraPage() {
         preset={ROUTE_SERVICE}
       />
 
-      <TrustStrip/>
+      <TrustStrip items={HN_TRUST}/>
 
       <section className="section">
         <div className="container">
@@ -83,7 +83,7 @@ export default async function HamiltonNiagaraPage() {
         </div>
       </section>
 
-      <section className="section section-soft">
+      <section className="section section-soft" id="routes">
         <div className="container">
           <div className="section-head">
             <span className="kicker">Popular routes</span>
@@ -96,7 +96,7 @@ export default async function HamiltonNiagaraPage() {
                 <h3>{group === 'hamilton' ? 'From & to Hamilton' : 'From & to Niagara'}</h3>
                 <div className="side-links" style={{ marginTop: 10 }}>
                   {regionalRoutes.filter(route => route.group === group).map(route => (
-                    <Link href={routeHref(route)} key={route.slug}>{route.from} → {route.to}</Link>
+                    <Link href={hnRouteHref(route)} key={route.slug}>{route.from} → {route.to}</Link>
                   ))}
                 </div>
               </div>
@@ -112,7 +112,7 @@ export default async function HamiltonNiagaraPage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section" id="towns">
         <div className="container">
           <div className="section-head">
             <span className="kicker">Towns we serve</span>
@@ -127,7 +127,7 @@ export default async function HamiltonNiagaraPage() {
                   <p className="muted">{region.note}</p>
                   {towns.length ? (
                     <div className="side-links" style={{ marginTop: 10 }}>
-                      {towns.map(town => <Link href={`/locations/${town.slug}`} key={town.slug}>{town.title} movers</Link>)}
+                      {towns.map(town => <Link href={`${HN}/${town.slug}`} key={town.slug}>{town.title} movers</Link>)}
                     </div>
                   ) : null}
                 </div>
@@ -148,7 +148,6 @@ export default async function HamiltonNiagaraPage() {
         </div>
       </section>
 
-      <BreadcrumbSchema baseUrl={getBaseUrl()} items={crumbs}/>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'FAQPage',

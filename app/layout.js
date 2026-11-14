@@ -5,6 +5,7 @@ import SiteAnalytics from '@/components/SiteAnalytics';
 import QuoteForm from '@/components/QuoteForm';
 import SnowOffer from '@/components/SnowOffer';
 import BackToTop from '@/components/BackToTop';
+import SiteChrome from '@/components/SiteChrome';
 import { featuredPrice, getSiteContent } from '@/lib/siteContent';
 import { getBaseUrl, getGlobalBlockProps, getGlobalSection, getGlobalStyles, getServices, getSiteSettings, getSocialLinks, globalStyleVars, googleFontsHref, isProductionDeploy } from '@/lib/content';
 
@@ -100,12 +101,12 @@ export default async function RootLayout({ children }) {
       {fontsHref ? <link rel="stylesheet" href={fontsHref}/> : null}
       <body style={styleVars}>
         <SiteAnalytics ga4={settings.ga4_measurement_id || ''} metaPixel={settings.meta_pixel_id || ''}/>
-        <Header settings={settings} services={services} globalHeader={headerProps} promo={topbarPromo} />
+        <SiteChrome><Header settings={settings} services={services} globalHeader={headerProps} promo={topbarPromo} /></SiteChrome>
         <QuoteForm services={services} replyHours={settings.quote_reply_hours} triggerText="Request a Quote" global />
-        <SnowOffer services={services}/>
+        <SiteChrome><SnowOffer services={services}/></SiteChrome>
         <main>{children}</main>
         <BackToTop/>
-        <Footer settings={settings} globalFooter={footerProps} socialLinks={socialLinks} />
+        <SiteChrome><Footer settings={settings} globalFooter={footerProps} socialLinks={socialLinks} /></SiteChrome>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}

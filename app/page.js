@@ -32,7 +32,22 @@ export default async function HomePage() {
 
   if (pageData) {
     return <>
-      <PageBlocks data={pageData} pageId="home" services={services} locations={locations} settings={settings} posts={posts}/>
+      <PageBlocks data={pageData} pageId="home" services={services} locations={locations} settings={settings} posts={posts} insertAfter={{
+        // Hamilton & Niagara: the regional page for long-distance moves and transport.
+        SunwingsTrustBlock: (
+          <section className="section" style={{ paddingTop: 8, paddingBottom: 8 }}>
+            <div className="container">
+              <div className="cta-inline" style={{ margin: 0 }}>
+                <div>
+                  <h3>Moving to or from Hamilton or Niagara?</h3>
+                  <p>Long-distance moves, furniture delivery and transport between Hamilton, Niagara, Toronto and the GTA.</p>
+                </div>
+                <Link className="btn btn-accent" href="/hamilton-niagara">Hamilton &amp; Niagara →</Link>
+              </div>
+            </div>
+          </section>
+        ),
+      }}/>
       <GoogleReviews/>
       <FacebookPosts/>
     </>;

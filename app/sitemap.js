@@ -38,6 +38,7 @@ export default async function sitemap() {
       priority: .8,
     })),
     { url: `${base}/hamilton-niagara`, changeFrequency: 'monthly', priority: .9 },
+    ...['long-distance', 'furniture-delivery', 'commercial-transport'].map(slug => ({ url: `${base}/hamilton-niagara/${slug}`, changeFrequency: 'monthly', priority: .8 })),
     { url: `${base}/long-distance`, changeFrequency: 'monthly', priority: .9 },
     ...ROUTES.map(route => ({ url: `${base}${routeHref(route)}`, changeFrequency: 'monthly', priority: .9 })),
     ...posts.map(post => ({

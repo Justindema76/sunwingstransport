@@ -12,12 +12,13 @@ function SmartNavLink({ href = '#', children, className = '' }) {
   return <Link className={className} href={href}>{children}</Link>;
 }
 
-export default function Header({ settings, services = [], globalHeader = {}, promo = null }) {
+// navLinks / homeHref / topbarLine: used by the Hamilton & Niagara section, which has its own menu.
+export default function Header({ settings, services = [], globalHeader = {}, promo = null, navLinks = null, homeHref = '/', topbarLine = '' }) {
   const phone = settings?.phone || '647-526-5132';
   const logo = globalHeader.logo || settings?.logo_url || 'https://nowsajdmbpxvlvrhopjg.supabase.co/storage/v1/object/public/site-assets/sunwings/1791334339517-SUNWING-site-logo.png';
   const brand = settings?.site_name || globalHeader.brand || 'Sun Wings';
   const topbarEmphasis = settings?.topbar_emphasis || globalHeader.topbarEmphasis || 'Reliable • On-Time • Professional';
-  const topbarText = settings?.topbar_text || globalHeader.topbarText || 'Moving & delivery from Toronto to Niagara';
+  const topbarText = topbarLine || settings?.topbar_text || globalHeader.topbarText || 'Moving & delivery from Toronto to Niagara';
   const showTopbar=on(globalHeader.topbarEnabled ?? settings?.topbar_enabled,true);
   const showCall=on(globalHeader.callButtonEnabled ?? settings?.call_button_enabled,true);
   const callText=globalHeader.callButtonText || settings?.call_button_text || 'Call Now';
@@ -40,7 +41,7 @@ export default function Header({ settings, services = [], globalHeader = {}, pro
     { label:'Services', url:'/services' },{ label:'Service Areas', url:'/locations' },
     { label:'Pricing', url:'/pricing' },{ label:'Moving Tips', url:'/blog' },{ label:'Contact', url:'/contact' },
   ];
-  const links = navItems.length ? navItems : fallbackNav;
+  const links = navLinks || (navItems.length ? navItems : fallbackNav);
 
   return (
     <div className="header-system" style={vars}>
@@ -56,7 +57,7 @@ export default function Header({ settings, services = [], globalHeader = {}, pro
       </div>}</div> : null}
       <header className="site">
         <div className="container nav">
-          <Link className="logo" href="/" aria-label={brand}>
+          <Link className="logo" href={homeHref} aria-label={brand}>
             {logo ? <img src={logo} alt={brand}/> : <strong>{brand}</strong>}
           </Link>
           <nav className="nav-links" aria-label="Main navigation">
