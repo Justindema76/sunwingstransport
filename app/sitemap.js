@@ -37,6 +37,7 @@ export default async function sitemap() {
       changeFrequency: 'monthly',
       priority: .8,
     })),
+    { url: `${base}/hamilton-niagara`, changeFrequency: 'monthly', priority: .9 },
     { url: `${base}/long-distance`, changeFrequency: 'monthly', priority: .9 },
     ...ROUTES.map(route => ({ url: `${base}${routeHref(route)}`, changeFrequency: 'monthly', priority: .9 })),
     ...posts.map(post => ({
