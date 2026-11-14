@@ -3,9 +3,21 @@
 import { useEffect } from 'react';
 import Script from 'next/script';
 
+// Which part of the site an event belongs to: 'hamilton_niagara' (Justin's branch: on those
+// pages, or visited them in the last 90 days, same rule as the quote form) or 'main'.
+function siteSection() {
+  if (window.location.pathname.startsWith('/hamilton-niagara')) return 'hamilton_niagara';
+  try {
+    if (Date.now() - Number(window.localStorage.getItem('sunwings_hn') || 0) < 90 * 86400000) return 'hamilton_niagara';
+  } catch {
+    // Storage blocked: only the current page counts.
+  }
+  return 'main';
+}
+
 export function trackEvent(name, params = {}) {
   if (typeof window === 'undefined') return;
-  if (typeof window.gtag === 'function') window.gtag('event', name, params);
+  if (typeof window.gtag === 'function') window.gtag('event', name, { site_section: siteSection(), ...params });
 }
 
 export default function SiteAnalytics({ ga4 = '', metaPixel = '' }) {
