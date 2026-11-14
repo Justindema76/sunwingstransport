@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import BlogCards from '@/components/BlogCards';
+import FacebookPosts from '@/components/FacebookPosts';
 import HomeHero from '@/components/HomeHero';
 import PageBlocks from '@/components/PageBlocks';
 import HowItWorks from '@/components/HowItWorks';
@@ -29,7 +30,10 @@ export default async function HomePage() {
   ]);
 
   if (pageData) {
-    return <PageBlocks data={pageData} pageId="home" services={services} locations={locations} settings={settings} posts={posts}/>;
+    return <>
+      <PageBlocks data={pageData} pageId="home" services={services} locations={locations} settings={settings} posts={posts}/>
+      <FacebookPosts/>
+    </>;
   }
 
   return (
