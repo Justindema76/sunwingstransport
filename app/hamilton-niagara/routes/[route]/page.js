@@ -50,9 +50,9 @@ export default async function HnRoutePage({ params }) {
         title={own.heading || `${route.from} to ${route.to} Movers`}
         accent={own.accent || undefined}
         description={own.text || route.intro}
-        image={banner.image || HERO_IMAGE_OPTIONS.truck}
+        image={banner.image || HERO_IMAGE_OPTIONS.highway}
         imagePosition={photoSettings(banner)}
-        imageAlt={`Sunwings moving truck for ${route.from} to ${route.to} moves`}
+        imageAlt={`Highway to ${route.to} for Sunwings ${route.from} to ${route.to} moves`}
         phone={settings.phone}
         preset={ROUTE_SERVICE}
         quoteFill={{ pickupCity: route.from, dropoffCity: route.to }}

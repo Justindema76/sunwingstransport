@@ -51,10 +51,10 @@ export default async function LongDistancePage() {
         title={banner.heading || 'Long-distance'}
         accent={banner.heading ? (banner.accent || undefined) : 'moving.'}
         description={banner.text || 'A carefully planned home move between Toronto, Hamilton, Mississauga and Niagara. Share your inventory, access and schedule so we can confirm the right crew, vehicle and tailored quote.'}
-        image={banner.image || imagePreview(heroImage, 1600, 900)}
+        image={banner.image || HERO_IMAGE_OPTIONS.highway}
         imagePosition={photoSettings(banner)}
         fallbackImage={HERO_IMAGE_OPTIONS.truck}
-        imageAlt="Dining and living furniture from a Sunwings residential job"
+        imageAlt="QEW highway toward Toronto"
         phone={settings.phone}
         preset={movingService}
       />

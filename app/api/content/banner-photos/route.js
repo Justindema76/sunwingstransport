@@ -27,8 +27,8 @@ export async function GET() {
     slides: content.heroSlides.map((slide, index) => safeHeroImage(slide.image || (index === 0 && homeImage ? homeImage : banner(slide.slug)))),
     pages: Object.fromEntries(PAGES.map((id, i) => [id, safeHeroImage(content.pageBanners?.[id]?.image || heroImage(pages[i]))])),
     services: Object.fromEntries(services.map(service => [service.slug, safeHeroImage(service.banner_image)])),
-    // Route pages (Admin › Route pages): the route's own photo, else the moving truck.
-    routes: Object.fromEntries([['long-distance', routeBanners['long-distance']?.image || 'https://nowsajdmbpxvlvrhopjg.supabase.co/storage/v1/object/public/blog-images/sunwings/1794229390663-IMG_8141.jpeg'], ...ROUTES.map(route => [route.slug, routeBanners[route.slug]?.image || HERO_IMAGE_OPTIONS.truck])]),
+    // Route pages (Admin › Route pages): the route's own photo, else the QEW highway photo.
+    routes: Object.fromEntries([['long-distance', routeBanners['long-distance']?.image || HERO_IMAGE_OPTIONS.highway], ...ROUTES.map(route => [route.slug, routeBanners[route.slug]?.image || HERO_IMAGE_OPTIONS.highway])]),
     // Old photos the site swaps for newer ones, so the admin can show (and save) the photo that's really live.
     retired: RETIRED_HERO_IMAGES,
   };
