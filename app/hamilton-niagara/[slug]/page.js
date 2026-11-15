@@ -1,12 +1,14 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import PageHero from '@/components/PageHero';
+import PhotoGallery from '@/components/PhotoGallery';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import TrustStrip from '@/components/TrustStrip';
 import { photoSettings, rotatingHeroImage } from '@/components/heroSlides';
 import { getLocations, getServices, getSiteSettings } from '@/lib/content';
 import { HN, HN_ROUTES, HN_SERVICES, HN_TRUST, getHnContent, hnRouteHref, isHnTown, keepLinksInSection } from '@/lib/hamiltonNiagara';
 import { ROUTE_SERVICE } from '@/lib/routes';
+import { extractServicePhotos } from '@/lib/servicePhotos';
 
 // One page per Hamilton & Niagara town (/hamilton-niagara/grimsby) and per section service
 // (/hamilton-niagara/furniture-delivery). Links on these pages stay inside the section.
@@ -49,6 +51,8 @@ export default async function HnSlugPage({ params }) {
   if (page.kind === 'town') {
     const { town } = page;
     const routes = HN_ROUTES.filter(route => route.fromSlug === town.slug || route.toSlug === town.slug);
+    // Photos typed into the post's text go into the proper gallery (same size, opens over the page).
+    const townBody = extractServicePhotos(town.body_html);
     return (
       <>
         <PageHero
@@ -87,7 +91,8 @@ export default async function HnSlugPage({ params }) {
               <h2>Neighbourhoods we cover</h2>
               <div className="chips">{town.neighbourhoods.map(item => <span className="chip" key={item}>{item}</span>)}</div>
             </> : null}
-            {town.body_html ? <div dangerouslySetInnerHTML={{ __html: keepLinksInSection(town.body_html, townSlugs) }}/> : null}
+            {townBody.html ? <div dangerouslySetInnerHTML={{ __html: keepLinksInSection(townBody.html, townSlugs) }}/> : null}
+            {townBody.photos.length ? <><h2>{townBody.title || `Our work in ${town.title}`}</h2><PhotoGallery photos={townBody.photos}/></> : null}
             <div className="cta-inline">
               <div>
                 <h3>{town.cta_title || `Moving in ${town.title}?`}</h3>
@@ -112,6 +117,8 @@ export default async function HnSlugPage({ params }) {
   const image = copy.image || (isLong ? '' : main?.banner_image);
   const sendList = (copy.sendList || []).filter(Boolean);
   const preset = service.preset || main?.title || service.label;
+  // Photos typed into the Service Post's text go into the proper gallery (same size, opens over the page).
+  const body = extractServicePhotos(isLong ? '' : main?.body_html);
   return (
     <>
       <PageHero
@@ -131,7 +138,11 @@ export default async function HnSlugPage({ params }) {
       <section className="section">
         <div className="container prose hn-prose" style={{ maxWidth: 900 }}>
           {!isLong && main?.intro ? <p className="lead-p">{main.intro}</p> : null}
-          {!isLong && main?.body_html ? <div dangerouslySetInnerHTML={{ __html: keepLinksInSection(main.body_html, townSlugs) }}/> : null}
+          {body.html ? <div dangerouslySetInnerHTML={{ __html: keepLinksInSection(body.html, townSlugs) }}/> : null}
+          {body.photos.length ? <>
+            <h2>{body.title || `${service.label} photos`}</h2>
+            <PhotoGallery photos={body.photos}/>
+          </> : null}
           {isLong ? <>
             <h2>Routes we run</h2>
             <div className="side-links" style={{ marginTop: 10 }}>
