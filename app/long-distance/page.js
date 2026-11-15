@@ -9,16 +9,10 @@ import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { getRouteBanner } from '@/lib/routeBanners';
 import { getBaseUrl, getSiteSettings, getServices } from '@/lib/content';
 import { ROUTES, ROUTE_GROUPS, ROUTE_SERVICE, routeHref } from '@/lib/routes';
+import { PHOTO_ROOT, heroImage, movingPhotos } from '@/lib/longDistancePhotos';
 
 const TITLE = 'Long-Distance Movers Toronto, Hamilton & Niagara | Sunwings';
 const DESCRIPTION = 'Long-distance and intercity moves between Toronto, Hamilton, Mississauga, St. Catharines and Niagara Falls. Carefully planned residential moves with tailored quotes, access planning and owner review.';
-const PHOTO_ROOT = 'https://nowsajdmbpxvlvrhopjg.supabase.co/storage/v1/object/public/blog-images/sunwings/';
-const movingPhotos = [
-  { file: '1794157095452-IMG_9724.jpeg', alt: 'Moving vehicles and a loading ramp at a residential moving job', caption: 'Loading access planned around the home' },
-  { file: '1794228549975-IMG_4836.jpeg', alt: 'Wrapped furniture loaded for transport', caption: 'Furniture prepared and protected for transport' },
-  { file: '1794157095250-IMG_9732.jpeg', alt: 'Stacked moving totes beside a home entrance', caption: 'Household belongings ready for loading' },
-];
-const heroImage = `${PHOTO_ROOT}1794229390663-IMG_8141.jpeg`;
 const imagePreview = (url, width, height) => `${url.replace('/object/public/', '/render/image/public/')}?width=${width}&height=${height}&resize=cover&quality=80`;
 const faqs = [
   { question: 'What affects a long-distance moving quote?', answer: 'The route, full inventory, crew and vehicle requirements, loading and unloading time, stairs, elevators and carrying distances all affect the quote. Packing, furniture preparation and any additional stops must be agreed in advance.' },
