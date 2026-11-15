@@ -19,6 +19,9 @@
 }
 
 /* Menu dropdowns with no link of their own (Hamilton & Niagara Towns, Routes) and long lists. */
-.nav-dropdown-button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer}
+/* Same box as the menu links (6px padding + 2px underline space) so it sits on the same line. */
+.nav-links{align-items:center}
+.nav-dropdown-button{background:none;border:0;border-bottom:2px solid transparent;padding:6px 0;margin:0;font:inherit;line-height:inherit;color:inherit;cursor:pointer;display:flex;align-items:center;gap:6px}
+.nav-dropdown-button:hover{color:var(--blue);border-color:var(--accent)}
 .nav-dropdown-menu-wide{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));min-width:480px;max-height:70vh;overflow:auto}
 .mobile-nav-label{background:none;border:0;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer;flex:1}
