@@ -14,7 +14,8 @@ const FALLBACK_IMAGES = {
 // On a city page (locationSlug), the Snow Removal card opens that city's own snow page.
 // The full grid ends with a Long-Distance Moving card that opens the Hamilton & Niagara section
 // (edited in Admin › Banners & Pop-up › Hamilton & Niagara › Services page card).
-export default async function ServiceCards({ services = [], compact = false, locationName = '', locationSlug = '', cardOverrides = [] }) {
+// area='hn': the Hamilton & Niagara home, whose Long-Distance card always opens its own long-distance page.
+export default async function ServiceCards({ services = [], compact = false, locationName = '', locationSlug = '', cardOverrides = [], area = 'main' }) {
   if (compact) {
     return (
       <div className="grid-2 location-service-grid">
@@ -65,7 +66,7 @@ export default async function ServiceCards({ services = [], compact = false, loc
         );
       })}
       {longDistance ? (
-        <Link className="card" href={longDistance.url || '/hamilton-niagara/long-distance'}>
+        <Link className="card" href={area === 'hn' ? '/hamilton-niagara/long-distance' : (longDistance.url || '/long-distance')}>
           <div className="card-img ph" style={longDistance.image ? { backgroundImage: `url("${longDistance.image}")` } : undefined}>
             <div className="badge"><ServiceIcon slug="long-distance"/></div>
           </div>

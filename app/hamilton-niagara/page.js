@@ -63,7 +63,7 @@ export default async function HamiltonNiagaraPage() {
             <h2>Moving and transport across the region.</h2>
             <p>From one sofa to a full house, between towns or into Toronto. Every job is quoted in writing before it’s booked.</p>
           </div>
-          <ServiceCards services={services} cardOverrides={cardLinks}/>
+          <ServiceCards services={services} cardOverrides={cardLinks} area="hn"/>
         </div>
       </section>
 
