@@ -3,6 +3,8 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import { trackEvent } from './SiteAnalytics';
+import { MAX_PHOTOS, PhotoPicker, leadSource, pickFill, readReferral, rememberVisit, uploadPhotos } from './quoteShared';
+import StepQuote, { DELIVERY_SERVICE, isDeliveryService, useStepQuote } from './StepQuote';
 
 const initialState = {
   name: '',
@@ -47,133 +49,6 @@ function ChoiceList({ name, options, value, onChange, multiple = false }) {
 
 export const LONG_DISTANCE = 'Long Distance Moving';
 
-const MAX_PHOTOS = 6;
-const PHOTO_MAX_SIDE = 1600;
-
-function newUploadId() {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, ch => {
-    const r = Math.random() * 16 | 0;
-    return (ch === 'x' ? r : (r & 0x3) | 0x8).toString(16);
-  });
-}
-
-function loadImage(file) {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error(`${file.name || 'A photo'} could not be read. Try a JPG or PNG.`)); };
-    img.src = url;
-  });
-}
-
-// Phone photos are often 3–10 MB. Shrink to a JPEG (longest side 1600px) before sending.
-async function shrinkPhoto(file) {
-  const img = await loadImage(file);
-  const scale = Math.min(1, PHOTO_MAX_SIDE / Math.max(img.naturalWidth, img.naturalHeight));
-  const canvas = document.createElement('canvas');
-  canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
-  canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.82));
-  if (!blob) throw new Error(`${file.name || 'A photo'} could not be prepared.`);
-  return blob;
-}
-
-async function uploadPhotos(files) {
-  if (!files.length) return [];
-  const uploadId = newUploadId();
-  const paths = [];
-  for (const [index, file] of files.entries()) {
-    const blob = await shrinkPhoto(file);
-    const response = await fetch(`/api/quote/photo?upload=${uploadId}&n=${index}`, {
-      method: 'POST',
-      headers: { 'content-type': 'image/jpeg' },
-      body: blob,
-    });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok || !result.path) throw new Error(result.error || 'A photo did not upload. Please try again.');
-    paths.push(result.path);
-  }
-  return paths;
-}
-
-function PhotoPicker({ photos, onAdd, onRemove, error, disabled }) {
-  const inputId = useId();
-  return <div className={`quote-photos ${error ? 'field-has-error' : ''}`}>
-    <span className="quote-choice-label">Photos <small>(optional, up to {MAX_PHOTOS})</small></span>
-    <p className="quote-photos-hint">Photos of the items, stairs or driveway help us quote accurately.</p>
-    {photos.length ? <ul className="quote-photo-list">
-      {photos.map((photo, index) => <li key={photo.preview}>
-        <img src={photo.preview} alt={`Photo ${index + 1}`}/>
-        <button type="button" onClick={() => onRemove(index)} disabled={disabled} aria-label={`Remove photo ${index + 1}`}><X size={14}/></button>
-      </li>)}
-    </ul> : null}
-    {photos.length < MAX_PHOTOS ? <label className="btn btn-line quote-photo-add" htmlFor={inputId}>
-      {photos.length ? 'Add more photos' : 'Add photos'}
-      <input id={inputId} type="file" accept="image/*" multiple onChange={onAdd} disabled={disabled}/>
-    </label> : null}
-    {error ? <small className="field-error">{error}</small> : null}
-  </div>;
-}
-
-// Where a quote came from: the page it was sent from, the first page of the visit and any
-// ad tags (utm_*, Google Ads click). Saved with the quote so ads can be measured.
-const VISIT_KEY = 'sunwings_visit';
-const FILL_KEYS = ['pickupCity', 'dropoffCity'];
-
-// Hamilton & Niagara is Justin's branch: a visit to that section is remembered for 90 days,
-// so a quote sent later from anywhere on the site is still credited to the branch.
-const HN_KEY = 'sunwings_hn';
-const HN_DAYS = 90;
-
-function rememberVisit() {
-  try {
-    if (window.location.pathname.startsWith('/hamilton-niagara')) window.localStorage.setItem(HN_KEY, String(Date.now()));
-  } catch {
-    // Storage can be blocked; the quote then only records the pages of this visit.
-  }
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const ad = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term'].map(key => params.get(key)).filter(Boolean).join(' / ');
-    const fromAd = Boolean(ad) || params.has('gclid') || params.has('gbraid') || params.has('wbraid');
-    // Keep the first page of the visit, unless this page was opened from an ad: an ad click
-    // always wins, so a quote is credited to the ad even if they browsed the site earlier.
-    if (window.sessionStorage.getItem(VISIT_KEY) && !fromAd) return;
-    window.sessionStorage.setItem(VISIT_KEY, JSON.stringify({
-      landing: window.location.pathname,
-      ad,
-      googleAds: params.has('gclid') || params.has('gbraid') || params.has('wbraid'),
-      referrer: document.referrer && !document.referrer.includes(window.location.host) ? new URL(document.referrer).host : '',
-    }));
-  } catch {
-    // Storage can be blocked; the quote then only records the page it was sent from.
-  }
-}
-
-function leadSource() {
-  let visit = {};
-  try { visit = JSON.parse(window.sessionStorage.getItem(VISIT_KEY) || '{}') || {}; } catch { visit = {}; }
-  let hnVisit = false;
-  try { hnVisit = Date.now() - Number(window.localStorage.getItem(HN_KEY) || 0) < HN_DAYS * 86400000; } catch { hnVisit = false; }
-  const inHn = [window.location.pathname, visit.landing].some(path => String(path || '').startsWith('/hamilton-niagara'));
-  return [
-    hnVisit && !inHn ? 'visited Hamilton & Niagara section' : '',
-    `Sent from ${window.location.pathname}`,
-    visit.landing && visit.landing !== window.location.pathname ? `landed on ${visit.landing}` : '',
-    visit.ad ? `ad: ${visit.ad}` : '',
-    visit.googleAds ? 'Google Ads click' : '',
-    !visit.ad && !visit.googleAds && visit.referrer ? `from ${visit.referrer}` : '',
-  ].filter(Boolean).join(' · ').slice(0, 300);
-}
-
-function pickFill(fill) {
-  return Object.fromEntries(FILL_KEYS.filter(key => fill?.[key]).map(key => [key, String(fill[key])]));
-}
 
 function YesNo({ name, value, onChange }) {
   return <div className="quote-choice-row" role="group" aria-label={name}>
@@ -182,28 +57,6 @@ function YesNo({ name, value, onChange }) {
   </div>;
 }
 
-// Partner referral links (e.g. ?ref=justin, or a store's QR link /r/<code> which adds ?ref=<code>).
-// The code is remembered for 90 days so a visitor who books later is still credited to the partner.
-const REFERRERS = { justin: 'Referred by Justin DeMatteis' };
-const REFERRAL_KEY = 'sunwings_ref';
-const REFERRAL_DAYS = 90;
-const REFERRAL_CODE = /^[a-z0-9][a-z0-9-]{1,39}$/;
-const referralLabel = code => REFERRERS[code] || `Store partner: ${code}`;
-
-function readReferral() {
-  try {
-    const fromUrl = new URLSearchParams(window.location.search).get('ref')?.trim().toLowerCase();
-    if (fromUrl && REFERRAL_CODE.test(fromUrl)) {
-      window.localStorage.setItem(REFERRAL_KEY, JSON.stringify({ code: fromUrl, at: Date.now() }));
-      return referralLabel(fromUrl);
-    }
-    const saved = JSON.parse(window.localStorage.getItem(REFERRAL_KEY) || 'null');
-    if (saved?.code && REFERRAL_CODE.test(saved.code) && Date.now() - saved.at < REFERRAL_DAYS * 86400000) return referralLabel(saved.code);
-  } catch {
-    // Storage can be blocked; the referral then only counts on the page the link opened.
-  }
-  return '';
-}
 
 export default function QuoteForm({
   services = [],
@@ -220,6 +73,12 @@ export default function QuoteForm({
   const [state, setState] = useState({ sending: false, message: '', fieldErrors: {} });
   const [referral, setReferral] = useState('');
   const [photos, setPhotos] = useState([]);
+  // Drawer only: 'choose' asks what they need, 'steps' is the step-by-step delivery form,
+  // 'full' is the long form (full moves and every other service, until their own steps exist).
+  const [mode, setMode] = useState('choose');
+  const [chose, setChose] = useState(false);
+  const stepQuote = useStepQuote();
+  const deliveryService = services.find(service => /furniture/i.test(service.title))?.title || DELIVERY_SERVICE;
 
   const photosRef = useRef(photos);
   photosRef.current = photos;
@@ -249,6 +108,7 @@ export default function QuoteForm({
     if (!label) return;
     setReferral(label);
     setForm(current => ({ ...current, referralSource: current.referralSource || label }));
+    stepQuote.setData(current => ({ ...current, referralSource: current.referralSource || label }));
   }, []);
 
   useEffect(() => {
@@ -261,12 +121,15 @@ export default function QuoteForm({
       if (nextPreset) setForm(current => ({ ...current, service: nextPreset, moveSize: nextPlan || current.moveSize }));
       if (Object.keys(nextFill).length) setForm(current => ({ ...current, ...nextFill }));
       setState(current => ({ ...current, message: '', fieldErrors: {} }));
+      if (stepQuote.done) stepQuote.reset({ referralSource: referral });
+      if (Object.keys(nextFill).length) stepQuote.setData(current => ({ ...current, ...nextFill }));
+      if (nextPreset) { setMode(isDeliveryService(nextPreset) ? 'steps' : 'full'); setChose(false); }
       setOpen(true);
     }
 
     window.addEventListener('sunwings:open-quote', openQuoteDrawer);
     return () => window.removeEventListener('sunwings:open-quote', openQuoteDrawer);
-  }, [global]);
+  }, [global, stepQuote.done, referral]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -285,7 +148,7 @@ export default function QuoteForm({
   }, [open]);
 
   function closeDrawer() {
-    if (!state.sending) setOpen(false);
+    if (!state.sending && !stepQuote.status.sending) setOpen(false);
   }
 
   function update(event) {
@@ -637,14 +500,32 @@ export default function QuoteForm({
           <header className="quote-drawer-head">
             <div>
               <span className="kicker">Free Quote</span>
-              <h2 id={`${drawerId}-title`}>{title}</h2>
-              <p>{snowJob ? 'Tell us about the property and the plan you want.' : 'Tell us what you need moved and where it is going.'}</p>
+              <h2 id={`${drawerId}-title`}>{mode === 'steps' ? (stepQuote.done ? 'Request sent' : 'Delivery quote') : mode === 'choose' ? 'Request a Quote' : title}</h2>
+              <p>{mode === 'steps' ? (stepQuote.done ? 'We’ve got your request.' : 'A few quick questions. About a minute.') : mode === 'choose' ? 'What can we help you with?' : snowJob ? 'Tell us about the property and the plan you want.' : 'Tell us what you need moved and where it is going.'}</p>
             </div>
             <button className="quote-drawer-close" type="button" onClick={closeDrawer} aria-label="Close quote form">
               <X size={21}/>
             </button>
           </header>
-          <div className="quote-drawer-body">{formMarkup}</div>
+          <div className="quote-drawer-body">
+            {mode === 'choose' ? <div className="qs-choose">
+              <button type="button" onClick={() => { setMode('steps'); setChose(true); }}>
+                <b>Furniture or a few items</b>
+                <span>A sofa, a bed, a store pickup, one big item</span>
+              </button>
+              <button type="button" onClick={() => { setForm(current => ({ ...current, service: services.find(service => /residential/i.test(service.title))?.title || current.service })); setMode('full'); setChose(true); }}>
+                <b>A full move</b>
+                <span>Apartment, condo or house</span>
+              </button>
+              <button type="button" onClick={() => { setMode('full'); setChose(true); }}>
+                <b>Something else</b>
+                <span>Long distance, commercial, junk removal, snow removal</span>
+              </button>
+            </div> : null}
+            {mode !== 'choose' && chose && !stepQuote.done && !(mode === 'steps' && stepQuote.step > 0) ? <button type="button" className="qs-switch" onClick={() => setMode('choose')}>← Change what you need</button> : null}
+            {mode === 'steps' ? <StepQuote quote={stepQuote} service={deliveryService} referral={referral} replyHours={replyHours} onClose={() => { setOpen(false); setMode('choose'); setChose(false); }}/> : null}
+            {mode === 'full' ? formMarkup : null}
+          </div>
         </aside>
       </> : null}
     </>

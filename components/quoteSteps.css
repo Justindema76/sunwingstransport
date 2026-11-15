@@ -1,0 +1,58 @@
+/* Step-by-step quote form in the quote drawer (components/StepQuote.js). Uses the site's colours. */
+.qs{display:flex;flex-direction:column;gap:14px;min-height:100%}
+.qs-progress{display:grid;gap:8px}
+.qs-progress-text{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:var(--muted)}
+.qs-progress-text span:last-child{color:var(--blue)}
+.qs-bar{height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+.qs-bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(135deg,var(--accent),var(--accent-2));transition:width .25s ease}
+.qs-step{padding:22px 20px 8px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.qs-title{margin:0 0 8px;font-size:24px;line-height:1.15;color:var(--navy);outline:none}
+.qs-help{margin:0 0 16px;font-size:14px;line-height:1.5;color:var(--muted)}
+.qs-step .quote-photos{margin-bottom:14px}
+.qs-place{margin:0 0 14px;padding:16px 0 4px;border:0;border-top:1px solid var(--line)}
+.qs-place:first-of-type{border-top:0;padding-top:4px}
+.qs-place legend{padding:0;font-size:16px;font-weight:800;color:var(--navy);margin-bottom:10px;float:left;width:100%}
+.qs-place legend+*{clear:both}
+.qs-step .quote-choice-list{margin-bottom:14px}
+.qs-step .quote-choice-list label{margin:0}
+.qs-check{display:flex!important;align-items:center;gap:10px;margin:4px 0 16px;padding:12px 14px;border:1px solid #D5DEEA;border-radius:12px;background:#FBFCFE;font-size:15px;font-weight:600;color:var(--ink);cursor:pointer}
+.qs-check input{width:20px;height:20px;margin:0;padding:0;flex:0 0 20px;accent-color:var(--blue)}
+.qs-review{margin:0 0 16px;padding:0;display:grid;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.qs-review>div{display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:start;padding:12px 14px;border-top:1px solid var(--line)}
+.qs-review>div:first-child{border-top:0}
+.qs-review dt{font-size:13px;font-weight:700;color:var(--muted)}
+.qs-review dd{margin:0;font-size:15px;line-height:1.4;color:var(--ink);overflow-wrap:anywhere;white-space:pre-line}
+.qs-review dd small{color:var(--muted)}
+.qs-review button{border:0;background:none;padding:0;font:inherit;font-size:14px;font-weight:700;color:var(--blue);cursor:pointer;text-decoration:underline}
+.qs-status{margin:0}
+.qs-nav{position:sticky;bottom:-28px;margin:auto -26px -28px;padding:14px 26px 18px;display:flex;gap:10px;background:#f8fafc;border-top:1px solid var(--line)}
+.qs-nav .btn{min-height:52px}
+.qs-back{flex:0 0 auto;gap:6px;padding:12px 18px}
+.qs-next-btn{flex:1 1 auto}
+.qs-wide{width:100%}
+.qs-done{align-items:stretch;text-align:left}
+.qs-done-icon{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:#E7F6EC;color:#1E7B3C;margin-top:8px}
+.qs-ref{padding:18px 20px;border-radius:14px;background:var(--sky);border:1px solid #CFE0F4;display:grid;gap:4px}
+.qs-ref span{font-size:13px;font-weight:700;color:var(--muted)}
+.qs-ref strong{font-size:28px;letter-spacing:.06em;color:var(--navy)}
+.qs-done .qs-review>div{grid-template-columns:130px 1fr}
+.qs-next{padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.qs-next h4{margin:0 0 10px;font-size:16px;color:var(--navy)}
+.qs-next ol{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px;line-height:1.45;color:var(--ink)}
+.qs-choose{display:grid;gap:12px}
+.qs-choose button{display:grid;gap:4px;text-align:left;padding:18px 20px;border:1px solid #D5DEEA;border-radius:14px;background:#fff;cursor:pointer;font:inherit;transition:border-color .15s,background .15s}
+.qs-choose button:hover,.qs-choose button:focus-visible{border-color:var(--blue);background:#F4F8FD}
+.qs-choose b{font-size:17px;color:var(--navy)}
+.qs-choose span{font-size:14px;color:var(--muted)}
+.qs-switch{justify-self:start;border:0;background:none;padding:0 0 12px;font:inherit;font-size:14px;font-weight:700;color:var(--blue);cursor:pointer;text-decoration:underline}
+@media (max-width:640px){
+  .qs-step{padding:18px 16px 4px}
+  .qs-title{font-size:22px}
+  .qs-nav{bottom:-12px;margin:auto -12px -12px;padding:12px 12px calc(12px + env(safe-area-inset-bottom))}
+  .qs-step .row{grid-template-columns:1fr 1fr;gap:10px}
+  .qs-review>div{grid-template-columns:1fr auto}
+  .qs-review dt{grid-column:1/-1;margin-bottom:-6px}
+  .qs-done .qs-review>div{grid-template-columns:1fr}
+  .qs-step .quote-choice-list{gap:6px}
+  .qs-step .quote-choice-list label{padding:9px 11px;gap:6px}
+}
