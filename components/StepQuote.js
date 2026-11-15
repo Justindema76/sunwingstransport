@@ -21,11 +21,38 @@ const STEPS = [
   { key: 'review', label: 'Review' },
 ];
 
+// Tap-to-pick items on step 1, so the customer doesn't have to type.
+const ITEMS = [
+  'Sofa / couch', 'Sectional', 'Loveseat', 'Armchair', 'Bed + mattress', 'Mattress only',
+  'Dresser', 'Nightstand', 'Dining table', 'Dining chair', 'Desk', 'Bookshelf',
+  'TV', 'TV stand', 'Fridge', 'Washer', 'Dryer', 'Stove', 'Boxes',
+];
+
+export function itemsText(data) {
+  const picked = Object.entries(data.items || {}).filter(([, n]) => n > 0).map(([name, n]) => `${n} × ${name}`);
+  return [picked.join(', '), String(data.itemOther || '').trim()].filter(Boolean).join('\n');
+}
+
+function ItemPicker({ items, onChange }) {
+  const add = (name, delta) => onChange({ ...items, [name]: Math.max(0, Math.min(99, (items[name] || 0) + delta)) });
+  return <ul className="qs-items" aria-label="Pick your items">
+    {ITEMS.map(name => {
+      const n = items[name] || 0;
+      return <li key={name} className={n ? 'is-on' : ''}>
+        <button type="button" className="qs-item-name" onClick={() => add(name, 1)} aria-label={`Add ${name}`}>
+          <span>{name}</span>{n ? <b>{n}</b> : <i aria-hidden="true">+</i>}
+        </button>
+        {n ? <button type="button" className="qs-item-minus" onClick={() => add(name, -1)} aria-label={`Remove one ${name}`}>−</button> : null}
+      </li>;
+    })}
+  </ul>;
+}
+
 const ACCESS = ['No stairs', 'Stairs', 'Elevator'];
 const TIMES = ['Any time', 'Morning', 'Afternoon', 'Evening'];
 
 const blank = {
-  itemList: '',
+  items: {}, itemOther: '',
   pickupAddress: '', pickupCity: '', pickupPostalCode: '', pickupAccess: '',
   dropoffAddress: '', dropoffCity: '', dropoffPostalCode: '', dropoffAccess: '',
   preferredDate: '', preferredTime: '', flexible: false,
@@ -35,7 +62,7 @@ const blank = {
 
 // Which step shows a field, so an error from the server takes the customer to the right screen.
 const FIELD_STEP = {
-  itemList: 0,
+  itemList: 0, itemOther: 0,
   pickupAddress: 1, pickupCity: 1, pickupPostalCode: 1, dropoffAddress: 1, dropoffCity: 1, dropoffPostalCode: 1,
   preferredDate: 2,
   name: 3, phone: 3, email: 3,
@@ -83,7 +110,7 @@ function whenText(data) {
 
 function validateStep(index, data) {
   const errors = {};
-  if (index === 0 && !data.itemList.trim()) errors.itemList = 'Tell us what we’re moving.';
+  if (index === 0 && !itemsText(data)) errors.itemOther = 'Tap at least one item, or type what it is.';
   if (index === 1) {
     if (!data.pickupAddress.trim()) errors.pickupAddress = 'Enter the pickup address.';
     if (!data.pickupCity.trim()) errors.pickupCity = 'Enter the pickup city.';
@@ -234,7 +261,7 @@ export default function StepQuote({ quote, service = DELIVERY_SERVICE, referral 
       pickupStairs: pickup.stairs, pickupElevator: pickup.elevator,
       dropoffAddress: data.dropoffAddress, dropoffCity: data.dropoffCity, dropoffPostalCode: data.dropoffPostalCode,
       dropoffStairs: dropoff.stairs, dropoffElevator: dropoff.elevator,
-      itemList: data.itemList,
+      itemList: itemsText(data),
       message: [
         `Reference: ${reference}`,
         data.flexible ? 'Date is flexible.' : '',
@@ -317,9 +344,10 @@ export default function StepQuote({ quote, service = DELIVERY_SERVICE, referral 
 
     {current.key === 'what' ? <section className="qs-step">
       <h3 className="qs-title" tabIndex={-1} ref={headingRef}>What are we moving?</h3>
-      <p className="qs-help">A few words is enough, like “a sofa and a dresser” or “a fridge from Home Depot”.</p>
-      <Field label="Items" name="itemList" error={err('itemList')}>
-        <textarea id="qs-itemList" name="itemList" rows="4" value={data.itemList} onChange={onInput} placeholder="E.g. 3-seat sofa and a queen bed frame" aria-invalid={Boolean(err('itemList'))}/>
+      <p className="qs-help">Tap each item. Tap again to add more.</p>
+      <ItemPicker items={data.items} onChange={items => { set('items', items); if (errors.itemOther) setErrors(current => ({ ...current, itemOther: '' })); }}/>
+      <Field label="Something not listed?" name="itemOther" error={err('itemOther')} optional>
+        <input id="qs-itemOther" name="itemOther" value={data.itemOther} onChange={onInput} placeholder="E.g. piano, treadmill, patio set" aria-invalid={Boolean(err('itemOther'))}/>
       </Field>
       <PhotoPicker photos={photos} onAdd={addPhotos} onRemove={removePhoto} error={err('photos')} disabled={status.sending}/>
     </section> : null}
@@ -374,7 +402,7 @@ export default function StepQuote({ quote, service = DELIVERY_SERVICE, referral 
     {current.key === 'review' ? <section className="qs-step">
       <h3 className="qs-title" tabIndex={-1} ref={headingRef}>Check and send</h3>
       <dl className="qs-review">
-        <div><dt>Items</dt><dd>{data.itemList}{photos.length ? <small> · {photos.length} photo{photos.length > 1 ? 's' : ''}</small> : null}</dd><button type="button" onClick={() => setStep(0)}>Edit</button></div>
+        <div><dt>Items</dt><dd>{itemsText(data)}{photos.length ? <small> · {photos.length} photo{photos.length > 1 ? 's' : ''}</small> : null}</dd><button type="button" onClick={() => setStep(0)}>Edit</button></div>
         <div><dt>Pickup</dt><dd>{place(data, 'pickup')}{data.pickupAccess ? <small> · {data.pickupAccess}</small> : null}</dd><button type="button" onClick={() => setStep(1)}>Edit</button></div>
         <div><dt>Drop-off</dt><dd>{place(data, 'dropoff')}{data.dropoffAccess ? <small> · {data.dropoffAccess}</small> : null}</dd><button type="button" onClick={() => setStep(1)}>Edit</button></div>
         <div><dt>Date</dt><dd>{whenText(data)}</dd><button type="button" onClick={() => setStep(2)}>Edit</button></div>
