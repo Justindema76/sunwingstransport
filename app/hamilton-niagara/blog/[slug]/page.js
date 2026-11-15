@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import BlogPostView, { blogPostMetadata } from '@/components/BlogPostView';
 import { getBlogPostBySlug, getBlogPosts, getServices, getSiteSettings } from '@/lib/content';
 import { HN } from '@/lib/hamiltonNiagara';
-import { ROUTE_SERVICE } from '@/lib/routes';
 import { readSiteSections, sectionFor } from '@/lib/siteSections';
 
 const BASE = `${HN}/blog`;
@@ -27,5 +26,5 @@ export default async function HnBlogPostPage({ params }) {
   const { slug } = await params;
   const [post, posts, services, settings] = await Promise.all([findPost(slug), getBlogPosts({ area: 'hn' }), getServices(), getSiteSettings()]);
   if (!post) notFound();
-  return <BlogPostView post={post} posts={posts} services={services} settings={settings} base={BASE} home={HN} quotePreset={ROUTE_SERVICE}/>;
+  return <BlogPostView post={post} posts={posts} services={services} settings={settings} base={BASE} home={HN}/>;
 }

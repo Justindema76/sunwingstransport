@@ -8,7 +8,6 @@ import { photoSettings, rotatingHeroImage } from '@/components/heroSlides';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { getLocations, getServices, getSiteSettings } from '@/lib/content';
 import { HN, HN_ROUTES, HN_SERVICES, HN_TRUST, getHnContent, hnRouteHref, isHnTown, keepLinksInSection, hnMetadata } from '@/lib/hamiltonNiagara';
-import { ROUTE_SERVICE } from '@/lib/routes';
 import { extractServicePhotos } from '@/lib/servicePhotos';
 import { getHnTownBanner } from '@/lib/routeBanners';
 
@@ -71,7 +70,6 @@ export default async function HnSlugPage({ params }) {
           imageAlt={town.banner_alt}
           fallbackImage={rotatingHeroImage(town.slug)}
           phone={settings.phone}
-          preset={ROUTE_SERVICE}
         />
         <TrustStrip items={HN_TRUST}/>
         <section className="section">
@@ -104,7 +102,7 @@ export default async function HnSlugPage({ params }) {
                 <h3>{town.cta_title || `Moving in ${town.title}?`}</h3>
                 <p>Pickup city, destination, your date and what’s being moved is all we need to start.</p>
               </div>
-              <QuoteDrawerTrigger className="btn btn-accent" preset={ROUTE_SERVICE}>Get my quote →</QuoteDrawerTrigger>
+              <QuoteDrawerTrigger className="btn btn-accent">Get my quote →</QuoteDrawerTrigger>
             </div>
           </div>
         </section>
