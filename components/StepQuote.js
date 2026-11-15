@@ -216,9 +216,19 @@ export function useStepQuote() {
   return { service, choose, data, setData, step, setStep, errors, setErrors, status, setStatus, photos, setPhotos, done, setDone, reset };
 }
 
-export function serviceOptionsFor(services = [], preset = '') {
-  const list = services.filter(item => item?.title).map(({ title, slug, eyebrow, banner_image }) => ({ title, slug, eyebrow, banner_image }));
+// limitTo: optional list of offered services ({ serviceSlug, preset }), e.g. a region that
+// only offers some of them. A preset entry (like Long Distance) is matched by its title.
+export function serviceOptionsFor(services = [], preset = '', limitTo = null) {
+  let list = services.filter(item => item?.title).map(({ title, slug, eyebrow, banner_image }) => ({ title, slug, eyebrow, banner_image }));
   if (!list.some(item => kindOf(item) === 'longdistance')) list.push(LONG_DISTANCE);
+  if (Array.isArray(limitTo) && limitTo.length) {
+    const slugs = limitTo.filter(item => !item.preset).map(item => item.serviceSlug);
+    const titles = limitTo.filter(item => item.preset).map(item => item.preset);
+    list = [
+      ...list.filter(item => titles.includes(item.title) || (kindOf(item) === 'longdistance' && titles.some(t => kindOf({ title: t }) === 'longdistance'))),
+      ...list.filter(item => slugs.includes(item.slug)),
+    ];
+  }
   if (preset && !list.some(item => item.title === preset)) list.push({ title: preset, slug: '', eyebrow: '' });
   return list;
 }

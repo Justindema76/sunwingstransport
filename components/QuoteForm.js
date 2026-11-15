@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { X } from 'lucide-react';
 import { trackEvent } from './SiteAnalytics';
 import ItemPicker, { itemsText } from './ItemPicker';
@@ -66,6 +67,7 @@ export default function QuoteForm({
   triggerText = 'Request a Quote',
   global = false,
   fill = null,
+  hnServices = null,
 }) {
   const drawerId = useId();
   const [open, setOpen] = useState(false);
@@ -75,7 +77,9 @@ export default function QuoteForm({
   const [photos, setPhotos] = useState([]);
   // Drawer: the customer picks a service, then gets that service's step-by-step form.
   const stepQuote = useStepQuote();
-  const serviceChoices = serviceOptionsFor(services);
+  // Hamilton & Niagara pages only offer that section's services.
+  const pathname = usePathname() || '';
+  const serviceChoices = serviceOptionsFor(services, '', pathname.startsWith('/hamilton-niagara') ? hnServices : null);
   const findService = title => serviceChoices.find(item => item.title === title) || { title, slug: '', eyebrow: '' };
 
   const photosRef = useRef(photos);
