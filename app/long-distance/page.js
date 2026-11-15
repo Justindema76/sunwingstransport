@@ -4,7 +4,9 @@ import PageHero from '@/components/PageHero';
 import PhotoGallery from '@/components/PhotoGallery';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import TrustStrip from '@/components/TrustStrip';
+import { photoSettings } from '@/components/heroSlides';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
+import { getRouteBanner } from '@/lib/routeBanners';
 import { getBaseUrl, getSiteSettings, getServices } from '@/lib/content';
 import { ROUTES, ROUTE_GROUPS, ROUTE_SERVICE, routeHref } from '@/lib/routes';
 
@@ -39,15 +41,18 @@ export default async function LongDistancePage() {
   const [settings, services] = await Promise.all([getSiteSettings(), getServices()]);
   const movingService = ROUTE_SERVICE;
   const crumbs = [{ label: 'Home', href: '/' }, { label: 'Long Distance' }];
+  // Banner: Admin › Banners & Pop-up › Route pages › Long-Distance page (blank = defaults).
+  const banner = await getRouteBanner('long-distance');
   return (
     <>
       <PageHero
         crumbs={crumbs}
-        eyebrow="Premium residential & intercity moving"
-        title="Long-distance"
-        accent="moving."
-        description="A carefully planned home move between Toronto, Hamilton, Mississauga and Niagara. Share your inventory, access and schedule so we can confirm the right crew, vehicle and tailored quote."
-        image={imagePreview(heroImage, 1600, 900)}
+        eyebrow={banner.eyebrow || 'Premium residential & intercity moving'}
+        title={banner.heading || 'Long-distance'}
+        accent={banner.heading ? (banner.accent || undefined) : 'moving.'}
+        description={banner.text || 'A carefully planned home move between Toronto, Hamilton, Mississauga and Niagara. Share your inventory, access and schedule so we can confirm the right crew, vehicle and tailored quote.'}
+        image={banner.image || imagePreview(heroImage, 1600, 900)}
+        imagePosition={photoSettings(banner)}
         fallbackImage={HERO_IMAGE_OPTIONS.truck}
         imageAlt="Dining and living furniture from a Sunwings residential job"
         phone={settings.phone}

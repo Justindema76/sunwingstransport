@@ -7,6 +7,7 @@ import TrustStrip from '@/components/TrustStrip';
 import { photoSettings } from '@/components/heroSlides';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { getLocations, getSiteSettings } from '@/lib/content';
+import { getRouteBanner } from '@/lib/routeBanners';
 import { HN, HN_ROUTES, HN_TRUST, getHnContent, hnRouteHref, isHnTown } from '@/lib/hamiltonNiagara';
 import { ROUTE_SERVICE, reverseRoute, routeHref, routeTips, townAreas } from '@/lib/routes';
 
@@ -29,7 +30,9 @@ export default async function HnRoutePage({ params }) {
   if (!route) notFound();
   const [settings, locations, content] = await Promise.all([getSiteSettings(), getLocations(), getHnContent()]);
   // Banner photo for every route page: Admin › Banners & Pop-up › Hamilton & Niagara › Route pages.
-  const banner = content.routes || {};
+  // This route's own banner wins; then the section-wide route photo (Hamilton & Niagara tab).
+  const own = await getRouteBanner(route.slug);
+  const banner = own.image ? own : { ...(content.routes || {}), ...Object.fromEntries(Object.entries(own).filter(([, v]) => v)) };
   const hnTowns = new Set(locations.filter(isHnTown).map(town => town.slug));
   const back = reverseRoute(route);
   const others = HN_ROUTES.filter(item => item.slug !== route.slug && item.slug !== back?.slug);
@@ -43,9 +46,10 @@ export default async function HnRoutePage({ params }) {
       <PageHero
         placement={`hamilton-niagara-route-${route.slug}`}
         crumbs={[{ label: 'Hamilton & Niagara', href: HN }, { label: `${route.from} to ${route.to}` }]}
-        eyebrow={`Long-distance moving · ${route.from} → ${route.to}`}
-        title={`${route.from} to ${route.to} Movers`}
-        description={route.intro}
+        eyebrow={own.eyebrow || `Long-distance moving · ${route.from} → ${route.to}`}
+        title={own.heading || `${route.from} to ${route.to} Movers`}
+        accent={own.accent || undefined}
+        description={own.text || route.intro}
         image={banner.image || HERO_IMAGE_OPTIONS.truck}
         imagePosition={photoSettings(banner)}
         imageAlt={`Sunwings moving truck for ${route.from} to ${route.to} moves`}

@@ -6,7 +6,9 @@ import PageHero from '@/components/PageHero';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import QuoteForm from '@/components/QuoteForm';
 import TrustStrip from '@/components/TrustStrip';
+import { photoSettings } from '@/components/heroSlides';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
+import { getRouteBanner } from '@/lib/routeBanners';
 import { getBaseUrl, getLocations, getServices, getSiteSettings } from '@/lib/content';
 import { telHref } from '@/lib/phone';
 import { ROUTES, ROUTE_SERVICE, reverseRoute, routeBySlug, routeHref, routeTips, townAreas } from '@/lib/routes';
@@ -68,14 +70,18 @@ export default async function RoutePage({ params }) {
     provider: { '@type': 'MovingCompany', name: settings.site_name || 'Sunwings Transport', telephone: settings.phone || undefined, url: getBaseUrl() },
   };
 
+  // Banner text and photo: Admin › Banners & Pop-up › Route pages (blank = defaults).
+  const banner = await getRouteBanner(route.slug);
   return (
     <>
       <PageHero
         crumbs={crumbs}
-        eyebrow={`Long-distance moving · ${route.from} → ${route.to}`}
-        title={`${route.from} to ${route.to} Movers`}
-        description={route.intro}
-        image={HERO_IMAGE_OPTIONS.truck}
+        eyebrow={banner.eyebrow || `Long-distance moving · ${route.from} → ${route.to}`}
+        title={banner.heading || `${route.from} to ${route.to} Movers`}
+        accent={banner.accent || undefined}
+        description={banner.text || route.intro}
+        image={banner.image || HERO_IMAGE_OPTIONS.truck}
+        imagePosition={photoSettings(banner)}
         imageAlt={`Sunwings moving truck for ${route.from} to ${route.to} moves`}
         phone={settings.phone}
         preset={ROUTE_SERVICE}

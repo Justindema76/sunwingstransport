@@ -1,7 +1,9 @@
 import { getPageBuilderData, getServices } from '@/lib/content';
 import { getSiteContent } from '@/lib/siteContent';
 import { safeHeroImage } from '@/components/heroSlides';
-import { RETIRED_HERO_IMAGES } from '@/lib/contentDefaults';
+import { HERO_IMAGE_OPTIONS, RETIRED_HERO_IMAGES } from '@/lib/contentDefaults';
+import { getRouteBanners } from '@/lib/routeBanners';
+import { ROUTES } from '@/lib/routes';
 
 // The exact photo each banner shows on the live site, so the admin's photo position
 // editor previews the same picture. Uses the same rules as the pages themselves.
@@ -10,7 +12,8 @@ const isHero = block => block?.type === 'SunwingsHeroBlock' || block?.type === '
 const heroImage = data => (data?.content || []).find(isHero)?.props?.image || '';
 
 export async function GET() {
-  const [content, services, home, ...pages] = await Promise.all([
+  const [routeBanners, content, services, home, ...pages] = await Promise.all([
+    getRouteBanners(),
     getSiteContent(),
     getServices(),
     getPageBuilderData('home'),
@@ -24,6 +27,8 @@ export async function GET() {
     slides: content.heroSlides.map((slide, index) => safeHeroImage(slide.image || (index === 0 && homeImage ? homeImage : banner(slide.slug)))),
     pages: Object.fromEntries(PAGES.map((id, i) => [id, safeHeroImage(content.pageBanners?.[id]?.image || heroImage(pages[i]))])),
     services: Object.fromEntries(services.map(service => [service.slug, safeHeroImage(service.banner_image)])),
+    // Route pages (Admin › Route pages): the route's own photo, else the moving truck.
+    routes: Object.fromEntries([['long-distance', routeBanners['long-distance']?.image || 'https://nowsajdmbpxvlvrhopjg.supabase.co/storage/v1/object/public/blog-images/sunwings/1794229390663-IMG_8141.jpeg'], ...ROUTES.map(route => [route.slug, routeBanners[route.slug]?.image || HERO_IMAGE_OPTIONS.truck])]),
     // Old photos the site swaps for newer ones, so the admin can show (and save) the photo that's really live.
     retired: RETIRED_HERO_IMAGES,
   };
