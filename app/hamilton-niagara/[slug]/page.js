@@ -122,6 +122,14 @@ export default async function HnSlugPage({ params }) {
   const description = copy.text || (isLong ? '' : (main?.hero_description || main?.intro || ''));
   const image = copy.image || (isLong ? '' : main?.banner_image);
   const sendList = (copy.sendList || []).filter(Boolean);
+  // Page sections, all edited in Admin › Hamilton & Niagara › <page>. Empty ones are hidden.
+  const list = value => (Array.isArray(value) ? value : String(value || '').split('\n')).map(item => (typeof item === 'string' ? item.trim() : item)).filter(Boolean);
+  const intro = copy.intro || (isLong ? '' : main?.intro || '');
+  const handle = list(copy.handle);
+  const steps = list(copy.steps).filter(step => step?.title || step?.text);
+  const local = String(copy.local || '').split(/\n\s*\n/).map(text => text.trim()).filter(Boolean);
+  const quoteFactors = list(copy.quoteFactors);
+  const faqs = list(copy.faqs).filter(item => item?.question && item?.answer);
   const preset = service.preset || main?.title || service.label;
   // Photos typed into the Service Post's text go into the proper gallery (same size, opens over the page).
   const body = extractServicePhotos(isLong ? '' : main?.body_html);
@@ -143,11 +151,30 @@ export default async function HnSlugPage({ params }) {
       <TrustStrip items={HN_TRUST}/>
       <section className="section">
         <div className="container prose hn-prose" style={{ maxWidth: 900 }}>
-          {!isLong && main?.intro ? <p className="lead-p">{main.intro}</p> : null}
-          {body.html ? <div dangerouslySetInnerHTML={{ __html: keepLinksInSection(body.html, townSlugs) }}/> : null}
+          {intro ? <p className="lead-p">{intro}</p> : null}
+          {/* The Service Post's own text is the main-site version, so only its photos are used here. */}
+          {!copy.intro && body.html ? <div dangerouslySetInnerHTML={{ __html: keepLinksInSection(body.html, townSlugs) }}/> : null}
+          {handle.length ? <>
+            <h2>{copy.handleTitle || 'What we handle'}</h2>
+            <ul className="checks">{handle.map(item => <li key={item}>{item}</li>)}</ul>
+          </> : null}
           {body.photos.length ? <>
             <h2>{body.title || `${service.label} photos`}</h2>
             <PhotoGallery photos={body.photos} initial={3}/>
+          </> : null}
+          {steps.length ? <>
+            <h2>{copy.stepsTitle || 'How it works'}</h2>
+            <div className="hn-steps">
+              {steps.map((step, index) => <div className="hn-step" key={`${step.title}-${index}`}><span>{index + 1}</span><div><b>{step.title}</b>{step.text ? <p>{step.text}</p> : null}</div></div>)}
+            </div>
+          </> : null}
+          {local.length ? <>
+            <h2>{copy.localTitle || `${service.label} in Hamilton and Niagara`}</h2>
+            {local.map(text => <p key={text.slice(0, 40)}>{text}</p>)}
+          </> : null}
+          {quoteFactors.length ? <>
+            <h2>{copy.quoteTitle || 'What your quote is based on'}</h2>
+            <ul className="checks one">{quoteFactors.map(item => <li key={item}>{item}</li>)}</ul>
           </> : null}
           {isLong ? <>
             <h2>Routes we run</h2>
@@ -161,6 +188,12 @@ export default async function HnSlugPage({ params }) {
           </> : null}
           <h2>Towns we serve</h2>
           <div className="chips">{towns.map(town => <Link className="chip" key={town.slug} href={`${HN}/${town.slug}`}>{town.title}</Link>)}</div>
+          {faqs.length ? <>
+            <h2>{service.label} questions</h2>
+            <div className="service-faqs">
+              {faqs.map((item, index) => <details key={`${item.question}-${index}`} open><summary>{item.question}</summary><p>{item.answer}</p></details>)}
+            </div>
+          </> : null}
           <div className="cta-inline">
             <div>
               <h3>Get a written quote</h3>
@@ -170,6 +203,11 @@ export default async function HnSlugPage({ params }) {
           </div>
         </div>
       </section>
+      {faqs.length ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map(item => ({ '@type': 'Question', name: item.question, acceptedAnswer: { '@type': 'Answer', text: item.answer } })),
+      }) }}/> : null}
     </>
   );
 }

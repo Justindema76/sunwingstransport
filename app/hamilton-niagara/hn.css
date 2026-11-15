@@ -1,1 +1,9 @@
 .hn-prose a{color:var(--blue);font-weight:600}
+
+/* Service page "How it works" steps (numbered, compact). */
+.hn-steps{display:grid;gap:12px;margin:18px 0 28px}
+.hn-step{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.hn-step>span{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--accent-ink)}
+.hn-step b{display:block;font-size:16px;margin:4px 0 2px}
+.hn-step p{margin:0;color:var(--muted);font-size:15px}
+@media (min-width:760px){.hn-steps{grid-template-columns:1fr 1fr}}
