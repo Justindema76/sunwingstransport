@@ -96,3 +96,9 @@
   .prose p,.prose li,main p{font-size:15.5px;line-height:1.6}
   .hero p{font-size:15.5px}
 }
+
+@media (max-width: 700px){
+  /* Home page "Service areas" town chips: hidden on phones (the menu and the Service Areas page
+     have them). The full Service Areas page (detailed list) still shows. */
+  .section:has(.grid-4 > .region){display:none}
+}
