@@ -1,7 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import Script from 'next/script';
+
+// Google Analytics "Content group" for every page view: which part of the site the page is in.
+// In GA: Reports › Engagement › Pages and screens › switch the table to "Content group".
+const contentGroup = path => (String(path || '').startsWith('/hamilton-niagara') ? 'Hamilton & Niagara' : 'Toronto & GTA');
 
 // Which part of the site an event belongs to: 'hamilton_niagara' (Justin's branch: on those
 // pages, or visited them in the last 90 days, same rule as the quote form) or 'main'.
@@ -21,6 +26,12 @@ export function trackEvent(name, params = {}) {
 }
 
 export default function SiteAnalytics({ ga4 = '', metaPixel = '' }) {
+  const pathname = usePathname();
+  // Keep the content group right as visitors move between pages.
+  useEffect(() => {
+    if (typeof window.gtag === 'function') window.gtag('set', { content_group: contentGroup(pathname) });
+  }, [pathname]);
+
   useEffect(() => {
     function click(event) {
       const link = event.target?.closest?.('a[href]');
@@ -56,6 +67,7 @@ export default function SiteAnalytics({ ga4 = '', metaPixel = '' }) {
           function gtag(){dataLayer.push(arguments);}
           window.gtag = gtag;
           gtag('js', new Date());
+          gtag('set', { content_group: window.location.pathname.indexOf('/hamilton-niagara') === 0 ? 'Hamilton & Niagara' : 'Toronto & GTA' });
           gtag('config', '${String(ga4).replace(/'/g, '')}');
         `}</Script>
       </> : null}
