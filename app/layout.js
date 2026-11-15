@@ -1,6 +1,6 @@
 import './globals.css';
 import Header from '@/components/Header';
-import { getHnContent } from '@/lib/hamiltonNiagara';
+import { getHnContent, hnRegions } from '@/lib/hamiltonNiagara';
 import Footer from '@/components/Footer';
 import SiteAnalytics from '@/components/SiteAnalytics';
 import QuoteForm from '@/components/QuoteForm';
@@ -104,7 +104,7 @@ export default async function RootLayout({ children }) {
       {fontsHref ? <link rel="stylesheet" href={fontsHref}/> : null}
       <body style={styleVars}>
         <SiteAnalytics ga4={settings.ga4_measurement_id || ''} metaPixel={settings.meta_pixel_id || ''}/>
-        <SiteChrome><Header settings={settings} services={services} globalHeader={headerProps} promo={topbarPromo} badge={hnContent.theme.mainBadge} /></SiteChrome>
+        <SiteChrome><Header settings={settings} services={services} globalHeader={headerProps} promo={topbarPromo} badge={hnContent.theme.mainBadge} regions={hnRegions(hnContent.theme, false)} /></SiteChrome>
         <QuoteForm services={services} replyHours={settings.quote_reply_hours} triggerText="Request a Quote" global />
         <SiteChrome><SnowOffer services={services}/></SiteChrome>
         <main>{children}</main>

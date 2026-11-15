@@ -15,7 +15,8 @@ function SmartNavLink({ href = '#', children, className = '' }) {
 
 // navLinks / homeHref / topbarLine / badge / badgeHref: used by the Hamilton & Niagara section, which has
 // its own menu. With badgeHref the label is its own link (the logo still goes to homeHref).
-export default function Header({ settings, services = [], globalHeader = {}, promo = null, navLinks = null, homeHref = '/', topbarLine = '', badge = '', badgeHref = '' }) {
+// regions: [{ label, href, current }] shows a two-way switch beside the logo (Toronto & GTA / Hamilton & Niagara).
+export default function Header({ settings, services = [], globalHeader = {}, promo = null, navLinks = null, homeHref = '/', topbarLine = '', badge = '', badgeHref = '', regions = null }) {
   const phone = settings?.phone || '647-526-5132';
   const logo = globalHeader.logo || settings?.logo_url || 'https://nowsajdmbpxvlvrhopjg.supabase.co/storage/v1/object/public/site-assets/sunwings/1791334339517-SUNWING-site-logo.png';
   const brand = settings?.site_name || globalHeader.brand || 'Sun Wings';
@@ -59,7 +60,18 @@ export default function Header({ settings, services = [], globalHeader = {}, pro
       </div>}</div> : null}
       <header className="site">
         <div className="container nav">
-          {badge && badgeHref ? (
+          {regions?.length > 1 ? (
+            <div className="logo-wrap">
+              <Link className="logo" href={homeHref} aria-label={brand}>
+                {logo ? <img src={logo} alt={brand}/> : <strong>{brand}</strong>}
+              </Link>
+              <nav className="region-switch" aria-label="Choose your area">
+                {regions.map(region => (
+                  <Link key={region.href} href={region.href} className={region.current ? 'cur' : ''} aria-current={region.current ? 'page' : undefined}>{region.label}</Link>
+                ))}
+              </nav>
+            </div>
+          ) : badge && badgeHref ? (
             <div className="logo-wrap">
               <Link className="logo" href={homeHref} aria-label={brand}>
                 {logo ? <img src={logo} alt={brand}/> : <strong>{brand}</strong>}
@@ -89,6 +101,15 @@ export default function Header({ settings, services = [], globalHeader = {}, pro
             <MobileNav links={links} services={services} phone={phone} buttonText="" buttonUrl=""/>
           </div>
         </div>
+        {regions?.length > 1 ? (
+          <div className="region-switch-row">
+            <nav className="region-switch" aria-label="Choose your area">
+              {regions.map(region => (
+                <Link key={region.href} href={region.href} className={region.current ? 'cur' : ''} aria-current={region.current ? 'page' : undefined}>{region.label}</Link>
+              ))}
+            </nav>
+          </div>
+        ) : null}
       </header>
     </div>
   );

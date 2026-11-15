@@ -1,6 +1,6 @@
 import Header from '@/components/Header';
 import { getGlobalBlockProps, getGlobalSection, getSiteSettings } from '@/lib/content';
-import { HN, HN_NAV, getHnContent, hnThemeCss } from '@/lib/hamiltonNiagara';
+import { HN, HN_NAV, getHnContent, hnRegions, hnThemeCss } from '@/lib/hamiltonNiagara';
 import './hn.css';
 
 // Hamilton & Niagara section: its own header menu and a "Hamilton & Niagara" label by the logo.
@@ -10,13 +10,14 @@ export default async function HamiltonNiagaraLayout({ children }) {
   const [settings, headerSection, content] = await Promise.all([getSiteSettings(), getGlobalSection('header'), getHnContent()]);
   const { theme } = content;
   const css = hnThemeCss(theme);
-  // The logo goes back to the main site; the first menu item says so. The label opens the section's home.
+  // The logo goes back to the main site; the switch beside it flips between the two areas.
+  // An optional back button can be added as the first menu item (Admin › Look & colours).
   const navLinks = theme.backLabel ? [{ label: theme.backLabel, url: '/' }, ...HN_NAV] : HN_NAV;
   const headerProps = getGlobalBlockProps(headerSection, 'HeaderBlock');
   return (
     <>
       {css ? <style dangerouslySetInnerHTML={{ __html: css }}/> : null}
-      <Header settings={settings} services={[]} globalHeader={headerProps} navLinks={navLinks} homeHref="/" badgeHref={HN} topbarLine={theme.topbarLine} badge={theme.badge}/>
+      <Header settings={settings} services={[]} globalHeader={headerProps} navLinks={navLinks} homeHref="/" badgeHref={HN} topbarLine={theme.topbarLine} badge={theme.badge} regions={hnRegions(theme, true)}/>
       {children}
     </>
   );
