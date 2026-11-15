@@ -182,21 +182,23 @@ function YesNo({ name, value, onChange }) {
   </div>;
 }
 
-// Partner referral links (e.g. ?ref=justin). The code is remembered for 90 days so a
-// visitor who books later is still credited to the partner who sent them.
+// Partner referral links (e.g. ?ref=justin, or a store's QR link /r/<code> which adds ?ref=<code>).
+// The code is remembered for 90 days so a visitor who books later is still credited to the partner.
 const REFERRERS = { justin: 'Referred by Justin DeMatteis' };
 const REFERRAL_KEY = 'sunwings_ref';
 const REFERRAL_DAYS = 90;
+const REFERRAL_CODE = /^[a-z0-9][a-z0-9-]{1,39}$/;
+const referralLabel = code => REFERRERS[code] || `Store partner: ${code}`;
 
 function readReferral() {
   try {
     const fromUrl = new URLSearchParams(window.location.search).get('ref')?.trim().toLowerCase();
-    if (fromUrl && REFERRERS[fromUrl]) {
+    if (fromUrl && REFERRAL_CODE.test(fromUrl)) {
       window.localStorage.setItem(REFERRAL_KEY, JSON.stringify({ code: fromUrl, at: Date.now() }));
-      return REFERRERS[fromUrl];
+      return referralLabel(fromUrl);
     }
     const saved = JSON.parse(window.localStorage.getItem(REFERRAL_KEY) || 'null');
-    if (saved?.code && REFERRERS[saved.code] && Date.now() - saved.at < REFERRAL_DAYS * 86400000) return REFERRERS[saved.code];
+    if (saved?.code && REFERRAL_CODE.test(saved.code) && Date.now() - saved.at < REFERRAL_DAYS * 86400000) return referralLabel(saved.code);
   } catch {
     // Storage can be blocked; the referral then only counts on the page the link opened.
   }
