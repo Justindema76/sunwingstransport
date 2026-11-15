@@ -82,6 +82,34 @@ export default function QuoteForm({
   const serviceChoices = serviceOptionsFor(services, '', pathname.startsWith('/hamilton-niagara') ? hnServices : null);
   const findService = title => serviceChoices.find(item => item.title === title) || { title, slug: '', eyebrow: '' };
 
+  // The service this page is about, so any quote button (side tab included) opens on it:
+  // a service page opens that service, long-distance and route pages open Long Distance.
+  // Every other page (home, contact, pricing, towns…) opens on the service picker.
+  function pageService() {
+    const parts = pathname.split('/').filter(Boolean);
+    const bySlug = slug => serviceChoices.find(item => item.slug === slug) || null;
+    const longDistance = () => serviceChoices.find(item => /long[- ]distance/i.test(item.title)) || null;
+    if (parts[0] === 'services' && parts[1]) return bySlug(parts[1]);
+    if (parts[0] === 'snow-removal') return bySlug(parts[1] || 'snow-removal') || bySlug('snow-removal');
+    if (parts[0] === 'long-distance') return longDistance();
+    if (parts[0] === 'hamilton-niagara') {
+      if (parts[1] === 'long-distance' || parts[1] === 'routes') return longDistance();
+      const own = hnServices?.find(item => item.slug === parts[1] && !item.preset);
+      if (own) return bySlug(own.serviceSlug);
+    }
+    return null;
+  }
+
+  // Opens the drawer on the given service, or on this page's service, or on the picker.
+  function startQuote(chosen) {
+    if (stepQuote.done) stepQuote.reset({ referralSource: referral });
+    const service = chosen || pageService();
+    // Reopening on the job already in progress keeps your place in it.
+    if (stepQuote.done || stepQuote.service?.title !== service?.title) stepQuote.choose(service);
+    if (service) setForm(current => ({ ...current, service: service.title }));
+    setOpen(true);
+  }
+
   const photosRef = useRef(photos);
   photosRef.current = photos;
   useEffect(() => () => photosRef.current.forEach(photo => URL.revokeObjectURL(photo.preview)), []);
@@ -123,15 +151,13 @@ export default function QuoteForm({
       if (nextPreset) setForm(current => ({ ...current, service: nextPreset, moveSize: nextPlan || current.moveSize }));
       if (Object.keys(nextFill).length) setForm(current => ({ ...current, ...nextFill }));
       setState(current => ({ ...current, message: '', fieldErrors: {} }));
-      if (stepQuote.done) stepQuote.reset({ referralSource: referral });
+      startQuote(nextPreset ? findService(nextPreset) : null);
       if (Object.keys(nextFill).length || nextPlan) stepQuote.setData(current => ({ ...current, ...nextFill, plan: nextPlan || current.plan }));
-      if (nextPreset) stepQuote.choose(findService(nextPreset));
-      setOpen(true);
     }
 
     window.addEventListener('sunwings:open-quote', openQuoteDrawer);
     return () => window.removeEventListener('sunwings:open-quote', openQuoteDrawer);
-  }, [global, stepQuote.done, referral, services]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [global, stepQuote.done, referral, services, pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!open) return undefined;
@@ -490,7 +516,7 @@ export default function QuoteForm({
         aria-haspopup="dialog"
         aria-controls={drawerId}
         aria-expanded={open}
-        onClick={() => setOpen(true)}
+        onClick={() => startQuote(null)}
       >
         <span className="quote-side-tab-dot" aria-hidden="true"/>
         <span>{triggerText}</span>

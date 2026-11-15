@@ -9,7 +9,6 @@ import TrustStrip from '@/components/TrustStrip';
 import { photoSettings } from '@/components/heroSlides';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { getBlogPosts, getLocations, getServicesFor, getSiteSettings } from '@/lib/content';
-import { ROUTE_SERVICE } from '@/lib/routes';
 import { HN, HN_CONTENT_DEFAULTS, HN_ROUTES, HN_SERVICES, HN_TRUST, getHnContent, hnMetadata, hnRouteHref } from '@/lib/hamiltonNiagara';
 
 // Banner, service boxes and FAQs are edited in Admin › Banners & Pop-up › Hamilton & Niagara.
@@ -53,7 +52,6 @@ export default async function HamiltonNiagaraPage() {
         fallbackImage={HERO_IMAGE_OPTIONS.truck}
         imageAlt="Sunwings Transport cargo van"
         phone={settings.phone}
-        preset={ROUTE_SERVICE}
       />
 
       <TrustStrip items={HN_TRUST}/>
@@ -95,7 +93,7 @@ export default async function HamiltonNiagaraPage() {
               <h3>Moving between two other towns?</h3>
               <p>Pickup city, destination city, your date and what’s being moved is all we need to start.</p>
             </div>
-            <QuoteDrawerTrigger className="btn btn-accent" preset={ROUTE_SERVICE}>Get my quote →</QuoteDrawerTrigger>
+            <QuoteDrawerTrigger className="btn btn-accent">Get my quote →</QuoteDrawerTrigger>
           </div>
         </div>
       </section>
@@ -149,7 +147,7 @@ export default async function HamiltonNiagaraPage() {
           <div className="service-faqs">
             {FAQS.map(item => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}
           </div>
-          <QuoteDrawerTrigger className="btn btn-accent" preset={ROUTE_SERVICE}>Request a free quote</QuoteDrawerTrigger>
+          <QuoteDrawerTrigger className="btn btn-accent">Request a free quote</QuoteDrawerTrigger>
         </div>
       </section>
 
