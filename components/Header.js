@@ -3,6 +3,7 @@ import { ChevronDown, Phone, Snowflake } from 'lucide-react';
 import MobileNav from './MobileNav';
 import TopbarFlip from './TopbarFlip';
 import { telHref } from '@/lib/phone';
+import './logoBadge.css';
 
 function on(value, fallback=true){return value==null||value===''?fallback:String(value)!=='false'}
 function px(value,fallback){const n=Number(value);return Number.isFinite(n)?n:fallback}

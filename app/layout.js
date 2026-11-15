@@ -1,5 +1,6 @@
 import './globals.css';
 import Header from '@/components/Header';
+import { getHnContent } from '@/lib/hamiltonNiagara';
 import Footer from '@/components/Footer';
 import SiteAnalytics from '@/components/SiteAnalytics';
 import QuoteForm from '@/components/QuoteForm';
@@ -63,6 +64,8 @@ export default async function RootLayout({ children }) {
   ]);
   // Snow offer (Admin › Promotions & Banners › Pop-up) flips into the top bar on every page.
   const { popup, pricing } = await getSiteContent();
+  // Label next to the logo ('Toronto & GTA'): Admin › Hamilton & Niagara › Look & colours.
+  const hnContent = await getHnContent();
   const promoService = popup.enabled === false ? null : services.find(item => item.slug === popup.serviceSlug);
   const topbarPromo = promoService ? {
     label: promoService.title,
@@ -101,7 +104,7 @@ export default async function RootLayout({ children }) {
       {fontsHref ? <link rel="stylesheet" href={fontsHref}/> : null}
       <body style={styleVars}>
         <SiteAnalytics ga4={settings.ga4_measurement_id || ''} metaPixel={settings.meta_pixel_id || ''}/>
-        <SiteChrome><Header settings={settings} services={services} globalHeader={headerProps} promo={topbarPromo} /></SiteChrome>
+        <SiteChrome><Header settings={settings} services={services} globalHeader={headerProps} promo={topbarPromo} badge={hnContent.theme.mainBadge} /></SiteChrome>
         <QuoteForm services={services} replyHours={settings.quote_reply_hours} triggerText="Request a Quote" global />
         <SiteChrome><SnowOffer services={services}/></SiteChrome>
         <main>{children}</main>
