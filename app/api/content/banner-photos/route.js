@@ -36,7 +36,7 @@ export async function GET() {
     hnTowns: (() => {
       let own = {};
       try { own = (typeof townBannersRaw === 'string' ? JSON.parse(townBannersRaw) : townBannersRaw) || {}; } catch {}
-      return locations.filter(isHnTown).map(town => ({ slug: town.slug, title: town.title, region: town.region, image: own[town.slug]?.image || town.banner_image || '' }));
+      return locations.filter(isHnTown).map(town => ({ slug: town.slug, title: town.title, region: town.region, image: own[town.slug]?.image || HERO_IMAGE_OPTIONS.road }));
     })(),
     // Old photos the site swaps for newer ones, so the admin can show (and save) the photo that's really live.
     retired: RETIRED_HERO_IMAGES,

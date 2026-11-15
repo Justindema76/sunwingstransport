@@ -5,6 +5,7 @@ import PhotoGallery from '@/components/PhotoGallery';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import TrustStrip from '@/components/TrustStrip';
 import { photoSettings, rotatingHeroImage } from '@/components/heroSlides';
+import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { getLocations, getServices, getSiteSettings } from '@/lib/content';
 import { HN, HN_ROUTES, HN_SERVICES, HN_TRUST, getHnContent, hnRouteHref, isHnTown, keepLinksInSection } from '@/lib/hamiltonNiagara';
 import { ROUTE_SERVICE } from '@/lib/routes';
@@ -54,7 +55,8 @@ export default async function HnSlugPage({ params }) {
     const routes = HN_ROUTES.filter(route => route.fromSlug === town.slug || route.toSlug === town.slug);
     // Photos typed into the post's text go into the proper gallery (same size, opens over the page).
     const townBody = extractServicePhotos(town.body_html);
-    // This town's own Hamilton & Niagara banner (Admin › H&N town banners); blank = its Location Post.
+    // This town's own Hamilton & Niagara banner (Admin › H&N town banners). Photo blank = the van on an
+    // Ontario road; text blank = its Location Post.
     const own = await getHnTownBanner(town.slug);
     return (
       <>
@@ -65,7 +67,7 @@ export default async function HnSlugPage({ params }) {
           title={own.heading || town.hero_title || `${town.title} movers`}
           accent={own.accent || undefined}
           description={own.text || town.hero_description || town.intro}
-          image={own.image || town.banner_image}
+          image={own.image || HERO_IMAGE_OPTIONS.road}
           imagePosition={photoSettings(own)}
           imageAlt={town.banner_alt}
           fallbackImage={rotatingHeroImage(town.slug)}
