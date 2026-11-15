@@ -3,7 +3,7 @@ import PageHero from '@/components/PageHero';
 import PageBlocks from '@/components/PageBlocks';
 import PriceMatch from '@/components/PriceMatch';
 import ServicePricing from '@/components/ServicePricing';
-import { getPageBuilderData, getServices, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
+import { getPageBuilderData, getServices, getServicesFor, getSiteSettings, pageMetadataFromBuilder } from '@/lib/content';
 import { getSiteContent } from '@/lib/siteContent';
 
 // Jump links so each service's prices can be linked to and promoted on their own.
@@ -25,9 +25,11 @@ function ServicePricingSections({ services }) {
   ));
 }
 
-async function pricedServices() {
-  const [services, content] = await Promise.all([getServices(), getSiteContent()]);
-  return Object.entries(content.pricing).map(([slug, pricing]) => ({
+// area: 'main' or 'hn' — only the services shown on that part of the site.
+async function pricedServices(area = 'main') {
+  const [services, content, offered] = await Promise.all([getServices(), getSiteContent(), getServicesFor(area)]);
+  const slugs = offered.map(service => service.slug);
+  return Object.entries(content.pricing).filter(([slug]) => slugs.includes(slug)).map(([slug, pricing]) => ({
     ...pricing,
     slug,
     title: services.find(service => service.slug === slug)?.title || pricing.label,
@@ -43,8 +45,15 @@ export async function generateMetadata() {
   });
 }
 
-export default async function PricingPage() {
-  const [settings, pageData, priced, services] = await Promise.all([getSiteSettings(), getPageBuilderData('pricing'), pricedServices(), getServices()]);
+export default function PricingPage() {
+  return <PricingContent/>;
+}
+
+// Also used by the Hamilton & Niagara section (/hamilton-niagara/pricing): its own page from the
+// admin's visual editor (page id "hn-pricing") when one is saved, otherwise the main Pricing page.
+export async function PricingContent({ area = 'main', pageId = 'pricing', home = '/' }) {
+  const [settings, ownPage, priced, services] = await Promise.all([getSiteSettings(), getPageBuilderData(pageId), pricedServices(area), area === 'main' ? getServices() : getServicesFor(area)]);
+  const pageData = ownPage || (pageId !== 'pricing' ? await getPageBuilderData('pricing') : null);
   if (pageData) {
     return <PageBlocks data={pageData} pageId="pricing" settings={settings} services={services} insertAfter={{
       SunwingsHeroBlock: <PricingNav services={priced}/>,
@@ -54,7 +63,7 @@ export default async function PricingPage() {
   return (
     <>
       <PageHero placement="pricing"
-        crumbs={[{label:'Home',href:'/'},{label:'Pricing'}]}
+        crumbs={[{label:'Home',href:home},{label:'Pricing'}]}
         title="Straight answers on price"
         description="Clear, upfront quotes tailored to your job, based on crew size, truck time and distance."
         image="https://sunwingstransport.ca/wp-content/uploads/2026/02/van-loading-file-cabinet.jpg"
@@ -72,7 +81,7 @@ export default async function PricingPage() {
               <div className="amt">Quote</div>
               <small className="muted">based on the job</small>
               <ul><li>1–2 movers</li><li>Cargo van</li><li>Blanket wrapping</li><li>Placement in room</li></ul>
-              <Link className="btn btn-line" href="/contact">Get a quote</Link>
+              <Link className="btn btn-line" href={home === '/' ? '/contact' : `${home}/contact`}>Get a quote</Link>
             </div>
             <div className="price-card pop">
               <h3>Truck + 2 movers</h3>
@@ -80,7 +89,7 @@ export default async function PricingPage() {
               <div className="amt">Quote</div>
               <small className="muted">upfront pricing</small>
               <ul><li>2 movers</li><li>Truck &amp; equipment</li><li>Wrapping &amp; protection</li><li>Disassembly &amp; reassembly</li></ul>
-              <Link className="btn btn-accent" href="/contact">Get a quote</Link>
+              <Link className="btn btn-accent" href={home === '/' ? '/contact' : `${home}/contact`}>Get a quote</Link>
             </div>
             <div className="price-card">
               <h3>Truck + larger crew</h3>
@@ -88,7 +97,7 @@ export default async function PricingPage() {
               <div className="amt">Quote</div>
               <small className="muted">based on crew and time</small>
               <ul><li>Larger crew</li><li>Truck &amp; equipment</li><li>Wrapping &amp; protection</li><li>Built for bigger jobs</li></ul>
-              <Link className="btn btn-line" href="/contact">Get a quote</Link>
+              <Link className="btn btn-line" href={home === '/' ? '/contact' : `${home}/contact`}>Get a quote</Link>
             </div>
           </div>
         </div>

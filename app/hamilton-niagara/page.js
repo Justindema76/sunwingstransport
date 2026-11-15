@@ -1,19 +1,21 @@
 import Link from 'next/link';
+import BlogCards from '@/components/BlogCards';
+import FacebookPosts from '@/components/FacebookPosts';
+import GoogleReviews from '@/components/GoogleReviews';
 import PageHero from '@/components/PageHero';
+import ServiceCards from '@/components/ServiceCards';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
 import TrustStrip from '@/components/TrustStrip';
 import { photoSettings } from '@/components/heroSlides';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
-import { getBaseUrl, getLocations, getSiteSettings } from '@/lib/content';
+import { getBlogPosts, getLocations, getServicesFor, getSiteSettings } from '@/lib/content';
 import { ROUTE_SERVICE } from '@/lib/routes';
-import { HN, HN_CONTENT_DEFAULTS, HN_ROUTES, HN_TRUST, getHnContent, hnRouteHref } from '@/lib/hamiltonNiagara';
+import { HN, HN_CONTENT_DEFAULTS, HN_ROUTES, HN_SERVICES, HN_TRUST, getHnContent, hnMetadata, hnRouteHref } from '@/lib/hamiltonNiagara';
 
 // Banner, service boxes and FAQs are edited in Admin › Banners & Pop-up › Hamilton & Niagara.
 // Hamilton & Niagara regional hub: the landing page for regional ads. Long-distance
 // moving and transportation between Hamilton/Niagara and Toronto/GTA is the lead service.
-const TITLE = 'Hamilton & Niagara Movers | Long-Distance Moving & Transport | Sunwings';
-const DESCRIPTION = 'Moving, furniture delivery and long-distance transport across Hamilton, Burlington, Grimsby, St. Catharines, Niagara Falls and the Niagara Region, and to Toronto and the GTA. Free tailored quotes.';
-const PATH = HN;
+// SEO (title, description, share image) is edited in Admin › Pages › Hamilton & Niagara.
 
 const REGIONS = [
   { key: 'Hamilton Region', title: 'Hamilton', note: 'Hamilton, Stoney Creek, Ancaster, Dundas and Waterdown' },
@@ -23,19 +25,16 @@ const REGIONS = [
 
 export async function generateMetadata() {
   const hero = (await getHnContent()).home.image || HN_CONTENT_DEFAULTS.home.image;
-  return {
-    title: { absolute: TITLE },
-    description: DESCRIPTION,
-    alternates: { canonical: PATH },
-    openGraph: { type: 'website', url: PATH, title: TITLE, description: DESCRIPTION, siteName: 'Sunwings Transport', locale: 'en_CA', images: [{ url: hero, alt: 'Sunwings Transport cargo van' }] },
-    twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: [hero] },
-  };
+  return hnMetadata('home', HN, hero);
 }
 
 export default async function HamiltonNiagaraPage() {
-  const [settings, locations, content] = await Promise.all([getSiteSettings(), getLocations(), getHnContent()]);
+  const [settings, locations, content, services, posts] = await Promise.all([getSiteSettings(), getLocations(), getHnContent(), getServicesFor('hn'), getBlogPosts({ area: 'hn' })]);
   const { home } = content;
-  const SERVICES = home.cards;
+  // Service cards: every service set to show here (Admin › Service Posts › Show on). Services this
+  // section has its own page for link there; the rest open the main service page.
+  const sectionPages = Object.fromEntries(HN_SERVICES.map(item => [item.serviceSlug, `${HN}/${item.slug}`]));
+  const cardLinks = services.map(service => ({ url: service.slug !== 'residential-moving' && sectionPages[service.slug] ? sectionPages[service.slug] : `/services/${service.slug}` }));
   const FAQS = home.faqs.filter(item => item?.question && item?.answer);
   const crumbs = [];
   const regionalRoutes = HN_ROUTES;
@@ -59,24 +58,18 @@ export default async function HamiltonNiagaraPage() {
 
       <TrustStrip items={HN_TRUST}/>
 
-      <section className="section">
+      <section className="section" id="services">
         <div className="container">
           <div className="section-head">
             <span className="kicker">What we do here</span>
             <h2>Moving and transport across the region.</h2>
             <p>From one sofa to a full house, between towns or into Toronto. Every job is quoted in writing before it’s booked.</p>
           </div>
-          <div className="grid-3">
-            {SERVICES.map((item, index) => (
-              <div className="side-card" key={index}>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-                <Link href={item.href} style={{ fontWeight: 700, color: 'var(--blue)' }}>{item.cta || 'Learn more'} →</Link>
-              </div>
-            ))}
-          </div>
+          <ServiceCards services={services} cardOverrides={cardLinks}/>
         </div>
       </section>
+
+      <GoogleReviews/>
 
       <section className="section section-soft" id="routes">
         <div className="container">
@@ -132,14 +125,31 @@ export default async function HamiltonNiagaraPage() {
         </div>
       </section>
 
-      <section className="section section-soft">
+      {posts.length ? (
+        <section className="section section-soft">
+          <div className="container">
+            <div className="section-head">
+              <span className="kicker">Moving tips</span>
+              <h2>Advice before you move.</h2>
+            </div>
+            <BlogCards posts={posts.slice(0, 3)} basePath={`${HN}/blog`}/>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 28 }}>
+              <Link className="btn btn-navy" href={`${HN}/blog`}>All moving tips</Link>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      <FacebookPosts viewAllHref={`${HN}/facebook`}/>
+
+      <section className="section">
         <div className="container prose" style={{ maxWidth: 900 }}>
           <span className="kicker">Questions</span>
           <h2>Hamilton & Niagara moving questions</h2>
           <div className="service-faqs">
             {FAQS.map(item => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}
           </div>
-          <QuoteDrawerTrigger className="btn btn-accent" preset={ROUTE_SERVICE}>Request a free quote →</QuoteDrawerTrigger>
+          <QuoteDrawerTrigger className="btn btn-accent" preset={ROUTE_SERVICE}>Request a free quote</QuoteDrawerTrigger>
         </div>
       </section>
 

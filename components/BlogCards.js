@@ -12,13 +12,14 @@ function readTime(body = '') {
   return words ? `${Math.max(1, Math.ceil(words / 220))} min` : '';
 }
 
-export default function BlogCards({ posts = [] }) {
+// basePath: where post links point (the Hamilton & Niagara section links to its own copies).
+export default function BlogCards({ posts = [], basePath = '/blog' }) {
   if (!posts.length) return null;
 
   return (
     <div className="grid-3">
       {posts.map(post => (
-        <Link className="card post-card" href={`/blog/${post.slug}`} key={post.slug}>
+        <Link className="card post-card" href={`${basePath}/${post.slug}`} key={post.slug}>
           <div className="card-img ph" style={post.image ? { backgroundImage:`url("${post.image}")` } : undefined}/>
           <div className="card-body tight">
             {post.tag ? <span className="tag">{post.tag}</span> : null}

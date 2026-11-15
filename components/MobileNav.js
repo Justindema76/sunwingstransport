@@ -73,6 +73,18 @@ export default function MobileNav({ links = [], services = [], phone = '', butto
                 <Link href="/long-distance" onClick={close}>Long Distance Moving</Link>
               </div> : null}
             </div>
+          ) : Array.isArray(item.children) && item.children.length ? (
+            <div className="mobile-nav-services" key={`${item.label}-${item.url}`}>
+              <div className="mobile-nav-service-row">
+                <SmartLink href={item.url || '#'} onClick={close}>{item.label}</SmartLink>
+                <button type="button" aria-label={`Toggle ${item.label}`} aria-expanded={servicesOpen} onClick={() => setServicesOpen(value => !value)}>
+                  <ChevronDown size={18} className={servicesOpen ? 'open' : ''}/>
+                </button>
+              </div>
+              {servicesOpen ? <div className="mobile-nav-submenu">
+                {item.children.map(child => <SmartLink href={child.url} onClick={close} key={child.url}>{child.label}</SmartLink>)}
+              </div> : null}
+            </div>
           ) : (
             <SmartLink href={item.url || '#'} onClick={close} key={`${item.label}-${item.url}`}>{item.label}</SmartLink>
           ))}

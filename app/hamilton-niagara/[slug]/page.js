@@ -7,7 +7,7 @@ import TrustStrip from '@/components/TrustStrip';
 import { photoSettings, rotatingHeroImage } from '@/components/heroSlides';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { getLocations, getServices, getSiteSettings } from '@/lib/content';
-import { HN, HN_ROUTES, HN_SERVICES, HN_TRUST, getHnContent, hnRouteHref, isHnTown, keepLinksInSection } from '@/lib/hamiltonNiagara';
+import { HN, HN_ROUTES, HN_SERVICES, HN_TRUST, getHnContent, hnRouteHref, isHnTown, keepLinksInSection, hnMetadata } from '@/lib/hamiltonNiagara';
 import { ROUTE_SERVICE } from '@/lib/routes';
 import { extractServicePhotos } from '@/lib/servicePhotos';
 import { getHnTownBanner } from '@/lib/routeBanners';
@@ -38,8 +38,7 @@ export async function generateMetadata({ params }) {
     // Same text as the main town page, so Google is pointed at that one.
     return { title: { absolute: title }, description: page.town.seo_description || page.town.intro, alternates: { canonical: `/locations/${page.town.slug}` } };
   }
-  const title = `${page.service.label} in Hamilton & Niagara | Sunwings Transport`;
-  return { title: { absolute: title }, description: `${page.service.label} across Hamilton, Burlington and the Niagara Region, and to Toronto and the GTA.`, alternates: { canonical: `${HN}/${page.service.slug}` } };
+  return hnMetadata(page.service.slug, `${HN}/${page.service.slug}`);
 }
 
 export default async function HnSlugPage({ params }) {

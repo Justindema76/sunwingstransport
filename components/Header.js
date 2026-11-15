@@ -94,6 +94,14 @@ export default function Header({ settings, services = [], globalHeader = {}, pro
                   <Link href="/long-distance">Long Distance Moving</Link>
                 </div>
               </div>
+            ) : Array.isArray(item.children) && item.children.length ? (
+              // A menu item with its own dropdown (e.g. the Hamilton & Niagara section's Services).
+              <div className="nav-dropdown" key={`${item.label}-${item.url}`}>
+                <SmartNavLink className="nav-dropdown-trigger" href={item.url || '#'}>{item.label} <ChevronDown size={16} strokeWidth={2.2}/></SmartNavLink>
+                <div className="nav-dropdown-menu">
+                  {item.children.map(child => <SmartNavLink href={child.url} key={child.url}>{child.label}</SmartNavLink>)}
+                </div>
+              </div>
             ) : <SmartNavLink href={item.url || '#'} key={`${item.label}-${item.url}`}>{item.label}</SmartNavLink>)}
           </nav>
           <div className="nav-cta">{showCall ? <a className="btn btn-accent header-call" href={telHref(phone)}><Phone size={17}/>{callText}</a> : null}</div>

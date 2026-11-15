@@ -353,7 +353,7 @@ export function ServicePicker({ options, onPick }) {
         const Icon = SERVICE_ICON[kind] || Truck;
         return <button type="button" key={option.title} className="qs-tile" onClick={() => onPick(option)}>
           <span className="qs-tile-icon"><Icon size={22}/></span>
-          <span className="qs-tile-text"><b>{option.title}</b>{option.eyebrow ? <small>{option.eyebrow}</small> : null}</span>
+          <span className="qs-tile-text"><b>{option.title}</b>{option.eyebrow && option.eyebrow.toLowerCase() !== option.title.toLowerCase() ? <small>{option.eyebrow}</small> : null}</span>
           <ChevronRight size={18} className="qs-tile-go"/>
         </button>;
       })}

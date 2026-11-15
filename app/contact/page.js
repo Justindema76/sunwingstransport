@@ -15,11 +15,11 @@ export async function generateMetadata() {
   });
 }
 
-async function ContactHero({ settings }) {
+async function ContactHero({ settings, home = '/' }) {
   const copy = (await getSiteContent()).pageBanners.contact;
   return (
     <PageHero placement="contact"
-      crumbs={[{ label: 'Home', href: '/' }, { label: 'Contact' }]}
+      crumbs={[{ label: 'Home', href: home }, { label: 'Contact' }]}
       eyebrow={copy.eyebrow}
       title={copy.heading}
       accent={copy.accent}
@@ -31,19 +31,26 @@ async function ContactHero({ settings }) {
   );
 }
 
-export default async function ContactPage() {
-  const [services, settings, pageData] = await Promise.all([getServices(), getSiteSettings(), getPageBuilderData('contact')]);
+export default function ContactPage() {
+  return <ContactContent/>;
+}
+
+// Also used by the Hamilton & Niagara section (/hamilton-niagara/contact): its own page from the
+// admin's visual editor (page id "hn-contact") when one is saved, otherwise the main Contact page.
+export async function ContactContent({ pageId = 'contact', home = '/' }) {
+  const [services, settings, ownPage] = await Promise.all([getServices(), getSiteSettings(), getPageBuilderData(pageId)]);
+  const pageData = ownPage || (pageId !== 'contact' ? await getPageBuilderData('contact') : null);
   if (pageData) {
     return (
       <>
-        <ContactHero settings={settings}/>
+        <ContactHero settings={settings} home={home}/>
         <PageBlocks data={pageData} pageId="contact" services={services} settings={settings}/>
       </>
     );
   }
   return (
     <>
-    <ContactHero settings={settings}/>
+    <ContactHero settings={settings} home={home}/>
     <section className="section contact-page-section">
       <div className="container with-side contact-layout">
         <ContactForm services={services}/>

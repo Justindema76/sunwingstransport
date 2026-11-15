@@ -1,10 +1,9 @@
 import PartnersPage from '@/components/PartnersPage';
+import { hnMetadata } from '@/lib/hamiltonNiagara';
 
-export const metadata = {
-  title: { absolute: 'Furniture Delivery Partners in Hamilton & Niagara | Sunwings Transport' },
-  description: 'Furniture stores and consignment shops in Hamilton, Burlington, Grimsby and the Niagara Region: free delivery partner program with written quotes for your customers.',
-  alternates: { canonical: '/hamilton-niagara/partners' },
-};
+export function generateMetadata() {
+  return hnMetadata('partners', '/hamilton-niagara/partners');
+}
 
 export default function Page() {
   return <PartnersPage area="hn"/>;

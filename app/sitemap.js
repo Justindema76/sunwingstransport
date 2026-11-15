@@ -1,4 +1,6 @@
 import { getBaseUrl, getBlogPosts, getLocations, getServices } from '@/lib/content';
+import { readSiteSections, sectionFor } from '@/lib/siteSections';
+import { getSiteSettings } from '@/lib/content';
 import { offersSnow, snowTownHref } from '@/lib/siteContent';
 import { ROUTES, routeHref } from '@/lib/routes';
 
@@ -9,7 +11,8 @@ function lastModified(item) {
 
 export default async function sitemap() {
   const base = getBaseUrl();
-  const [services, locations, posts] = await Promise.all([getServices(), getLocations(), getBlogPosts()]);
+  const [services, locations, posts, hnPosts, settings] = await Promise.all([getServices(), getLocations(), getBlogPosts(), getBlogPosts({ area: 'hn' }), getSiteSettings()]);
+  const sections = readSiteSections(settings);
 
   return [
     { url: base, changeFrequency: 'weekly', priority: 1 },
@@ -42,6 +45,14 @@ export default async function sitemap() {
     // Store partner program pages.
     { url: `${base}/partners`, changeFrequency: 'monthly', priority: .6 },
     { url: `${base}/hamilton-niagara/partners`, changeFrequency: 'monthly', priority: .6 },
+    ...['pricing', 'contact', 'blog'].map(slug => ({ url: `${base}/hamilton-niagara/${slug}`, changeFrequency: 'monthly', priority: .7 })),
+    // Posts shown only in the Hamilton & Niagara section (posts on both sites are listed once, under /blog).
+    ...hnPosts.filter(post => sectionFor('blog', post.slug, sections) === 'hn').map(post => ({
+      url: `${base}/hamilton-niagara/blog/${post.slug}`,
+      lastModified: lastModified(post),
+      changeFrequency: 'monthly',
+      priority: .6,
+    })),
     { url: `${base}/long-distance`, changeFrequency: 'monthly', priority: .9 },
     ...ROUTES.map(route => ({ url: `${base}${routeHref(route)}`, changeFrequency: 'monthly', priority: .9 })),
     ...posts.map(post => ({
