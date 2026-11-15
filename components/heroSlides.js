@@ -37,7 +37,8 @@ export function heroBackground(image, fallback, position = '') {
     backgroundPosition: photo.desktopPosition ? `center, ${photo.desktopPosition}` : 'center',
     backgroundRepeat: 'no-repeat',
     // Phones show the photo on its own (no dark wash) above the text; see globals.css.
-    '--hero-photo': `url("${url}")`,
+    // Phones can use their own photo (Admin › banner › Phone photo); otherwise the same one.
+    '--hero-photo': `url("${photo.mobileImage ? safeHeroImage(photo.mobileImage, url) : url}")`,
     ...(photo.mobilePosition ? { '--hero-mobile-position': photo.mobilePosition } : {}),
     ...(photo.mobileSize ? { '--hero-mobile-size': photo.mobileSize } : {}),
   };
@@ -49,6 +50,7 @@ export const photoSettings = (item = {}) => ({
   desktopSize: item.desktopSize || '',
   mobilePosition: item.mobilePosition || '',
   mobileSize: item.mobileSize || '',
+  mobileImage: item.mobileImage || '',
 });
 
 
