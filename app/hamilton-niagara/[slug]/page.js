@@ -9,6 +9,7 @@ import { getLocations, getServices, getSiteSettings } from '@/lib/content';
 import { HN, HN_ROUTES, HN_SERVICES, HN_TRUST, getHnContent, hnRouteHref, isHnTown, keepLinksInSection } from '@/lib/hamiltonNiagara';
 import { ROUTE_SERVICE } from '@/lib/routes';
 import { extractServicePhotos } from '@/lib/servicePhotos';
+import { getHnTownBanner } from '@/lib/routeBanners';
 
 // One page per Hamilton & Niagara town (/hamilton-niagara/grimsby) and per section service
 // (/hamilton-niagara/furniture-delivery). Links on these pages stay inside the section.
@@ -53,15 +54,19 @@ export default async function HnSlugPage({ params }) {
     const routes = HN_ROUTES.filter(route => route.fromSlug === town.slug || route.toSlug === town.slug);
     // Photos typed into the post's text go into the proper gallery (same size, opens over the page).
     const townBody = extractServicePhotos(town.body_html);
+    // This town's own Hamilton & Niagara banner (Admin › H&N town banners); blank = its Location Post.
+    const own = await getHnTownBanner(town.slug);
     return (
       <>
         <PageHero
           placement={`hamilton-niagara-${town.slug}`}
           crumbs={[{ label: 'Hamilton & Niagara', href: HN }, { label: town.title }]}
-          eyebrow={town.eyebrow || `${town.title} moving & transport`}
-          title={town.hero_title || `${town.title} movers`}
-          description={town.hero_description || town.intro}
-          image={town.banner_image}
+          eyebrow={own.eyebrow || town.eyebrow || `${town.title} moving & transport`}
+          title={own.heading || town.hero_title || `${town.title} movers`}
+          accent={own.accent || undefined}
+          description={own.text || town.hero_description || town.intro}
+          image={own.image || town.banner_image}
+          imagePosition={photoSettings(own)}
           imageAlt={town.banner_alt}
           fallbackImage={rotatingHeroImage(town.slug)}
           phone={settings.phone}
