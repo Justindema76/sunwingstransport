@@ -505,7 +505,7 @@ export default function QuoteForm({
             <div>
               <span className="kicker">Free Quote</span>
               <h2 id={`${drawerId}-title`}>{stepQuote.done ? 'Request sent' : stepQuote.service ? 'Your quote' : 'What can we help with?'}</h2>
-              <p>{stepQuote.done ? 'Here’s your boarding pass.' : stepQuote.service ? 'A few quick taps. About a minute.' : 'Every job gets its own short form.'}</p>
+              <p>{stepQuote.done ? 'Here’s your job pass.' : stepQuote.service ? 'A few quick taps. About a minute.' : 'Every job gets its own short form.'}</p>
             </div>
             <button className="quote-drawer-close" type="button" onClick={closeDrawer} aria-label="Close quote form">
               <X size={21}/>

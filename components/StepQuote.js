@@ -1,7 +1,7 @@
 'use client';
 
 // Quote drawer: the customer picks a service first, then gets that service's own short
-// step-by-step form. Their answers build a "boarding pass" for the job as they go; it becomes
+// step-by-step form. Their answers build a "job pass" as they go; it becomes
 // the review screen and, once sent, is stamped with their reference number.
 // Every service from the admin shows up automatically; its steps are chosen by service type.
 // Posts the same fields as the long form to /api/quote, so requests land in Admin › Quotes.
@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   ArrowLeft, Armchair, Archive, BedDouble, Bed, BookOpen, Box, Boxes, Building2, CalendarDays, Check, ChevronRight,
   Container, CookingPot, Forklift, HandHelping, House, Lamp, MapPin, Monitor, PackageCheck, Refrigerator, Route,
-  Snowflake, Sofa, Table, Trash2, Truck, Tv, UsersRound, WashingMachine, Plane,
+  Snowflake, Sofa, Table, Trash2, Truck, Tv, UsersRound, WashingMachine,
 } from 'lucide-react';
 import { trackEvent } from './SiteAnalytics';
 import { MAX_PHOTOS, PhotoPicker, leadSource, uploadPhotos } from './quoteShared';
@@ -289,7 +289,7 @@ function AddressBlock({ side, data, err, onInput, set, title, dot, postalRequire
   </div>;
 }
 
-// The boarding pass: what we know about the job so far.
+// The job pass: what we know about the job so far.
 function Pass({ service, kind, data, photos, reference, stamped, onEdit, steps }) {
   const Icon = SERVICE_ICON[kind] || Truck;
   const from = data.pickupCity.trim();
@@ -306,11 +306,11 @@ function Pass({ service, kind, data, photos, reference, stamped, onEdit, steps }
   if (items) rows.push(['Items', `${items}${photos ? ` · ${photos} photo${photos > 1 ? 's' : ''}` : ''}`, editTo(steps.includes('items') ? 'items' : 'place')]);
   if (data.pickupAddress.trim()) rows.push([steps.includes('route') ? 'Pickup' : 'Address', `${place(data, 'pickup')}${data.pickupAccess ? ` · ${data.pickupAccess}` : ''}`, editTo(steps.includes('route') ? 'route' : 'place')]);
   if (data.dropoffAddress.trim()) rows.push(['Drop-off', `${place(data, 'dropoff')}${data.dropoffAccess ? ` · ${data.dropoffAccess}` : ''}`, editTo('route')]);
-  if (data.name.trim()) rows.push(['Passenger', [data.name, data.phone, data.email].map(v => v.trim()).filter(Boolean).join(' · '), editTo('contact')]);
+  if (data.name.trim()) rows.push(['Customer', [data.name, data.phone, data.email].map(v => v.trim()).filter(Boolean).join(' · '), editTo('contact')]);
 
   return <div className={`qs-pass ${stamped ? 'is-stamped' : ''}`}>
     <div className="qs-pass-top">
-      <span className="qs-pass-brand"><Plane size={15}/> Sunwings</span>
+      <span className="qs-pass-brand">Sunwings Transport</span>
       <span className="qs-pass-service"><Icon size={15}/> {service?.title}</span>
     </div>
     <div className="qs-pass-route">
@@ -341,7 +341,7 @@ export function ServicePicker({ options, onPick }) {
       {options.map(option => {
         const kind = kindOf(option);
         const Icon = SERVICE_ICON[kind] || Truck;
-        return <button type="button" key={option.title} className={`qs-tile ${option.banner_image ? 'has-photo' : ''}`} onClick={() => onPick(option)} style={option.banner_image ? { backgroundImage: `linear-gradient(180deg,rgba(11,37,69,.15),rgba(11,37,69,.88)),url(${option.banner_image})` } : undefined}>
+        return <button type="button" key={option.title} className="qs-tile" onClick={() => onPick(option)}>
           <span className="qs-tile-icon"><Icon size={22}/></span>
           <span className="qs-tile-text"><b>{option.title}</b>{option.eyebrow ? <small>{option.eyebrow}</small> : null}</span>
           <ChevronRight size={18} className="qs-tile-go"/>
@@ -641,7 +641,7 @@ export default function StepQuote({ quote, referral = '', replyHours = '', onClo
     </section>
 
     {key !== 'review' && step > 0 ? <details className="qs-mini">
-      <summary><Plane size={14}/> Your pass so far</summary>
+      <summary><Truck size={14}/> Your job so far</summary>
       <Pass {...passProps}/>
     </details> : null}
 

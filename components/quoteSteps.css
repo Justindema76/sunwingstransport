@@ -1,6 +1,8 @@
 /* Quote drawer: service picker + step-by-step form + boarding pass (components/StepQuote.js).
    Uses the site's colour tokens (navy, blue, accent orange). */
 
+.quote-drawer-body{overflow-x:hidden}
+
 /* --- Service picker --- */
 .qs-pick-lead{margin:0 0 14px;font-size:15px;color:var(--muted)}
 .qs-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -159,4 +161,14 @@
   .qs-pass-rows dt{grid-column:1/-1;margin-bottom:-6px}
   .qs-stamp{width:88px;height:88px;font-size:11px;right:10px;bottom:10px}
   .qs-nav{bottom:-12px;margin:auto -12px -12px;padding:12px 12px calc(12px + env(safe-area-inset-bottom))}
+}
+
+/* Stamp gets its own space at the bottom of the pass, so it never covers text. */
+.qs-pass.is-stamped .qs-pass-rows{padding-bottom:132px}
+.qs-pass-brand{white-space:nowrap}
+.qs-pass-service{text-align:right}
+@media (max-width:640px){
+  .qs-pass-top{padding:11px 14px;font-size:11px}
+  .qs-pass-service{font-size:12px}
+  .qs-pass.is-stamped .qs-pass-rows{padding-bottom:108px}
 }
