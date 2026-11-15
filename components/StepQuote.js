@@ -344,9 +344,9 @@ function Pass({ service, kind, data, photos, reference, stamped, onEdit, steps }
 }
 
 // ---- Service picker -------------------------------------------------------------------------
-export function ServicePicker({ options, onPick }) {
-  return <div className="qs-pick">
-    <p className="qs-pick-lead">Pick a service. We’ll only ask what that job needs.</p>
+export function ServicePicker({ options, onPick, compact = false }) {
+  return <div className={`qs-pick ${compact ? 'is-compact' : ''}`}>
+    {compact ? null : <p className="qs-pick-lead">Pick a service. We’ll only ask what that job needs.</p>}
     <div className="qs-tiles">
       {options.map(option => {
         const kind = kindOf(option);
@@ -362,7 +362,7 @@ export function ServicePicker({ options, onPick }) {
 }
 
 // ---- The step form --------------------------------------------------------------------------
-export default function StepQuote({ quote, referral = '', replyHours = '', onClose, onChangeService }) {
+export default function StepQuote({ quote, referral = '', replyHours = '', onClose, onChangeService, inline = false }) {
   const { service, data, setData, step, setStep, errors, setErrors, status, setStatus, photos, setPhotos, done, setDone, reset } = quote;
   const kind = kindOf(service);
   const steps = FLOWS[kind] || FLOWS.general;
@@ -374,7 +374,11 @@ export default function StepQuote({ quote, referral = '', replyHours = '', onClo
   useEffect(() => {
     if (!mounted.current) { mounted.current = true; return; }
     headingRef.current?.focus({ preventScroll: true });
-    headingRef.current?.closest('.quote-drawer-body')?.scrollTo({ top: 0, behavior: 'smooth' });
+    if (inline) {
+      // In a page's side column: bring the top of the form back into view if it scrolled away.
+      const box = headingRef.current?.closest('.qs-inline');
+      if (box && box.getBoundingClientRect().top < 0) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else headingRef.current?.closest('.quote-drawer-body')?.scrollTo({ top: 0, behavior: 'smooth' });
   }, [step, done]);
 
   useEffect(() => {
@@ -501,7 +505,7 @@ export default function StepQuote({ quote, referral = '', replyHours = '', onClo
 
   if (done) {
     const hours = String(replyHours || '').trim();
-    return <div className="qs qs-done" role="status" aria-live="polite">
+    return <div className={`qs qs-done ${inline ? 'is-inline' : ''}`} role="status" aria-live="polite">
       <h3 className="qs-title" tabIndex={-1} ref={headingRef}>You’re on the list!</h3>
       <p className="qs-help">Keep your reference number. It’s on your pass.</p>
       <Pass {...passProps} reference={done.reference} stamped/>
@@ -519,7 +523,7 @@ export default function StepQuote({ quote, referral = '', replyHours = '', onClo
 
   const Icon = SERVICE_ICON[kind] || Truck;
 
-  return <form className="qs" onSubmit={next} noValidate>
+  return <form className={`qs ${inline ? 'is-inline' : ''}`} onSubmit={next} noValidate>
     <div className="qs-head">
       <span className="qs-head-service"><Icon size={16}/> {service?.title}</span>
       <button type="button" className="qs-head-change" onClick={onChangeService}>Change</button>
@@ -651,7 +655,7 @@ export default function StepQuote({ quote, referral = '', replyHours = '', onClo
       </> : null}
     </section>
 
-    {key !== 'review' && step > 0 ? <details className="qs-mini">
+    {key !== 'review' && step > 0 && !inline ? <details className="qs-mini">
       <summary><Truck size={14}/> Your job so far</summary>
       <Pass {...passProps}/>
     </details> : null}
@@ -665,4 +669,51 @@ export default function StepQuote({ quote, referral = '', replyHours = '', onClo
       </button>
     </div>
   </form>;
+}
+
+// ---- Quick quote "job ticket" -----------------------------------------------------------------
+// The small quote box in a page's side column. Not a mini form: a ticket that already knows the
+// page (route pages fill both cities, service pages offer that service) and opens the full quote
+// drawer with one tap, already filled in.
+const SINGLE_ADDRESS = ['junk', 'packing', 'warehouse', 'snow', 'general'];
+
+export function QuickTicket({ options = [], preset = '', fill = null, onStart }) {
+  const [from, setFrom] = useState(fill?.pickupCity || '');
+  const [to, setTo] = useState(fill?.dropoffCity || '');
+  const presetService = preset ? (options.find(item => item.title === preset) || { title: preset, slug: '' }) : null;
+  const presetKind = presetService ? kindOf(presetService) : '';
+  const byKind = kind => options.find(item => kindOf(item) === kind);
+  const moveService = presetKind === 'move' || presetKind === 'longdistance' ? presetService : (byKind('move') || byKind('longdistance'));
+  const delivery = byKind('delivery');
+  // A page about one service (other than moving or delivery) offers just that service.
+  const single = presetService && !['move', 'longdistance', 'delivery'].includes(presetKind) ? presetService : null;
+  const showRoute = !single || !SINGLE_ADDRESS.includes(presetKind);
+  const choices = single
+    ? [{ key: 'one', label: `Start my ${single.title.toLowerCase()} quote`, sub: 'One minute, a few taps', Icon: SERVICE_ICON[presetKind] || Truck, service: single, wide: true }]
+    : [
+      delivery ? { key: 'items', label: 'A few items', sub: 'Sofa, bed, store pickup', Icon: Armchair, service: delivery } : null,
+      moveService ? { key: 'move', label: 'A full move', sub: 'Apartment or house', Icon: House, service: moveService } : null,
+    ].filter(Boolean);
+  const start = service => onStart?.(service, { pickupCity: from.trim(), dropoffCity: to.trim() });
+
+  return <div className="qt">
+    <div className="qt-top"><span>Sunwings</span><span>Quick quote</span></div>
+    {showRoute ? <div className="qt-route">
+      <label><small>From</small><input value={from} onChange={event => setFrom(event.target.value)} placeholder="City" aria-label="Moving from (city)" autoComplete="address-level2"/></label>
+      <span className="qt-truck" aria-hidden="true"><Truck size={18}/></span>
+      <label className="qt-to"><small>To</small><input value={to} onChange={event => setTo(event.target.value)} placeholder="City" aria-label="Moving to (city)"/></label>
+    </div> : null}
+    {showRoute ? <div className="qt-tear" aria-hidden="true"/> : null}
+    <div className="qt-body">
+      <p className="qt-ask">{single ? `Need ${single.title.toLowerCase()}?` : 'What are we moving?'}</p>
+      <div className={`qt-choices ${choices.length === 1 ? 'is-one' : ''}`}>
+        {choices.map(({ key, label, sub, Icon, service }) => <button type="button" key={key} onClick={() => start(service)}>
+          <span className="qt-icon"><Icon size={22}/></span>
+          <b>{label}</b><small>{sub}</small>
+        </button>)}
+      </div>
+      <button type="button" className="qt-other" onClick={() => start(null)}>Something else <ChevronRight size={16}/></button>
+      <p className="qt-fine"><Check size={14}/> 1-minute quote · written quote first · nothing to pay</p>
+    </div>
+  </div>;
 }

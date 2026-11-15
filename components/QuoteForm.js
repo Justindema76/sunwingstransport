@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 import { trackEvent } from './SiteAnalytics';
 import ItemPicker, { itemsText } from './ItemPicker';
 import { MAX_PHOTOS, PhotoPicker, leadSource, pickFill, readReferral, rememberVisit, uploadPhotos } from './quoteShared';
-import StepQuote, { ServicePicker, useStepQuote, serviceOptionsFor } from './StepQuote';
+import StepQuote, { QuickTicket, ServicePicker, useStepQuote, serviceOptionsFor } from './StepQuote';
 
 const initialState = {
   name: '',
@@ -133,6 +133,7 @@ export default function QuoteForm({
 
   useEffect(() => { rememberVisit(); }, []);
 
+
   useEffect(() => {
     const label = readReferral();
     if (!label) return;
@@ -153,6 +154,8 @@ export default function QuoteForm({
       setState(current => ({ ...current, message: '', fieldErrors: {} }));
       startQuote(nextPreset ? findService(nextPreset) : null);
       if (Object.keys(nextFill).length || nextPlan) stepQuote.setData(current => ({ ...current, ...nextFill, plan: nextPlan || current.plan }));
+      // Quick quote's "Something else": always the service picker, even on a service's own page.
+      if (event?.detail?.pick && !nextPreset) stepQuote.choose(null);
     }
 
     window.addEventListener('sunwings:open-quote', openQuoteDrawer);
@@ -505,6 +508,17 @@ export default function QuoteForm({
       {state.message ? <p className="fine quote-status" role="status" aria-live="polite">{state.message}</p> : null}
     </form>
   );
+
+  // Quick quote (the small box on service, city, blog and route pages): a "job ticket" that knows
+  // the page and opens the quote drawer with one tap, already filled in (see QuickTicket).
+  if (!global && compact) {
+    return (
+      <QuickTicket options={serviceChoices} preset={preset} fill={fill} onStart={(service, cities) => {
+        const filled = Object.fromEntries(Object.entries(cities).filter(([, value]) => value));
+        window.dispatchEvent(new CustomEvent('sunwings:open-quote', { detail: { preset: service?.title || '', fill: filled, pick: !service } }));
+      }}/>
+    );
+  }
 
   if (!global) return formMarkup;
 

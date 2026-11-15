@@ -217,3 +217,74 @@
   .qs-sizes small{font-size:11px}
 }
 .qs-chips-error{display:block;margin:-8px 0 12px}
+
+/* --- Quick quote: the same form in a page's side column (.qs-inline, inside .form-card) --- */
+.qs-inline h3{margin:0}
+.qs-inline .sub{margin:4px 0 16px}
+.qs-pick.is-compact .qs-tiles{grid-template-columns:1fr;gap:8px}
+.qs-pick.is-compact .qs-tile{flex-direction:row;align-items:center;justify-content:flex-start;min-height:0;padding:11px 12px;border-radius:14px;animation:none}
+.qs-pick.is-compact .qs-tile::after{display:none}
+.qs-pick.is-compact .qs-tile-icon{width:36px;height:36px;border-radius:11px;flex:0 0 36px}
+.qs-pick.is-compact .qs-tile-icon svg{width:18px;height:18px}
+.qs-pick.is-compact .qs-tile-text b{font-size:15px}
+.qs-pick.is-compact .qs-tile-go{position:static;margin-left:auto;flex:0 0 auto}
+.qs.is-inline{min-height:0;gap:12px}
+.qs.is-inline .qs-head-service{font-size:12px;padding:6px 10px}
+.qs.is-inline .qs-steps small{display:none}
+.qs.is-inline .qs-steps span{width:26px;height:26px;font-size:12px}
+.qs.is-inline .qs-steps li::before{top:12px}
+.qs.is-inline .qs-step{padding:0;border:0;border-radius:0;background:none;animation:none}
+.qs.is-inline .qs-title{font-size:20px}
+.qs.is-inline .row{grid-template-columns:1fr}
+.qs.is-inline .qs-items{grid-template-columns:repeat(2,1fr);gap:6px}
+.qs.is-inline .qs-item-add{min-height:76px;padding:8px 4px}
+.qs.is-inline .qs-item-icon{width:34px;height:34px}
+.qs.is-inline .qs-sizes{grid-template-columns:1fr 1fr}
+.qs.is-inline .qs-quickdates{grid-template-columns:1fr 1fr}
+.qs.is-inline .qs-stop{grid-template-columns:22px 1fr;gap:8px}
+.qs.is-inline .qs-route:not(.is-single) .qs-stop-start::before{left:9px}
+.qs.is-inline .qs-stop-dot{width:20px;height:20px}
+.qs.is-inline .qs-pass-route strong{font-size:17px}
+.qs.is-inline .qs-pass-rows>div{grid-template-columns:1fr auto}
+.qs.is-inline .qs-pass-rows dt{grid-column:1/-1;margin-bottom:-6px}
+.qs.is-inline .qs-nav{position:static;margin:4px 0 0;padding:0;background:none;border:0;backdrop-filter:none}
+.qs.is-inline .qs-nav .btn{min-height:50px}
+.form-card .qs.is-inline .qs-back{width:auto;flex:0 0 auto}
+.form-card .qs.is-inline .qs-next-btn{width:auto;flex:1 1 auto}
+.qs-done.is-inline .qs-title{font-size:24px}
+.qs-done.is-inline .qs-pass.is-stamped .qs-pass-rows{padding-bottom:104px}
+.qs-done.is-inline .qs-stamp{width:86px;height:86px;font-size:11px;right:10px;bottom:10px}
+
+/* --- Quick quote job ticket (side column of service, city, blog and route pages) --- */
+.qt{position:relative;border-radius:22px;background:#fff;border:1px solid var(--line);box-shadow:0 20px 44px rgba(11,37,69,.14);overflow:hidden}
+.qt-top{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:var(--navy);color:#fff;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.qt-top span:first-child{color:var(--accent-2)}
+.qt-route{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:8px;padding:16px 18px 18px;background:linear-gradient(180deg,#F2F7FD,#fff)}
+.qt-route label{display:grid;gap:2px;margin:0;font-size:inherit}
+.qt-route small{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.qt-route input{margin:0;padding:4px 0;border:0;border-bottom:2px dashed #BFD3EA;border-radius:0;background:transparent;font-size:19px;font-weight:800;color:var(--navy);width:100%;min-width:0}
+.qt-route input::placeholder{color:#AFC0D6;font-weight:700}
+.qt-route input:focus{outline:none;border-bottom-color:var(--accent)}
+.qt-to{text-align:right}
+.qt-to input{text-align:right}
+.qt-truck{display:grid;place-items:center;width:38px;height:38px;margin-bottom:2px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--accent-ink);box-shadow:0 6px 14px rgba(247,120,20,.28)}
+.qt-tear{position:relative;height:0;border-top:2px dashed #D5DEEA;margin:0 16px}
+.qt-tear::before,.qt-tear::after{content:"";position:absolute;top:-12px;width:22px;height:22px;border-radius:50%;background:var(--bg,#fff);border:1px solid var(--line)}
+.qt-tear::before{left:-28px}.qt-tear::after{right:-28px}
+.qt-body{padding:16px 18px 18px}
+.qt-ask{margin:0 0 10px;font-size:16px;font-weight:800;color:var(--navy)}
+.qt-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qt-choices.is-one{grid-template-columns:1fr}
+.qt-choices button{display:grid;justify-items:start;gap:3px;padding:14px 12px;border:1.5px solid #D5DEEA;border-radius:16px;background:#fff;font:inherit;text-align:left;color:var(--ink);cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}
+.qt-choices button:hover,.qt-choices button:focus-visible{transform:translateY(-2px);border-color:var(--navy);box-shadow:0 10px 22px rgba(11,37,69,.12)}
+.qt-choices b{font-size:15px;line-height:1.2;color:var(--navy)}
+.qt-choices small{font-size:12px;color:var(--muted)}
+.qt-icon{display:grid;place-items:center;width:40px;height:40px;margin-bottom:4px;border-radius:12px;background:var(--sky);color:var(--blue)}
+.qt-choices.is-one button{grid-template-columns:auto 1fr;align-items:center;column-gap:12px;background:var(--navy);border-color:var(--navy)}
+.qt-choices.is-one .qt-icon{grid-row:span 2;margin:0;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--accent-ink)}
+.qt-choices.is-one b{color:#fff}
+.qt-choices.is-one small{color:#C9D8EC}
+.qt-other{display:flex;align-items:center;justify-content:center;gap:4px;width:100%;margin-top:10px;padding:10px;border:0;border-radius:12px;background:#F4F7FB;font:inherit;font-size:14px;font-weight:700;color:var(--blue);cursor:pointer}
+.qt-other:hover{background:var(--sky)}
+.qt-fine{display:flex;align-items:center;justify-content:center;gap:6px;margin:12px 0 0;font-size:12px;color:var(--muted);text-align:center}
+.qt-fine svg{color:#1E7B3C;flex:0 0 auto}
