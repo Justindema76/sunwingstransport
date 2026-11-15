@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ChevronDown, Phone, Snowflake } from 'lucide-react';
 import MobileNav from './MobileNav';
+import NavDropdownCloser from './NavDropdownCloser';
 import TopbarFlip from './TopbarFlip';
 import { telHref } from '@/lib/phone';
 import './logoBadge.css';
@@ -84,6 +85,7 @@ export default function Header({ settings, services = [], globalHeader = {}, pro
               {badge ? <span className="logo-badge">{badge}</span> : null}
             </Link>
           )}
+          <NavDropdownCloser/>
           <nav className="nav-links" aria-label="Main navigation">
             {links.map(item => item.url === '/services' ? (
               <div className="nav-dropdown" key={item.url}>

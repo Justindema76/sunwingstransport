@@ -53,9 +53,11 @@ export default async function HnSlugPage({ params }) {
     const routes = HN_ROUTES.filter(route => route.fromSlug === town.slug || route.toSlug === town.slug);
     // Photos typed into the post's text go into the proper gallery (same size, opens over the page).
     const townBody = extractServicePhotos(town.body_html);
-    // This town's own Hamilton & Niagara banner (Admin › H&N town banners). Photo blank = the van on an
-    // Ontario road; text blank = its Location Post.
-    const own = await getHnTownBanner(town.slug);
+    // This town's own Hamilton & Niagara banner (Admin › H&N town banners). Photo blank = the default for
+    // all towns (Admin › Hamilton & Niagara › Town pages), else the Lakeside Drive van; text blank =
+    // its Location Post.
+    const [own, hnContent] = await Promise.all([getHnTownBanner(town.slug), getHnContent()]);
+    const townDefault = hnContent.towns?.image ? hnContent.towns : null;
     return (
       <>
         <PageHero
@@ -65,8 +67,8 @@ export default async function HnSlugPage({ params }) {
           title={own.heading || town.hero_title || `${town.title} movers`}
           accent={own.accent || undefined}
           description={own.text || town.hero_description || town.intro}
-          image={own.image || HERO_IMAGE_OPTIONS.road}
-          imagePosition={photoSettings(own)}
+          image={own.image || townDefault?.image || HERO_IMAGE_OPTIONS.lakeside}
+          imagePosition={photoSettings(own.image || own.desktopPosition || own.mobilePosition ? own : (townDefault || {}))}
           imageAlt={town.banner_alt}
           fallbackImage={rotatingHeroImage(town.slug)}
           phone={settings.phone}

@@ -25,3 +25,4 @@
 .nav-dropdown-button:hover{color:var(--blue);border-color:var(--accent)}
 .nav-dropdown-menu-wide{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));min-width:480px;max-height:70vh;overflow:auto}
 .mobile-nav-label{background:none;border:0;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer;flex:1}
+.nav-dropdown.is-closed .nav-dropdown-menu{opacity:0!important;visibility:hidden!important;pointer-events:none}
