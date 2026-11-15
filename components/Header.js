@@ -12,8 +12,9 @@ function SmartNavLink({ href = '#', children, className = '' }) {
   return <Link className={className} href={href}>{children}</Link>;
 }
 
-// navLinks / homeHref / topbarLine / badge: used by the Hamilton & Niagara section, which has its own menu.
-export default function Header({ settings, services = [], globalHeader = {}, promo = null, navLinks = null, homeHref = '/', topbarLine = '', badge = '' }) {
+// navLinks / homeHref / topbarLine / badge / badgeHref: used by the Hamilton & Niagara section, which has
+// its own menu. With badgeHref the label is its own link (the logo still goes to homeHref).
+export default function Header({ settings, services = [], globalHeader = {}, promo = null, navLinks = null, homeHref = '/', topbarLine = '', badge = '', badgeHref = '' }) {
   const phone = settings?.phone || '647-526-5132';
   const logo = globalHeader.logo || settings?.logo_url || 'https://nowsajdmbpxvlvrhopjg.supabase.co/storage/v1/object/public/site-assets/sunwings/1791334339517-SUNWING-site-logo.png';
   const brand = settings?.site_name || globalHeader.brand || 'Sun Wings';
@@ -57,10 +58,19 @@ export default function Header({ settings, services = [], globalHeader = {}, pro
       </div>}</div> : null}
       <header className="site">
         <div className="container nav">
-          <Link className="logo" href={homeHref} aria-label={brand}>
-            {logo ? <img src={logo} alt={brand}/> : <strong>{brand}</strong>}
-            {badge ? <span className="logo-badge">{badge}</span> : null}
-          </Link>
+          {badge && badgeHref ? (
+            <div className="logo-wrap">
+              <Link className="logo" href={homeHref} aria-label={brand}>
+                {logo ? <img src={logo} alt={brand}/> : <strong>{brand}</strong>}
+              </Link>
+              <Link className="logo-badge" href={badgeHref}>{badge}</Link>
+            </div>
+          ) : (
+            <Link className="logo" href={homeHref} aria-label={brand}>
+              {logo ? <img src={logo} alt={brand}/> : <strong>{brand}</strong>}
+              {badge ? <span className="logo-badge">{badge}</span> : null}
+            </Link>
+          )}
           <nav className="nav-links" aria-label="Main navigation">
             {links.map(item => item.url === '/services' ? (
               <div className="nav-dropdown" key={item.url}>

@@ -10,11 +10,13 @@ export default async function HamiltonNiagaraLayout({ children }) {
   const [settings, headerSection, content] = await Promise.all([getSiteSettings(), getGlobalSection('header'), getHnContent()]);
   const { theme } = content;
   const css = hnThemeCss(theme);
+  // The logo goes back to the main site; the first menu item says so. The label opens the section's home.
+  const navLinks = theme.backLabel ? [{ label: theme.backLabel, url: '/' }, ...HN_NAV] : HN_NAV;
   const headerProps = getGlobalBlockProps(headerSection, 'HeaderBlock');
   return (
     <>
       {css ? <style dangerouslySetInnerHTML={{ __html: css }}/> : null}
-      <Header settings={settings} services={[]} globalHeader={headerProps} navLinks={HN_NAV} homeHref={HN} topbarLine={theme.topbarLine} badge={theme.badge}/>
+      <Header settings={settings} services={[]} globalHeader={headerProps} navLinks={navLinks} homeHref="/" badgeHref={HN} topbarLine={theme.topbarLine} badge={theme.badge}/>
       {children}
     </>
   );
