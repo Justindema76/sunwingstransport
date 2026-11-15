@@ -156,7 +156,7 @@ function validateStep(key, kind, data) {
   const e = {};
   if (key === 'items' && !itemsText(data.items) && !data.itemOther.trim() && kind !== 'move' && kind !== 'longdistance') e.itemOther = 'Tap at least one item, or type what it is.';
   if (key === 'size' && !data.moveSize) e.moveSize = 'Pick the closest size.';
-  if (key === 'job' && kind === 'assist' && !data.jobChips.length) e.jobText = 'Pick one.';
+  if (key === 'job' && kind === 'assist' && !data.jobChips.length) e.jobChips = 'Pick one of the answers above.';
   if (key === 'job' && kind !== 'assist' && !data.jobChips.length && !data.jobText.trim()) e.jobText = 'Tap one or more, or tell us in a few words.';
   if (key === 'route' || key === 'place') {
     if (!data.pickupAddress.trim()) e.pickupAddress = key === 'place' ? 'Enter the address.' : 'Enter the pickup address.';
@@ -561,7 +561,8 @@ export default function StepQuote({ quote, referral = '', replyHours = '', onClo
       {key === 'job' ? <>
         <h3 className="qs-title" tabIndex={-1} ref={headingRef}>{JOB_TITLE[kind] || JOB_TITLE.general}</h3>
         <p className="qs-help">{kind === 'assist' ? 'So we know how many movers to send.' : 'Tap what fits. Add a few words if it helps.'}</p>
-        <Chips label="Job" options={JOB_CHIPS[kind] || JOB_CHIPS.general} value={kind === 'assist' ? (data.jobChips[0] || '') : data.jobChips} multiple={kind !== 'assist'} onPick={value => { set('jobChips', Array.isArray(value) ? value : (value ? [value] : [])); clear(['jobText']); }}/>
+        <Chips label="Job" options={JOB_CHIPS[kind] || JOB_CHIPS.general} value={kind === 'assist' ? (data.jobChips[0] || '') : data.jobChips} multiple={kind !== 'assist'} onPick={value => { set('jobChips', Array.isArray(value) ? value : (value ? [value] : [])); clear(['jobText', 'jobChips']); }}/>
+        {err('jobChips') ? <small className="field-error qs-chips-error">{err('jobChips')}</small> : null}
         <Field label={kind === 'assist' ? 'Anything we should know?' : 'Tell us a bit more'} name="jobText" error={err('jobText')} optional>
           <textarea id="qs-jobText" name="jobText" rows="3" value={data.jobText} onChange={onInput} placeholder={kind === 'warehouse' ? 'E.g. one 40 ft container of boxed furniture' : 'A few words is enough'} aria-invalid={Boolean(err('jobText'))}/>
         </Field>

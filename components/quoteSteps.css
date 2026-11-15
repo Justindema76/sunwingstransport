@@ -172,3 +172,48 @@
   .qs-pass-service{font-size:12px}
   .qs-pass.is-stamped .qs-pass-rows{padding-bottom:108px}
 }
+
+/* Phone: give the question most of the screen. Header, service tag and step bar shrink, the
+   inner card loses its extra padding, and item tiles are 4 per row and smaller. */
+@media (max-width:640px){
+  .quote-drawer-head{padding:10px 14px;align-items:center}
+  .quote-drawer-head .kicker,.quote-drawer-head p{display:none}
+  .quote-drawer-head h2{margin:0;font-size:19px}
+  .quote-drawer-close{width:38px;height:38px}
+  .quote-drawer-body{padding:8px 10px 10px}
+  .qs{gap:8px}
+  .qs-head-service{padding:5px 10px;font-size:12px}
+  .qs-head-change{font-size:13px}
+  .qs-steps span{width:22px;height:22px;font-size:11px;border-width:1.5px}
+  .qs-steps li{gap:3px}
+  .qs-steps li::before{top:10px;height:2px}
+  .qs-steps li.is-now span{box-shadow:0 0 0 3px rgba(247,147,30,.18)}
+  .qs-steps small{font-size:9.5px}
+  .qs-step{padding:12px 10px 4px;border-radius:14px}
+  .qs-title{font-size:19px;margin-bottom:4px}
+  .qs-help{font-size:13px;margin-bottom:10px;line-height:1.4}
+  .qs-items{grid-template-columns:repeat(4,1fr);gap:5px}
+  .qs-items li{border-radius:12px}
+  .qs-item-add{min-height:70px;padding:8px 2px 6px;gap:4px}
+  .qs-item-icon{width:32px;height:32px;border-radius:9px}
+  .qs-item-icon svg{width:17px;height:17px}
+  .qs-item-name{font-size:11px;line-height:1.15}
+  .qs-item-plus{top:3px;right:5px;font-size:15px}
+  .qs-item-count{min-width:20px;height:20px;font-size:11px;top:3px;right:3px}
+  .qs-item-minus{width:22px;height:22px;font-size:15px!important}
+  .qs-chips{gap:6px;margin-bottom:12px}
+  .qs-chips button{min-height:38px;padding:6px 12px;font-size:13.5px}
+  .qs-sizes{gap:6px}
+  .qs-tile{padding:11px}
+  .qs-tile-icon{width:36px;height:36px;border-radius:11px}
+  .qs-tile-text b{font-size:14px}
+  .qs-tile-text small{font-size:11px}
+  .qs-step label{font-size:13px}
+  .qs-step input,.qs-step select,.qs-step textarea{padding:10px 12px;margin-top:4px}
+}
+@media (max-width:640px){
+  .qs-sizes button{padding:10px;border-radius:12px}
+  .qs-sizes b{font-size:14px}
+  .qs-sizes small{font-size:11px}
+}
+.qs-chips-error{display:block;margin:-8px 0 12px}
