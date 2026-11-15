@@ -1,4 +1,5 @@
 import './globals.css';
+import './phone.css';
 import Header from '@/components/Header';
 import { getHnContent, hnRegions, HN_SERVICES } from '@/lib/hamiltonNiagara';
 import Footer from '@/components/Footer';

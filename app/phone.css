@@ -1,0 +1,53 @@
+/* Phone fixes (Justin's phone fix list). Loaded after globals.css so these win.
+   Kept in its own file so the phone layout can be tuned in one place. */
+
+/* Back-to-top: the site's accent colour (orange on the main site, gold on Hamilton & Niagara),
+   so it shows against both the white pages and the black Hamilton footer/header. */
+.back-to-top{background:var(--accent);color:var(--accent-ink,#111)}
+
+@media (max-width: 820px){
+  /* The header scrolls away with the page instead of staying fixed at the top. */
+  .header-system,header.site{position:relative;top:auto}
+}
+
+@media (max-width: 700px){
+  /* Service cards: 2 per row, smaller. */
+  .service-cards{grid-template-columns:1fr 1fr!important;gap:10px}
+  .service-cards .card-img{aspect-ratio:4/3}
+  .service-cards .card-body{padding:22px 12px 12px}
+  .service-cards .card h3,.service-cards h3{font-size:15px;line-height:1.25;margin-bottom:4px}
+  .service-cards .card p,.service-cards p{font-size:13px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .service-cards .more{font-size:13px}
+  .service-cards .service-card-icon{width:32px;height:32px}
+  .service-cards .service-card-icon svg{width:16px;height:16px}
+}
+
+@media (max-width: 820px){
+  /* iPhones zoom the whole page in when a text box with text under 16px is tapped, and stay
+     zoomed: everything looks huge and the right side is cut off. 16px stops that. */
+  input,select,textarea{font-size:16px!important}
+
+  /* Bottom Call / Request Quote bar: clear of the iPhone home bar, and the page leaves room for it. */
+  .mbar{padding-bottom:env(safe-area-inset-bottom)}
+  body{padding-bottom:calc(56px + env(safe-area-inset-bottom))}
+  .back-to-top{bottom:calc(70px + env(safe-area-inset-bottom));right:14px;width:42px;height:42px}
+}
+
+@media (max-width: 700px){
+  /* Trust boxes under the banner: 2 per row, compact, icon on top. */
+  .trust-grid{grid-template-columns:1fr 1fr!important;border-radius:16px}
+  .trust-item{flex-direction:column;align-items:flex-start;gap:8px;padding:14px 12px;border-top:0!important;border-left:0!important}
+  .trust-item:nth-child(n+3){border-top:1px solid var(--line)!important}
+  .trust-item:nth-child(2n){border-left:1px solid var(--line)!important}
+  .trust-item .t-ico{width:34px;height:34px;border-radius:10px}
+  .trust-item .t-ico svg{width:18px;height:18px}
+  .trust-item b{font-size:14px;line-height:1.25}
+  .trust-item span{font-size:12.5px;line-height:1.35}
+  .trust-item .trust-arrow{display:none}
+}
+
+/* Phone menu: Routes and Towns (labels that only open a list) line up and look exactly like
+   the other menu items; long lists (towns) show in 2 columns. */
+.mobile-nav-service-row .mobile-nav-label{display:block;height:auto;width:100%;padding:13px 12px;border-radius:10px;font-weight:700;font-size:inherit;text-align:left;color:inherit}
+.mobile-nav-service-row .mobile-nav-label:hover{background:var(--sky)}
+.mobile-nav-submenu:has(> a:nth-child(9)){grid-template-columns:1fr 1fr;column-gap:6px}

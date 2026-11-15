@@ -38,7 +38,7 @@ export default async function ServiceCards({ services = [], compact = false, loc
   const longDistance = extra?.enabled !== false && extra?.title ? extra : null;
 
   return (
-    <div className="grid-3">
+    <div className="grid-3 service-cards">
       {services.map((service, index) => {
         const override = cardOverrides[index] || {};
         const image = override.image || service.banner_image || FALLBACK_IMAGES[service.slug] || '';
