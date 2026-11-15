@@ -650,7 +650,7 @@ export default function StepQuote({ quote, referral = '', replyHours = '', onClo
     <div className="qs-nav">
       <button type="button" className="btn btn-line qs-back" onClick={back} disabled={status.sending}><ArrowLeft size={18}/> Back</button>
       <button type="submit" className="btn btn-accent qs-next-btn" disabled={status.sending}>
-        {key === 'review' ? (status.sending ? 'Sending…' : 'Send my request →') : 'Continue →'}
+        {key === 'review' ? (status.sending ? 'Sending…' : 'Send my request') : 'Continue'}
       </button>
     </div>
   </form>;
