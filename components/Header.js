@@ -97,8 +97,11 @@ export default function Header({ settings, services = [], globalHeader = {}, pro
             ) : Array.isArray(item.children) && item.children.length ? (
               // A menu item with its own dropdown (e.g. the Hamilton & Niagara section's Services).
               <div className="nav-dropdown" key={`${item.label}-${item.url}`}>
-                <SmartNavLink className="nav-dropdown-trigger" href={item.url || '#'}>{item.label} <ChevronDown size={16} strokeWidth={2.2}/></SmartNavLink>
-                <div className="nav-dropdown-menu">
+                {/* No url: the label only opens the menu (it doesn't jump down the page). */}
+                {item.url
+                  ? <SmartNavLink className="nav-dropdown-trigger" href={item.url}>{item.label} <ChevronDown size={16} strokeWidth={2.2}/></SmartNavLink>
+                  : <button type="button" className="nav-dropdown-trigger nav-dropdown-button">{item.label} <ChevronDown size={16} strokeWidth={2.2}/></button>}
+                <div className={`nav-dropdown-menu${item.children.length > 10 ? ' nav-dropdown-menu-wide' : ''}`}>
                   {item.children.map(child => <SmartNavLink href={child.url} key={child.url}>{child.label}</SmartNavLink>)}
                 </div>
               </div>

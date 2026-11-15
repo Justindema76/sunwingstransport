@@ -16,6 +16,8 @@ function SmartLink({ href = '#', children, onClick, className = '' }) {
 export default function MobileNav({ links = [], services = [], phone = '', buttonText = 'Free Quote', buttonUrl = '/contact' }) {
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  // Which extra dropdown (e.g. Towns, Routes) is open in the phone menu; one at a time.
+  const [openMenu, setOpenMenu] = useState('');
   const wrapRef = useRef(null);
 
   useEffect(() => {
@@ -76,12 +78,14 @@ export default function MobileNav({ links = [], services = [], phone = '', butto
           ) : Array.isArray(item.children) && item.children.length ? (
             <div className="mobile-nav-services" key={`${item.label}-${item.url}`}>
               <div className="mobile-nav-service-row">
-                <SmartLink href={item.url || '#'} onClick={close}>{item.label}</SmartLink>
-                <button type="button" aria-label={`Toggle ${item.label}`} aria-expanded={servicesOpen} onClick={() => setServicesOpen(value => !value)}>
-                  <ChevronDown size={18} className={servicesOpen ? 'open' : ''}/>
+                {item.url
+                  ? <SmartLink href={item.url} onClick={close}>{item.label}</SmartLink>
+                  : <button type="button" className="mobile-nav-label" onClick={() => setOpenMenu(value => value === item.label ? '' : item.label)}>{item.label}</button>}
+                <button type="button" aria-label={`Toggle ${item.label}`} aria-expanded={openMenu === item.label} onClick={() => setOpenMenu(value => value === item.label ? '' : item.label)}>
+                  <ChevronDown size={18} className={openMenu === item.label ? 'open' : ''}/>
                 </button>
               </div>
-              {servicesOpen ? <div className="mobile-nav-submenu">
+              {openMenu === item.label ? <div className="mobile-nav-submenu">
                 {item.children.map(child => <SmartLink href={child.url} onClick={close} key={child.url}>{child.label}</SmartLink>)}
               </div> : null}
             </div>

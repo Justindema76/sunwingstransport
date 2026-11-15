@@ -46,6 +46,8 @@ export default async function sitemap() {
     { url: `${base}/partners`, changeFrequency: 'monthly', priority: .6 },
     { url: `${base}/hamilton-niagara/partners`, changeFrequency: 'monthly', priority: .6 },
     ...['pricing', 'contact', 'blog'].map(slug => ({ url: `${base}/hamilton-niagara/${slug}`, changeFrequency: 'monthly', priority: .7 })),
+    { url: `${base}/facebook`, changeFrequency: 'weekly', priority: .4 },
+    { url: `${base}/hamilton-niagara/facebook`, changeFrequency: 'weekly', priority: .4 },
     // Posts shown only in the Hamilton & Niagara section (posts on both sites are listed once, under /blog).
     ...hnPosts.filter(post => sectionFor('blog', post.slug, sections) === 'hn').map(post => ({
       url: `${base}/hamilton-niagara/blog/${post.slug}`,

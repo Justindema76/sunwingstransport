@@ -17,3 +17,8 @@
   .region-switch-row .region-switch{margin:0}
   .region-switch-row .region-switch a{font-size:12px;padding:6px 14px}
 }
+
+/* Menu dropdowns with no link of their own (Hamilton & Niagara Towns, Routes) and long lists. */
+.nav-dropdown-button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer}
+.nav-dropdown-menu-wide{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));min-width:480px;max-height:70vh;overflow:auto}
+.mobile-nav-label{background:none;border:0;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer;flex:1}
