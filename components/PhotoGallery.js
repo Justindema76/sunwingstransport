@@ -1,12 +1,15 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import './photoGallery.css';
 
 // Photo grid that opens a large view over the page (no leaving the page).
 // photos: [{ thumb, full, alt, caption }]
-export default function PhotoGallery({ photos = [] }) {
+// initial: show this many, with the rest in a dropdown under them (the large view still goes through all).
+export default function PhotoGallery({ photos = [], initial = 0 }) {
   const [index, setIndex] = useState(-1);
+  const [more, setMore] = useState(false);
   const open = index >= 0;
   const touchX = useRef(null);
   const closeRef = useRef(null);
@@ -34,24 +37,44 @@ export default function PhotoGallery({ photos = [] }) {
   }, [open, close, step]);
 
   const photo = open ? photos[index] : null;
+  const extra = initial ? photos.slice(initial) : [];
+  const thumb = (item, i) => (
+    <figure key={item.full} style={{ margin: 0 }}>
+      <button
+        type="button"
+        className="photo-gallery-thumb"
+        onClick={event => { lastFocus.current = event.currentTarget; setIndex(i); }}
+        aria-label={`View larger: ${item.alt}`}
+      >
+        <img src={item.thumb} alt={item.alt} width="640" height="640" loading="lazy" decoding="async"/>
+      </button>
+      {item.caption ? <figcaption style={{ marginTop: 12 }}>{item.caption}</figcaption> : null}
+    </figure>
+  );
 
   return (
     <>
       <div className="grid-3">
-        {photos.map((item, i) => (
-          <figure key={item.full} style={{ margin: 0 }}>
-            <button
-              type="button"
-              className="photo-gallery-thumb"
-              onClick={event => { lastFocus.current = event.currentTarget; setIndex(i); }}
-              aria-label={`View larger: ${item.alt}`}
-            >
-              <img src={item.thumb} alt={item.alt} width="640" height="640" loading="lazy" decoding="async"/>
-            </button>
-            {item.caption ? <figcaption style={{ marginTop: 12 }}>{item.caption}</figcaption> : null}
-          </figure>
-        ))}
+        {(initial ? photos.slice(0, initial) : photos).map((item, i) => thumb(item, i))}
       </div>
+      {extra.length ? (
+        <>
+          <button type="button" className={`photo-gallery-more-btn ${more ? 'open' : ''}`} onClick={() => setMore(value => !value)} aria-expanded={more}>
+            <span className="photo-gallery-more-faces" aria-hidden="true">
+              {extra.slice(0, 3).map(item => <img key={item.full} src={item.thumb} alt=""/>)}
+            </span>
+            <span>{more ? 'Hide' : 'View'} {extra.length} more job photo{extra.length > 1 ? 's' : ''}</span>
+            <ChevronDown size={18}/>
+          </button>
+          <div className={`photo-gallery-more ${more ? 'open' : ''}`} aria-hidden={!more} inert={more ? undefined : true}>
+            <div>
+              <div className="grid-3">
+                {extra.map((item, i) => thumb(item, i + initial))}
+              </div>
+            </div>
+          </div>
+        </>
+      ) : null}
 
       {photo ? (
         <div

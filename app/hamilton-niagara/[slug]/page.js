@@ -92,7 +92,7 @@ export default async function HnSlugPage({ params }) {
               <div className="chips">{town.neighbourhoods.map(item => <span className="chip" key={item}>{item}</span>)}</div>
             </> : null}
             {townBody.html ? <div dangerouslySetInnerHTML={{ __html: keepLinksInSection(townBody.html, townSlugs) }}/> : null}
-            {townBody.photos.length ? <><h2>{townBody.title || `Our work in ${town.title}`}</h2><PhotoGallery photos={townBody.photos}/></> : null}
+            {townBody.photos.length ? <><h2>{townBody.title || `Our work in ${town.title}`}</h2><PhotoGallery photos={townBody.photos} initial={3}/></> : null}
             <div className="cta-inline">
               <div>
                 <h3>{town.cta_title || `Moving in ${town.title}?`}</h3>
@@ -141,7 +141,7 @@ export default async function HnSlugPage({ params }) {
           {body.html ? <div dangerouslySetInnerHTML={{ __html: keepLinksInSection(body.html, townSlugs) }}/> : null}
           {body.photos.length ? <>
             <h2>{body.title || `${service.label} photos`}</h2>
-            <PhotoGallery photos={body.photos}/>
+            <PhotoGallery photos={body.photos} initial={3}/>
           </> : null}
           {isLong ? <>
             <h2>Routes we run</h2>
