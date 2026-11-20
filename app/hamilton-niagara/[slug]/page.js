@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Building2, GraduationCap, MapPin, Mountain, Route, Truck } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import PageHero from '@/components/PageHero';
 import PhotoGallery from '@/components/PhotoGallery';
@@ -40,6 +41,8 @@ export async function generateMetadata({ params }) {
   return hnMetadata(page.service.slug, `${HN}/${page.service.slug}`);
 }
 
+const NOTE_ICONS = { map: MapPin, building: Building2, route: Route, mountain: Mountain, graduation: GraduationCap, truck: Truck };
+
 export default async function HnSlugPage({ params }) {
   const { slug } = await params;
   const page = await findPage(slug);
@@ -58,6 +61,8 @@ export default async function HnSlugPage({ params }) {
     // its Location Post.
     const [own, hnContent] = await Promise.all([getHnTownBanner(town.slug), getHnContent()]);
     const townDefault = hnContent.towns?.image ? hnContent.towns : null;
+    const localNotes = Array.isArray(town.local_notes) ? town.local_notes.filter(note => note?.title || note?.text) : [];
+    const townFaqs = Array.isArray(town.faq) ? town.faq.filter(item => item?.question && item?.answer) : [];
     return (
       <>
         <PageHero
@@ -97,8 +102,29 @@ export default async function HnSlugPage({ params }) {
               <h2>Neighbourhoods we cover</h2>
               <div className="chips">{town.neighbourhoods.map(item => <span className="chip" key={item}>{item}</span>)}</div>
             </> : null}
+            {/* Local details, recent job and questions: edited in Admin › Location Posts › <town>. */}
+            {localNotes.length ? <>
+              <h2>Moving in {town.title}: what to know</h2>
+              <div className="grid-3 local-note-grid">
+                {localNotes.map((note, index) => {
+                  const Icon = NOTE_ICONS[note.icon] || MapPin;
+                  return <div className="side-card local-note-card" key={`${note.title}-${index}`}>
+                    <div className="local-note-icon"><Icon size={24}/></div>
+                    <h3>{note.title}</h3>
+                    <p>{note.text}</p>
+                  </div>;
+                })}
+              </div>
+            </> : null}
+            {town.recent_job ? <div className="note-box"><b>Recent {town.title} job:</b> {town.recent_job}</div> : null}
             {townBody.html ? <div dangerouslySetInnerHTML={{ __html: keepLinksInSection(townBody.html, townSlugs) }}/> : null}
             {townBody.photos.length ? <><h2>{townBody.title || `Our work in ${town.title}`}</h2><PhotoGallery photos={townBody.photos} initial={3}/></> : null}
+            {townFaqs.length ? <>
+              <h2>{town.title} moving questions</h2>
+              <div className="service-faqs">
+                {townFaqs.map((item, index) => <details key={`${item.question}-${index}`} open><summary>{item.question}</summary><p>{item.answer}</p></details>)}
+              </div>
+            </> : null}
             <div className="cta-inline">
               <div>
                 <h3>{town.cta_title || `Moving in ${town.title}?`}</h3>
@@ -108,6 +134,11 @@ export default async function HnSlugPage({ params }) {
             </div>
           </div>
         </section>
+        {townFaqs.length ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: townFaqs.map(item => ({ '@type': 'Question', name: item.question, acceptedAnswer: { '@type': 'Answer', text: item.answer } })),
+        }) }}/> : null}
       </>
     );
   }
