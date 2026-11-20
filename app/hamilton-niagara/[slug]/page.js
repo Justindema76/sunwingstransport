@@ -9,7 +9,7 @@ import { photoSettings, rotatingHeroImage } from '@/components/heroSlides';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { getLocations, getServices, getSiteSettings } from '@/lib/content';
 import { HN, HN_ROUTES, HN_SERVICES, HN_TRUST, getHnContent, hnRouteHref, isHnTown, keepLinksInSection, hnMetadata } from '@/lib/hamiltonNiagara';
-import { extractServicePhotos } from '@/lib/servicePhotos';
+import { extractAllPhotos, extractServicePhotos } from '@/lib/servicePhotos';
 import { getHnTownBanner } from '@/lib/routeBanners';
 
 // One page per Hamilton & Niagara town (/hamilton-niagara/grimsby) and per section service
@@ -55,7 +55,7 @@ export default async function HnSlugPage({ params }) {
     const { town } = page;
     const routes = HN_ROUTES.filter(route => route.fromSlug === town.slug || route.toSlug === town.slug);
     // Photos typed into the post's text go into the proper gallery (same size, opens over the page).
-    const townBody = extractServicePhotos(town.body_html);
+    const townBody = extractAllPhotos(town.body_html);
     // This town's own Hamilton & Niagara banner (Admin › H&N town banners). Photo blank = the default for
     // all towns (Admin › Hamilton & Niagara › Town pages), else the Lakeside Drive van; text blank =
     // its Location Post.
@@ -118,7 +118,7 @@ export default async function HnSlugPage({ params }) {
             </> : null}
             {town.recent_job ? <div className="note-box"><b>Recent {town.title} job:</b> {town.recent_job}</div> : null}
             {townBody.html ? <div dangerouslySetInnerHTML={{ __html: keepLinksInSection(townBody.html, townSlugs) }}/> : null}
-            {townBody.photos.length ? <><h2>{townBody.title || `Our work in ${town.title}`}</h2><PhotoGallery photos={townBody.photos} initial={3}/></> : null}
+            {townBody.photos.length ? <><h2>Sunwings job photos</h2><PhotoGallery photos={townBody.photos} initial={3}/></> : null}
             {townFaqs.length ? <>
               <h2>{town.title} moving questions</h2>
               <div className="service-faqs">

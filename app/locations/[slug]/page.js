@@ -12,6 +12,8 @@ import { SNOW_SLUG, getSiteContent, pricedServicesForLocation, snowTownHref } fr
 import { notFound } from 'next/navigation';
 import { telHref } from '@/lib/phone';
 import { routeHref, routesForTown } from '@/lib/routes';
+import PhotoGallery from '@/components/PhotoGallery';
+import { extractAllPhotos } from '@/lib/servicePhotos';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -44,6 +46,8 @@ export default async function LocationPage({ params }) {
   );
   const nearby = locations.filter(item => item.region === location.region && item.slug !== location.slug).slice(0,8);
   const localNotes = Array.isArray(location.local_notes) ? location.local_notes : [];
+  // Every photo in the page text goes into one small gallery (3 shown, click to see big).
+  const body = extractAllPhotos(location.body_html);
   const iconMap = { map: MapPin, building: Building2, route: Route, mountain: Mountain, graduation: GraduationCap, truck: Truck };
   const faqs = Array.isArray(location.faq) ? location.faq.filter(item => item?.question && item?.answer) : [];
 
@@ -133,7 +137,8 @@ export default async function LocationPage({ params }) {
 
             {location.recent_job ? <div className="note-box"><b>Recent {location.title} job:</b> {location.recent_job}</div> : null}
 
-            {location.body_html ? <div dangerouslySetInnerHTML={{__html:location.body_html}}/> : null}
+            {body.html ? <div dangerouslySetInnerHTML={{__html:body.html}}/> : null}
+            {body.photos.length ? <><h2>Sunwings job photos</h2><PhotoGallery photos={body.photos} initial={3}/></> : null}
 
             <div className="cta-inline">
               <div>

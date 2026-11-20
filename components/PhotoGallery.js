@@ -54,7 +54,7 @@ export default function PhotoGallery({ photos = [], initial = 0 }) {
 
   return (
     <>
-      <div className="grid-3">
+      <div className="grid-3 photo-gallery-grid">
         {(initial ? photos.slice(0, initial) : photos).map((item, i) => thumb(item, i))}
       </div>
       {extra.length ? (
@@ -68,7 +68,7 @@ export default function PhotoGallery({ photos = [], initial = 0 }) {
           </button>
           <div className={`photo-gallery-more ${more ? 'open' : ''}`} aria-hidden={!more} inert={more ? undefined : true}>
             <div>
-              <div className="grid-3">
+              <div className="grid-3 photo-gallery-grid">
                 {extra.map((item, i) => thumb(item, i + initial))}
               </div>
             </div>
