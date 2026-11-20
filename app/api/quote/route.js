@@ -1,5 +1,32 @@
 const SUPABASE_URL = process.env.SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
+// Phone alert through the free ntfy app. The topic is a long random name kept in Vercel, never in code.
+const NTFY_TOPIC = process.env.NTFY_TOPIC || '';
+const ADMIN_QUOTES_URL = 'https://admin.justindematteis.com/admin/sunwings/quotes';
+
+// Name, service, towns and date only: no phone, email or street address leaves our systems.
+async function sendPhoneAlert(payload) {
+  if (!NTFY_TOPIC) return;
+  const title = payload.contactRequest ? 'New contact request' : 'New quote request';
+  const route = [payload.pickupCity || payload.moveFrom, payload.dropoffCity || payload.moveTo].filter(Boolean).join(' to ');
+  const lines = [
+    payload.name,
+    payload.contactRequest ? '' : payload.service,
+    route,
+    payload.preferredDate ? `Date: ${payload.preferredDate}` : '',
+  ].filter(Boolean);
+  try {
+    const res = await fetch(`https://ntfy.sh/${encodeURIComponent(NTFY_TOPIC)}`, {
+      method:'POST',
+      headers:{ Title:title, Priority:'high', Tags:'truck', Click:ADMIN_QUOTES_URL },
+      body:lines.join('\n'),
+      cache:'no-store',
+    });
+    if (!res.ok) console.error('[sunwings] phone alert failed', res.status);
+  } catch (error) {
+    console.error('[sunwings] phone alert error', error);
+  }
+}
 
 const PHOTO_PATH = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-5]\.jpg$/;
 
@@ -160,6 +187,8 @@ export async function POST(request) {
   } catch (error) {
     console.error('[sunwings] quote notification error', error);
   }
+
+  await sendPhoneAlert(payload);
 
   return Response.json({ ok:true });
 }
