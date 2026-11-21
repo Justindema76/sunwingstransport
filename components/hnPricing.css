@@ -1,0 +1,45 @@
+/* Hamilton & Niagara prices and the "get your price" band. */
+.hn-from{font-size:15px;font-weight:700;color:var(--muted);margin-right:2px}
+.hn-unit{font-size:16px;font-weight:700;color:var(--muted);margin-left:2px}
+.hn-price-note{margin:18px auto 0;text-align:center;color:var(--muted);font-size:14px;max-width:720px}
+
+.hn-route-table{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff}
+.hn-route-row{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:12px;padding:14px 20px;border-top:1px solid var(--line);align-items:center}
+.hn-route-row:first-child{border-top:0}
+.hn-route-row.is-head{background:var(--navy);color:#fff;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.04em}
+.hn-route-row b{color:var(--navy)}
+
+.hn-quote-band{background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;padding:44px 0}
+.hn-quote-band-inner{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.hn-quote-band h2{color:#fff;font-size:30px;margin:0}
+.hn-quote-band p{color:#c9d9ee;margin:8px 0 0;font-size:17px}
+.hn-quote-band-actions{display:flex;gap:12px;flex-wrap:wrap}
+.hn-quote-band .btn-ghost{color:#fff;border-color:rgba(255,255,255,.5)}
+
+.hn-teaser{margin:8px 0 0}
+.hn-teaser-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.hn-teaser-head a{font-weight:700;color:var(--blue)}
+.hn-teaser-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px}
+.hn-teaser-card{display:flex;flex-direction:column;gap:4px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;cursor:pointer;font:inherit;color:inherit;transition:border-color .15s,box-shadow .15s}
+.hn-teaser-card:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+.hn-teaser-card.is-featured{border:2px solid var(--accent)}
+.hn-teaser-card span{font-weight:700}
+.hn-teaser-card b{font-family:var(--font-head);font-size:26px;color:var(--navy)}
+.hn-teaser-card small{color:var(--muted)}
+
+@media (max-width:760px){
+  .hn-teaser-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .hn-teaser-card{padding:14px}
+  .hn-teaser-card b{font-size:21px}
+  .hn-route-row{grid-template-columns:1.4fr 1fr 1fr;padding:12px 14px;font-size:14px;gap:8px}
+  .hn-quote-band{padding:32px 0}
+  .hn-quote-band h2{font-size:24px}
+  .hn-quote-band-actions{width:100%}
+  .hn-quote-band-actions .btn{flex:1;justify-content:center}
+}
+
+.hn-disclaimer{max-width:900px;margin:0 auto 28px;text-align:center}
+.hn-disclaimer h3{font-size:24px;margin:0 0 8px}
+.hn-disclaimer p{color:var(--muted);font-size:16px;margin:0}
+.hn-includes{display:block;margin-top:16px;font-size:15px}
+.price-card .hn-includes + ul{margin-top:8px}

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import PageHero from '@/components/PageHero';
 import PhotoGallery from '@/components/PhotoGallery';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
+import { HnPriceTeaser, HnQuoteBand } from '@/components/HnPricing';
 import TrustStrip from '@/components/TrustStrip';
 import { photoSettings, rotatingHeroImage } from '@/components/heroSlides';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
@@ -125,15 +126,10 @@ export default async function HnSlugPage({ params }) {
                 {townFaqs.map((item, index) => <details key={`${item.question}-${index}`} open><summary>{item.question}</summary><p>{item.answer}</p></details>)}
               </div>
             </> : null}
-            <div className="cta-inline">
-              <div>
-                <h3>{town.cta_title || `Moving in ${town.title}?`}</h3>
-                <p>Pickup city, destination, your date and what’s being moved is all we need to start.</p>
-              </div>
-              <QuoteDrawerTrigger className="btn btn-accent">Get my quote →</QuoteDrawerTrigger>
-            </div>
+            <HnPriceTeaser pricing={hnContent.pricing} pricingHref={`${HN}/pricing`}/>
           </div>
         </section>
+        <HnQuoteBand phone={settings.phone} heading={town.cta_title || `Moving in ${town.title}? Get your price.`}/>
         {townFaqs.length ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'FAQPage',
@@ -225,15 +221,10 @@ export default async function HnSlugPage({ params }) {
               {faqs.map((item, index) => <details key={`${item.question}-${index}`} open><summary>{item.question}</summary><p>{item.answer}</p></details>)}
             </div>
           </> : null}
-          <div className="cta-inline">
-            <div>
-              <h3>Get a written quote</h3>
-              <p>Tell us where it’s going and what’s being moved.</p>
-            </div>
-            <QuoteDrawerTrigger className="btn btn-accent" preset={preset}>Get my quote →</QuoteDrawerTrigger>
-          </div>
+          <HnPriceTeaser pricing={content.pricing} pricingHref={`${HN}/pricing`} preset={preset}/>
         </div>
       </section>
+      <HnQuoteBand phone={settings.phone} preset={preset}/>
       {faqs.length ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'FAQPage',

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import BlogCards from '@/components/BlogCards';
 import FacebookPosts from '@/components/FacebookPosts';
 import GoogleReviews from '@/components/GoogleReviews';
+import { HnPriceTeaser, HnQuoteBand } from '@/components/HnPricing';
 import PageHero from '@/components/PageHero';
 import ServiceCards from '@/components/ServiceCards';
 import QuoteDrawerTrigger from '@/components/QuoteDrawerTrigger';
@@ -61,11 +62,19 @@ export default async function HamiltonNiagaraPage() {
           <div className="section-head">
             <span className="kicker">What we do here</span>
             <h2>Moving and transport across the region.</h2>
-            <p>From one sofa to a full house, between towns or into Toronto. Every job is quoted in writing before it’s booked.</p>
+            <p>Sunwings is a small, owner-run moving company, not a broker. Every job matters to us, from one sofa to a full house, and every job is quoted in writing before it’s booked.</p>
           </div>
           <ServiceCards services={services} cardOverrides={cardLinks} area="hn"/>
         </div>
       </section>
+
+      <section className="section section-soft" id="prices">
+        <div className="container">
+          <HnPriceTeaser pricing={content.pricing} pricingHref={`${HN}/pricing`} title="Moving to or from Toronto? Starting prices." preset="Long-Distance Moving"/>
+        </div>
+      </section>
+
+      <HnQuoteBand phone={settings.phone}/>
 
       <GoogleReviews/>
 
