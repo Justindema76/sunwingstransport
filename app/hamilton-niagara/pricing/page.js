@@ -1,8 +1,9 @@
 import PageHero from '@/components/PageHero';
 import HnPricing from '@/components/HnPricing';
+import TrustStrip from '@/components/TrustStrip';
 import { PricingContent } from '@/app/pricing/page';
 import { getPageBuilderData, getSiteSettings } from '@/lib/content';
-import { HN, getHnContent, hnMetadata } from '@/lib/hamiltonNiagara';
+import { HN, HN_TRUST, getHnContent, hnMetadata } from '@/lib/hamiltonNiagara';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 
 export function generateMetadata() {
@@ -29,6 +30,7 @@ export default async function HnPricingPage() {
         imageAlt="Sunwings Transport moving van"
         phone={settings.phone}
       />
+      <TrustStrip items={HN_TRUST}/>
       <HnPricing pricing={pricing} phone={settings.phone}/>
     </>
   );
