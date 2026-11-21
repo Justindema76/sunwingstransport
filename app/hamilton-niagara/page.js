@@ -10,7 +10,7 @@ import TrustStrip from '@/components/TrustStrip';
 import { photoSettings } from '@/components/heroSlides';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { getBlogPosts, getLocations, getServicesFor, getSiteSettings } from '@/lib/content';
-import { HN, HN_CONTENT_DEFAULTS, HN_ROUTES, HN_SERVICES, HN_TRUST, getHnContent, hnMetadata, hnRouteHref } from '@/lib/hamiltonNiagara';
+import { HN, HN_CONTENT_DEFAULTS, HN_OWN_PAGES, hnLocalBadge, HN_ROUTES, HN_SERVICES, HN_TRUST, getHnContent, hnMetadata, hnRouteHref } from '@/lib/hamiltonNiagara';
 
 // Banner, service boxes and FAQs are edited in Admin › Banners & Pop-up › Hamilton & Niagara.
 // Hamilton & Niagara regional hub: the landing page for regional ads. Long-distance
@@ -33,9 +33,11 @@ export default async function HamiltonNiagaraPage() {
   const { home } = content;
   // Service cards: every service set to show here (Admin › Service Posts › Show on). Services this
   // section has its own page for link there; the rest open the main service page.
-  const sectionPages = Object.fromEntries(HN_SERVICES.map(item => [item.serviceSlug, `${HN}/${item.slug}`]));
+  const sectionPages = { ...HN_OWN_PAGES, ...Object.fromEntries(HN_SERVICES.map(item => [item.serviceSlug, `${HN}/${item.slug}`])) };
   const cardLinks = services.map(service => ({ url: service.slug !== 'residential-moving' && sectionPages[service.slug] ? sectionPages[service.slug] : `/services/${service.slug}` }));
   const FAQS = home.faqs.filter(item => item?.question && item?.answer);
+  // Banner badge: the lowest local (hourly) price on the pricing page.
+  const badge = hnLocalBadge(content.pricing);
   const crumbs = [];
   const regionalRoutes = HN_ROUTES;
 
@@ -53,6 +55,7 @@ export default async function HamiltonNiagaraPage() {
         fallbackImage={HERO_IMAGE_OPTIONS.truck}
         imageAlt="Sunwings Transport cargo van"
         phone={settings.phone}
+        badge={badge}
       />
 
       <TrustStrip items={HN_TRUST}/>

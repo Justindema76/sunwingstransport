@@ -9,7 +9,7 @@ import TrustStrip from '@/components/TrustStrip';
 import { photoSettings, rotatingHeroImage } from '@/components/heroSlides';
 import { HERO_IMAGE_OPTIONS } from '@/lib/contentDefaults';
 import { getLocations, getServices, getSiteSettings } from '@/lib/content';
-import { HN, HN_ROUTES, HN_SERVICES, HN_TRUST, getHnContent, hnRouteHref, isHnTown, keepLinksInSection, hnMetadata } from '@/lib/hamiltonNiagara';
+import { HN, HN_ROUTES, HN_SERVICES, HN_TRUST, getHnContent, hnLongBadge, hnSnowHref, hnRouteHref, isHnTown, keepLinksInSection, hnMetadata } from '@/lib/hamiltonNiagara';
 import { extractAllPhotos, extractServicePhotos } from '@/lib/servicePhotos';
 import { getHnTownBanner } from '@/lib/routeBanners';
 
@@ -127,6 +127,7 @@ export default async function HnSlugPage({ params }) {
               </div>
             </> : null}
             <HnPriceTeaser pricing={hnContent.pricing} pricingHref={`${HN}/pricing`}/>
+            {(hnContent['snow-removal'].skipTowns || []).includes(town.slug) ? null : <p style={{ marginTop: 18 }}><Link href={hnSnowHref(town)}>Snow removal in {town.title} →</Link></p>}
           </div>
         </section>
         <HnQuoteBand phone={settings.phone} heading={town.cta_title || `Moving in ${town.title}? Get your price.`}/>
@@ -173,6 +174,7 @@ export default async function HnSlugPage({ params }) {
         imagePosition={photoSettings(copy)}
         imageAlt={main?.banner_alt || service.label}
         phone={settings.phone}
+        badge={isLong ? hnLongBadge(content.pricing) : null}
         preset={preset}
       />
       <TrustStrip items={HN_TRUST}/>
